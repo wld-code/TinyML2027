@@ -6,7 +6,7 @@
 
 | Partie | Statut |
 |---|---|
-| Microphone de la carte (`mic_check`) | **exécuté** sur la Nano V1 : environ 16 000 échantillons/s reçus, niveau ambiant mesuré ([evidence](../../evidence/edge-impulse/)) |
+| Microphone de la carte (`mic_check`) | **validé sur matériel** sur la Nano V1 : environ 16 000 échantillons/s ; crête de 13 à 113 au calme, de 913 à 3 658 pendant les claquements de mains ([evidence](../../evidence/edge-impulse/)) |
 | Compte, collecte, entraînement et export Edge Impulse | **non testé** : demande le compte de l'enseignant et une session en ligne |
 | Bibliothèque Arduino exportée, sur l'originale et la Rev2 | **non testé** |
 
@@ -42,7 +42,7 @@ t_ms,rms,crete,echantillons_par_s
 - Les premières lignes sont plus fortes : c'est la mise en route du micro, qui se stabilise en environ 1 s.
 - Dans le calme, le niveau RMS reste autour de 10 (unités brutes, sur une échelle de 0 à 32 767).
 
-**À faire vous-même :** claquez des mains près de la carte. La crête doit monter nettement. Une carte **sans Sense** n'a pas de micro : le sketch affiche alors `ERREUR PDM.begin`.
+**Claquements de mains (essai réel, à environ 30 cm) :** la crête passe d'environ 50 au calme à une valeur comprise entre 913 et 3 658 à chaque claquement. On a compté 10 pics, pour 3 claquements demandés : une ligne couvre 250 ms, si bien qu'un même claquement et son écho peuvent tomber sur deux lignes. Le journal ne permet pas de compter exactement les claquements. Une carte **sans Sense** n'a pas de micro : le sketch affiche alors `ERREUR PDM.begin`.
 
 ---
 

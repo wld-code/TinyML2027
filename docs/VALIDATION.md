@@ -12,7 +12,7 @@
 | TP01 : acquisition de 5 sessions | validé sur matériel | evidence/tp01 |
 | TP03 : rejeu 8/8, direct sur 3 gestes | validé sur matériel | evidence/tp03 |
 | MLOps : refus avant téléversement, v1 → v2 → échec → retour à v1 | validé sur matériel | evidence/mlops |
-| Micro PDM | exécuté (niveau ambiant ; claquement de mains non vérifié) | evidence/edge-impulse |
+| Micro PDM | validé sur matériel (niveau ambiant et claquements de mains) | evidence/edge-impulse |
 | Edge Impulse (Studio, export) | non testé | — |
 | Firmwares Rev2 (`REV=rev2`) | compilé seulement | build logs |
 | CI GitHub Actions (`.github/workflows/ci.yml`) | non testé | — |
