@@ -1,0 +1,6 @@
+===== manifest tronqué =====
+REFUSÉ : manifest illisible (JSON invalide) : Expecting property name enclosed in double quotes: line 1 column 32 (char 31)
+code de sortie : 1
+===== labels inversés =====
+REFUSÉ : labels ['periodic', 'stationary', 'impact'] différents du contrat ['stationary', 'periodic', 'impact']
+code de sortie : 1

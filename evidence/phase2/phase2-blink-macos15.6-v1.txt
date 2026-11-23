@@ -1,0 +1,8 @@
+# Phase 2 — Blink, 2026-11-23 02:01, macOS 15.6, Nano 33 BLE Sense V1 (serial USB E011A05896DEE871)
+arduino-cli  Version: 1.5.1 Commit: 01f3d4f2b Date: 2026-06-05T10:21:41Z
+
+Sketch uses 85504 bytes (8%) of program storage space. Maximum is 983040 bytes.
+Global variables use 44552 bytes (16%) of dynamic memory, leaving 217592 bytes for local variables. Maximum is 262144 bytes.
+Téléversement : Done (bossac), port /dev/cu.usbmodem31201
+Sortie série : 'blink N LED=ON/OFF' toutes les 0,50 s (5 s observées, 10 transitions)
+Confirmation visuelle de la LED : clignote (confirmé par l'enseignant le 23/11/2026) — VALIDÉ SUR MATÉRIEL

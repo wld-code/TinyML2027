@@ -1,13 +1,28 @@
 # Validation, systèmes et captures — registre initial
 
-**État actuel : aucun des nouveaux TP de TinyML2027 n'a encore été testé sur du matériel.** Les références du livre ne constituent pas une validation du présent dépôt.
+**État au 23/11/2026.** Une seule combinaison est validée sur matériel : **macOS 15.6 (Apple Silicon) + Nano 33 BLE Sense originale (LSM9DS1)**. Les références du livre ne constituent pas une validation du présent dépôt.
+
+| Élément | macOS Apple Silicon + originale | Preuve |
+|---|---|---|
+| Installation `scripts/setup.sh`, 39 tests pytest, 4 notebooks | exécuté | `uv run pytest`, `--nbmake` |
+| Blink, identification de la carte | validé sur matériel | evidence/phase2, evidence/lot0 |
+| `hello_world` officiel TFLM | validé sur matériel (LED) | evidence/phase3 |
+| Modèle sinus FP32 et INT8 (exemples 03 et 05) | validé sur matériel | evidence/phase5 |
+| IMU : cadence, 6 orientations, gyroscope | validé sur matériel | evidence/phase6 |
+| TP01 : acquisition de 5 sessions | validé sur matériel | evidence/tp01 |
+| TP03 : rejeu 8/8, direct sur 3 gestes | validé sur matériel | evidence/tp03 |
+| MLOps : refus avant téléversement, v1 → v2 → échec → retour à v1 | validé sur matériel | evidence/mlops |
+| Micro PDM | exécuté (niveau ambiant ; claquement de mains non vérifié) | evidence/edge-impulse |
+| Edge Impulse (Studio, export) | non testé | — |
+| Firmwares Rev2 (`REV=rev2`) | compilé seulement | build logs |
+| CI GitHub Actions (`.github/workflows/ci.yml`) | non testé | — |
 
 ## Matrice de vérification
 | Cas | Sans matériel (CI) | Originale LSM9DS1 | Rev2 BMI270 |
 |---|---|---|---|
 | Windows 11 | à réaliser | à réaliser | à réaliser |
 | macOS Intel | à réaliser | à réaliser | à réaliser |
-| macOS Apple Silicon | à réaliser | à réaliser | à réaliser |
+| macOS Apple Silicon | exécuté en local (CI non lancée) | **validé** (23/11/2026) | compilé seulement |
 | Ubuntu LTS | à réaliser | à réaliser | à réaliser |
 
 Ne cocher une combinaison qu'avec OS/version, carte exacte, paquet Arduino, bibliothèque IMU, runtime, commandes, date, résultats et captures/logs correspondants. Les tests CI ne prouvent pas que l'USB, la compilation ou le capteur fonctionnent.

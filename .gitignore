@@ -1,0 +1,33 @@
+# Environnement Python local (créé par `uv sync`)
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Environnement Arduino isolé (créé par scripts/setup.sh)
+.arduino/
+build/
+
+# Artefacts générés par les TP (régénérables)
+results/
+artifacts/
+# Acquisitions locales des étudiants (TP01) : jamais publiées par défaut
+/data/
+
+# Système
+.DS_Store
+
+# ESP-IDF isolé (créé par scripts/setup_esp.sh)
+.esp/
+
+# Builds ESP-IDF
+**/esp32s3/*/build/
+**/esp32s3/*/managed_components/
+**/esp32s3/*/sdkconfig.old
+
+# Sorties des notebooks du tutoriel 01
+tutorials/01-python-jupyter/output/
+
+# Releases MLOps (binaires régénérables) et état de la carte
+releases/

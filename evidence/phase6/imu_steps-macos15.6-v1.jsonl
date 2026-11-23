@@ -1,0 +1,8 @@
+{"n": 31, "a_mean": [0.986, -0.001, -0.065], "a_norm": 0.988, "a_norm_std": 0.0006, "gravity": "+X", "gyro_peak_dps": [4.0, 1.0, 1.0], "etape": 1, "position": "a plat, puces vers le haut"}
+{"n": 30, "a_mean": [-0.002, -0.01, 0.963], "a_norm": 0.963, "a_norm_std": 0.0196, "gravity": "+Z", "gyro_peak_dps": [4.0, 1.0, 1.0], "etape": 1, "position": "a plat, puces vers le haut (reprise)"}
+{"n": 31, "a_mean": [0.003, -0.023, -1.036], "a_norm": 1.037, "a_norm_std": 0.001, "gravity": "-Z", "gyro_peak_dps": [8.0, 1.0, 2.0], "etape": 2, "position": "a plat, retournee"}
+{"n": 30, "a_mean": [0.983, -0.044, 0.025], "a_norm": 0.985, "a_norm_std": 0.0061, "gravity": "+X", "gyro_peak_dps": [11.0, 4.0, 2.0], "etape": 3, "position": "debout, USB en bas"}
+{"n": 30, "a_mean": [-0.984, -0.032, 0.147], "a_norm": 0.995, "a_norm_std": 0.0067, "gravity": "-X", "gyro_peak_dps": [7.0, 4.0, 4.0], "etape": 4, "position": "debout, USB en haut"}
+{"n": 31, "a_mean": [0.02, -0.904, 0.358], "a_norm": 0.973, "a_norm_std": 0.0042, "gravity": "-Y", "gyro_peak_dps": [7.0, 2.0, 2.0], "etape": 5, "position": "debout, USB a gauche"}
+{"n": 31, "a_mean": [-0.06, 0.943, 0.289], "a_norm": 0.988, "a_norm_std": 0.0076, "gravity": "+Y", "gyro_peak_dps": [8.0, 2.0, 3.0], "etape": 6, "position": "debout, USB a droite"}
+{"n": 60, "a_mean": [-0.137, 0.213, 0.149], "a_norm": 0.995, "a_norm_std": 0.0366, "gravity": "+Y", "gyro_peak_dps": [35.0, 54.0, 89.0], "etape": 7, "position": "rotation libre"}

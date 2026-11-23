@@ -1,0 +1,41 @@
+[project]
+name = "tinyml2027"
+version = "0.1.0"
+description = "TinyML2027 : tutoriels et TP TinyML sur Arduino Nano 33 BLE Sense"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE", "LICENSE-docs.md"]
+authors = [{ name = "Walid Abdaoui" }]
+# TensorFlow 2.21 ne publie des wheels que pour Python 3.10 à 3.13 ;
+# NumPy 2.5 / SciPy 1.18 exigent Python >= 3.12. D'où 3.12–3.13.
+requires-python = ">=3.12,<3.14"
+dependencies = [
+    # Signal, données, figures
+    "numpy>=2.3,<3",
+    "scipy>=1.16,<2",
+    "pandas>=2.3,<4",
+    "matplotlib>=3.10,<4",
+    # Apprentissage, conversion et interpréteur desktop
+    "scikit-learn>=1.7,<2",
+    "tensorflow==2.21.0",
+    "ai-edge-litert==2.4.0",
+    # Communication avec la carte
+    "pyserial>=3.5,<4",
+    # Notebooks
+    "jupyterlab>=4.4,<5",
+    "ipykernel>=6.29",
+]
+
+[dependency-groups]
+dev = ["pytest>=8.4", "nbmake>=1.5"]
+
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/tinyml2027"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["slow: tests longs (Docker, conversion) ; exclure avec -m 'not slow'"]

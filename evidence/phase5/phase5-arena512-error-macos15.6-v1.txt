@@ -1,0 +1,6 @@
+# Essai volontaire d'échec : copie de examples/03_custom_model avec kArenaSize = 512
+# (compilée hors dépôt), téléversée sur la Nano V1 le 23/11/2026, sortie série brute après un retour chariot :
+# TinyML2027 examples/03_custom_model (FP32)
+# model_sha256=6990a391336389883cc8b8a8ec011542cf5e2dcb6205e430a69e76ed0e216d6a
+# model_bytes=3216 schema=3 arena_size=512
+ERREUR init=AllocateTensors

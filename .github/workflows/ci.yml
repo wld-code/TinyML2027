@@ -1,0 +1,42 @@
+# CI sans matériel : tests Python, notebooks, compilation des sketches.
+# Elle ne prouve PAS que l'USB, le capteur ou l'inférence fonctionnent sur une carte réelle.
+# Statut : non testée (aucune exécution GitHub Actions à ce jour).
+name: ci
+on:
+  push:
+  pull_request:
+
+jobs:
+  python:
+    runs-on: macos-14            # Apple Silicon : même plateforme que le poste de référence
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - run: uv sync --frozen
+      - name: Tests (sans carte)
+        run: uv run pytest -q --ignore=tests/test_features_cpp.py
+      - name: Notebooks du tutoriel 01
+        run: uv run pytest -q --nbmake tutorials/01-python-jupyter
+
+  firmware:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - name: Environnement figé (Arduino CLI, core, bibliothèques, Python)
+        run: ./scripts/setup.sh
+      - name: Test C++ des features (kissfft officielle) contre Python
+        run: uv run pytest -q tests/test_features_cpp.py
+      - name: Compilation, carte originale et Rev2
+        run: |
+          set -e
+          for sketch in examples/01_blink examples/03_custom_model examples/05_int8_model \
+                        tutorials/02-arduino-nano/sketches/board_identify \
+                        advanced/edge-impulse/sketches/mic_check; do
+            ./scripts/compile.sh "$sketch"
+          done
+          for sketch in examples/04_imu labs/01-sensor-data/firmware/imu_capture \
+                        labs/03-embedded-inference/firmware/infer_nano; do
+            REV=original ./scripts/compile.sh "$sketch"
+            REV=rev2 ./scripts/compile.sh "$sketch"
+          done

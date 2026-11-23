@@ -1,0 +1,14 @@
+# imu_check 2026-11-23T09:42:03+00:00
+# firmware=04_imu 0.1.0 board_revision=original imu=LSM9DS1
+# accel_odr_nominal_hz=119.00 gyro_odr_nominal_hz=119.00
+position 1 (à plat sur la table, composants vers le HAUT) : gravité sur +Z, a moyen = (+0.039, +0.000, +0.960) g, |a| = 0.967 g ± 0.027 -> ÉCHEC ['immobile']
+position 2 (à plat, retournée : composants vers le BAS) : gravité sur +Z, a moyen = (+0.027, +0.001, +0.964) g, |a| = 0.966 g ± 0.019 -> ÉCHEC ['direction_nouvelle']
+position 3 (debout sur l'un de ses deux GRANDS côtés) : gravité sur +Z, a moyen = (+0.438, -0.101, +0.515) g, |a| = 0.979 g ± 0.047 -> ÉCHEC ['immobile', 'un_seul_axe', 'direction_nouvelle']
+position 4 (debout sur l'AUTRE grand côté) : gravité sur -X, a moyen = (-0.603, -0.108, +0.250) g, |a| = 0.997 g ± 0.055 -> ÉCHEC ['immobile', 'un_seul_axe']
+position 5 (debout, connecteur USB vers le HAUT) : gravité sur +Z, a moyen = (+0.031, +0.083, +0.950) g, |a| = 0.968 g ± 0.020 -> ÉCHEC ['direction_nouvelle']
+position 6 (debout, connecteur USB vers le BAS (posée sur l'extrémité opposée, si le câble le permet ; sinon tenue à la main sans bouger)) : gravité sur -Z, a moyen = (-0.171, -0.045, -1.010) g, |a| = 1.044 g ± 0.068 -> ÉCHEC ['immobile']
+
+6 directions couvertes (±X, ±Y, ±Z) : NON
+gyroscope : pic |gx|, |gy|, |gz| = 137, 190, 182 °/s -> OK
+
+RÉSULTAT IMU : ÉCHEC

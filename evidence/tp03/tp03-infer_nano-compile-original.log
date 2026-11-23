@@ -1,0 +1,6 @@
+# compile.sh REV=original sketch=labs/03-embedded-inference/firmware/infer_nano
+Library Arduino_TensorFlowLite has been declared precompiled:
+Precompiled library in "/Users/walidabdaoui/TinyML2027/.arduino/user/libraries/Arduino_TensorFlowLite/src/cortex-m4/-mfpu=fpv4-sp-d16--mfloat-abi=softfp" not found
+Precompiled library in "/Users/walidabdaoui/TinyML2027/.arduino/user/libraries/Arduino_TensorFlowLite/src/cortex-m4" not found
+Sketch uses 183872 bytes (18%) of program storage space. Maximum is 983040 bytes.
+Global variables use 61792 bytes (23%) of dynamic memory, leaving 200352 bytes for local variables. Maximum is 262144 bytes.

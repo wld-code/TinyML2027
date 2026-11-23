@@ -1,0 +1,31 @@
+# TinyML2027 — versions figées de la chaîne Arduino / TFLM (voie A).
+# Format : CLÉ=VALEUR, lu par scripts/setup.sh. Ne jamais mettre "latest" ni une branche.
+# Statut de chaque ligne : voir docs/compatibility.md.
+
+ARDUINO_CLI_VERSION=1.5.1
+ARDUINO_CLI_MACOS_ARM64_SHA256=cb952e8c1621c95ef5f1d17831c945e3d0ec5973f89c557a7ec8feb9c4f7d4c9
+
+ARDUINO_CORE=arduino:mbed_nano@4.6.0
+ARDUINO_FQBN=arduino:mbed_nano:nano33ble
+
+# Bibliothèques Arduino Library Manager (version exacte) et commit du tag correspondant (traçabilité)
+LIB_ARDUINO_LSM9DS1=Arduino_LSM9DS1@1.1.1
+LIB_ARDUINO_LSM9DS1_SHA=57b2b31905eba86b619484263bc5bfee944e56ee
+LIB_ARDUINO_BMI270_BMM150=Arduino_BMI270_BMM150@1.2.4
+
+# Bibliothèque officielle TensorFlow Lite Micro pour Arduino (dépôt archivé, pas de tag)
+TFLM_ARDUINO_REPO=https://github.com/tensorflow/tflite-micro-arduino-examples.git
+TFLM_ARDUINO_COMMIT=7948b85e020470a30a83bf00e10fc43b486bfcba
+
+# Python : voir .python-version, pyproject.toml, uv.lock et requirements.lock (avec hashes)
+PYTHON_VERSION=3.12.7
+
+# --- Extension « TinyML distribué » (ESP32-S3-DevKitC-1-N16R8) ---
+ESP_IDF_VERSION=v5.5.6
+ESP_IDF_COMMIT=880a203ae603d08a94d06aa01e0d6761958e5e9e
+ESP_IDF_TARGET=esp32s3
+ESP_TOOLCHAIN_XTENSA=esp-14.2.0_20260121
+ESP_TFLITE_MICRO_VERSION=1.4.3
+ESP_TFLITE_MICRO_HASH=6509fe52baded3968ac4d636c9c932fdfda2f86cf3d2f4f7919cf650ad3b8adc
+ESP_NN_VERSION=1.4.2
+ESP_NN_HASH=8411b307e5bb3618df19fe442f7ca5d5a8cb488f5010d9070eb14d80257aa140

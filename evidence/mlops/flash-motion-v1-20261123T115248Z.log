@@ -1,0 +1,18 @@
+# firmware=infer_nano 0.1.0 board_revision=original imu=LSM9DS1
+# model_version=motion-v1
+# model_sha256=023e01b8d61b1f962f30a660ff1528a50a8716862fec1f1b459b377944db2879
+# model_bytes=2176 arena_size=4096 arena_used=788
+# commandes : R = replay des golden vectors, L = live marche/arret
+REPLAY debut
+nom,rms,crest,dominant_hz,band_power,features,xq,yq,classe,attendu,feat_us,invoke_us,statut
+s05_stationary_t01@0,0.0008959,3.54686,6.8082,0.000000608,OK,0lsb,0lsb,stationary,stationary,666,108,OK
+s05_stationary_t01@1024,0.0005442,3.04771,9.0763,0.000000063,OK,0lsb,0lsb,stationary,stationary,651,92,OK
+s05_periodic_t01@0,0.0902025,2.67306,1.3611,0.007496708,OK,0lsb,0lsb,periodic,periodic,637,100,OK
+s05_periodic_t01@1024,0.1098541,2.34728,1.3613,0.011481862,OK,0lsb,0lsb,periodic,periodic,637,127,OK
+s05_impact_t01@0,0.0033917,6.38233,7.7097,0.000001503,OK,0lsb,0lsb,impact,impact,665,108,OK
+s05_impact_t01@1024,0.0031336,7.71840,6.8042,0.000001569,OK,0lsb,0lsb,impact,impact,648,109,OK
+synthetique_constante,0.0000000,0.00000,0.0000,0.000000000,OK,0lsb,0lsb,stationary,stationary,174,91,OK
+synthetique_sinus_2hz,0.0709667,1.50018,1.8169,0.004999634,OK,0lsb,0lsb,periodic,periodic,623,109,OK
+REPLAY RESUME n=8 ok=8 feat_us_max=666 invoke_us_max=127
+REPLAY STATUT OK
+# contrôles {'version': True, 'sha256': True, 'replay': True}

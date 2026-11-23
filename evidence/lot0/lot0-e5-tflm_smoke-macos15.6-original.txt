@@ -1,0 +1,20 @@
+BEGIN tflm_smoke v1
+model_sha256=765a2cf496ae19bb8e401f75419131c3427016316790fa8da83e2526e60b88af
+model_bytes=2368
+arena_size=4096
+arena_used_bytes=788
+input_type=int8 output_type=int8
+golden 0 out=85,-88,-125 expected=85,-88,-125 litert_diff=2 invoke_us=233 OK
+golden 1 out=75,-84,-119 expected=75,-84,-119 litert_diff=0 invoke_us=233 OK
+golden 2 out=-58,19,-88 expected=-58,19,-88 litert_diff=0 invoke_us=262 OK
+golden 3 out=-58,19,-88 expected=-58,19,-88 litert_diff=0 invoke_us=234 OK
+golden 4 out=-122,-126,120 expected=-122,-126,120 litert_diff=0 invoke_us=280 OK
+golden 5 out=-121,-126,119 expected=-121,-126,119 litert_diff=0 invoke_us=233 OK
+golden 6 out=103,-111,-120 expected=103,-111,-120 litert_diff=0 invoke_us=280 OK
+golden 7 out=91,-92,-127 expected=91,-92,-127 litert_diff=0 invoke_us=233 OK
+invoke_us_max=280
+litert_vectors_differing=1 litert_max_lsb=2
+status=PASS
+END
+Sketch uses 130080 bytes (13%) of program storage space. Maximum is 983040 bytes.
+Global variables use 48880 bytes (18%) of dynamic memory, leaving 213264 bytes for local variables. Maximum is 262144 bytes.

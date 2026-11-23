@@ -1,0 +1,20 @@
+# consigne=stationary
+LIVE debut (premiere classification apres 256 mesures, ~2,2 s)
+LIVE stationary stationary=1.00 periodic=0.00 impact=0.00 | rms=0.0010 crest=3.16 dom=8.18Hz fs=116.3 feat_us=632 invoke_us=91
+LIVE stationary stationary=1.00 periodic=0.00 impact=0.00 | rms=0.0008 crest=2.52 dom=6.80Hz fs=116.1 feat_us=614 invoke_us=108
+LIVE stationary stationary=1.00 periodic=0.00 impact=0.00 | rms=0.0006 crest=3.00 dom=6.80Hz fs=116.1 feat_us=644 invoke_us=108
+LIVE stationary stationary=1.00 periodic=0.00 impact=0.00 | rms=0.0007 crest=3.87 dom=7.26Hz fs=116.2 feat_us=661 invoke_us=91
+LIVE stationary stationary=1.00 periodic=0.00 impact=0.00 | rms=0.0008 crest=3.60 dom=9.98Hz fs=116.2 feat_us=636 invoke_us=99
+LIVE stationary stationary=1.00 periodic=0.00 impact=0.00 | rms=0.0008 crest=2.94 dom=6.81Hz fs=116.2 feat_us=660 invoke_us=91
+LIVE stationary stationary=1.00 periodic=0.00 impact=0.00 | rms=0.0008 crest=2.76 dom=8.62Hz fs=116.2 feat_us=616 invoke_us=108
+LIVE stationary stationary=1.00 periodic=0.00 impact=0.00 | rms=0.0007 crest=3.01 dom=9.07Hz fs=116.2 feat_us=614 invoke_us=91
+LIVE stationary stationary=1.00 periodic=0.00 impact=0.00 | rms=0.0005 crest=3.18 dom=9.98Hz fs=116.1 feat_us=663 invoke_us=91
+LIVE stationary stationary=1.00 periodic=0.00 impact=0.00 | rms=0.0006 crest=3.15 dom=8.62Hz fs=116.1 feat_us=643 invoke_us=91
+LIVE stationary stationary=1.00 periodic=0.00 impact=0.00 | rms=0.0006 crest=3.76 dom=9.07Hz fs=116.1 feat_us=616 invoke_us=91
+LIVE stationary stationary=1.00 periodic=0.00 impact=0.00 | rms=0.0006 crest=3.85 dom=9.98Hz fs=116.2 feat_us=615 invoke_us=91
+LIVE stationary stationary=1.00 periodic=0.00 impact=0.00 | rms=0.0006 crest=2.97 dom=5.44Hz fs=116.2 feat_us=615 invoke_us=91
+LIVE stationary stationary=1.00 periodic=0.00 impact=0.00 | rms=0.0005 crest=2.60 dom=8.62Hz fs=116.2 feat_us=616 invoke_us=91
+LIVE stationary stationary=1.00 periodic=0.00 impact=0.00 | rms=0.0008 crest=4.22 dom=9.53Hz fs=116.2 feat_us=660 invoke_us=100
+LIVE stationary stationary=1.00 periodic=0.00 impact=0.00 | rms=0.0009 crest=3.79 dom=9.98Hz fs=116.2 feat_us=615 invoke_us=125
+LIVE stationary stationary=1.00 periodic=0.00 impact=0.00 | rms=0.0009 crest=3.09 dom=9.08Hz fs=116.2 feat_us=659 invoke_us=91
+LIVE fin

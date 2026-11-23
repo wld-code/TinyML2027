@@ -1,0 +1,41 @@
+===== flash motion-v1 =====
+Release motion-v1 VALIDE (fichiers, SHA-256, labels, schéma, carte).
+Plan :
+  1. téléverser releases/motion-v1/firmware/infer_nano.ino.bin sur /dev/cu.usbmodem314101 (USB, supervisé)
+  2. lire ce que la carte annonce et exiger model_version=motion-v1, model_sha256=023e01b8d61b1f96…
+  3. exiger REPLAY STATUT OK sur les golden vectors
+La carte annonce : model_version=motion-v1 model_sha256=023e01b8d61b1f96… replay=OK
+CONFIRMÉ : la carte exécute motion-v1 et rejoue ses golden vectors. Journal : flash-motion-v1-20261123T115248Z.log
+code de sortie : 0
+===== flash motion-v2 =====
+Release motion-v2 VALIDE (fichiers, SHA-256, labels, schéma, carte).
+Plan :
+  1. téléverser releases/motion-v2/firmware/infer_nano.ino.bin sur /dev/cu.usbmodem314101 (USB, supervisé)
+  2. lire ce que la carte annonce et exiger model_version=motion-v2, model_sha256=9acece88c0e4579a…
+  3. exiger REPLAY STATUT OK sur les golden vectors
+La carte annonce : model_version=motion-v2 model_sha256=9acece88c0e4579a… replay=OK
+CONFIRMÉ : la carte exécute motion-v2 et rejoue ses golden vectors. Journal : flash-motion-v2-20261123T115302Z.log
+code de sortie : 0
+===== flash motion-v2-defaut =====
+Release motion-v2-defaut VALIDE (fichiers, SHA-256, labels, schéma, carte).
+Plan :
+  1. téléverser releases/motion-v2-defaut/firmware/infer_nano.ino.bin sur /dev/cu.usbmodem314101 (USB, supervisé)
+  2. lire ce que la carte annonce et exiger model_version=motion-v2-defaut, model_sha256=9acece88c0e4579a…
+  3. exiger REPLAY STATUT OK sur les golden vectors
+La carte annonce : model_version=motion-v2-defaut model_sha256=9acece88c0e4579a… replay=ECHEC
+ACCEPTATION REFUSÉE ['replay']. Journal : flash-motion-v2-defaut-20261123T115317Z.log
+Revenez à la dernière release confirmée : python -m tinyml2027.release flash releases/<version précédente>
+code de sortie : 3
+===== flash motion-v1 =====
+Release motion-v1 VALIDE (fichiers, SHA-256, labels, schéma, carte).
+Plan :
+  1. téléverser releases/motion-v1/firmware/infer_nano.ino.bin sur /dev/cu.usbmodem314101 (USB, supervisé)
+  2. lire ce que la carte annonce et exiger model_version=motion-v1, model_sha256=023e01b8d61b1f96…
+  3. exiger REPLAY STATUT OK sur les golden vectors
+La carte annonce : model_version=motion-v1 model_sha256=023e01b8d61b1f96… replay=OK
+CONFIRMÉ : la carte exécute motion-v1 et rejoue ses golden vectors. Journal : flash-motion-v1-20261123T115331Z.log
+code de sortie : 0
+===== status =====
+état souhaité  : motion-v1
+état confirmé  : motion-v1
+la carte annonce : motion-v1 / 023e01b8d61b1f96… / replay OK

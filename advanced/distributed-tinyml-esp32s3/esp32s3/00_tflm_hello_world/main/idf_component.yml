@@ -1,0 +1,5 @@
+# Versions figées (voir config/versions.lock à la racine du dépôt).
+dependencies:
+  idf: "==5.5.6"
+  espressif/esp-tflite-micro: "==1.4.3"
+  espressif/esp-nn: "==1.4.2"

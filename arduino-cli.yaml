@@ -1,0 +1,12 @@
+# Configuration Arduino CLI propre au dépôt TinyML2027.
+# Les répertoires (core, bibliothèques, téléchargements) sont fixés par les
+# variables ARDUINO_DIRECTORIES_* dans scripts/arduino.sh : ils pointent vers
+# .arduino/ dans le dépôt, sans toucher à l'installation Arduino de l'utilisateur.
+board_manager:
+  additional_urls: []
+library:
+  enable_unsafe_install: false
+build_cache:
+  compilations_before_purge: 10
+updater:
+  enable_notification: false
