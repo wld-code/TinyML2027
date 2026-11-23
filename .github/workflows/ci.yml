@@ -1,42 +1,94 @@
-# CI sans matériel : tests Python, notebooks, compilation des sketches.
+# CI sans carte : refait tout le parcours du cours qui ne demande pas de matériel,
+# sur des machines neuves Windows, Linux et macOS.
 # Elle ne prouve PAS que l'USB, le capteur ou l'inférence fonctionnent sur une carte réelle.
-# Statut : non testée (aucune exécution GitHub Actions à ce jour).
 name: ci
 on:
   push:
   pull_request:
+  workflow_dispatch:
 
 jobs:
-  python:
-    runs-on: macos-14            # Apple Silicon : même plateforme que le poste de référence
+  parcours:
+    name: parcours sans carte (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash          # Windows : Git Bash, comme le cours le demande aux étudiants
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v6
-      - run: uv sync --frozen
-      - name: Tests (sans carte)
-        run: uv run pytest -q --ignore=tests/test_features_cpp.py
-      - name: Notebooks du tutoriel 01
+
+      - name: "Préparer le poste (scripts/setup.sh : Arduino CLI figé + core + bibliothèques + Python)"
+        run: ./scripts/setup.sh
+
+      - name: "Tutoriel 01 — les 4 notebooks de bout en bout"
         run: uv run pytest -q --nbmake tutorials/01-python-jupyter
 
-  firmware:
-    runs-on: macos-14
-    steps:
-      - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v6
-      - name: Environnement figé (Arduino CLI, core, bibliothèques, Python)
-        run: ./scripts/setup.sh
-      - name: Test C++ des features (kissfft officielle) contre Python
-        run: uv run pytest -q tests/test_features_cpp.py
-      - name: Compilation, carte originale et Rev2
+      - name: "Tests automatiques (sans le test C++)"
+        run: uv run pytest -q --ignore=tests/test_features_cpp.py
+
+      - name: "Tutoriel 02 — compilation de tous les sketches (originale et Rev2)"
         run: |
           set -e
-          for sketch in examples/01_blink examples/03_custom_model examples/05_int8_model \
-                        tutorials/02-arduino-nano/sketches/board_identify \
-                        advanced/edge-impulse/sketches/mic_check; do
-            ./scripts/compile.sh "$sketch"
+          for s in examples/01_blink tutorials/02-arduino-nano/sketches/board_identify \
+                   advanced/edge-impulse/sketches/mic_check; do
+            ./scripts/compile.sh "$s" | tail -2
           done
-          for sketch in examples/04_imu labs/01-sensor-data/firmware/imu_capture \
-                        labs/03-embedded-inference/firmware/infer_nano; do
-            REV=original ./scripts/compile.sh "$sketch"
-            REV=rev2 ./scripts/compile.sh "$sketch"
+          for s in examples/04_imu labs/01-sensor-data/firmware/imu_capture; do
+            REV=original ./scripts/compile.sh "$s" | tail -2
+            REV=rev2     ./scripts/compile.sh "$s" | tail -2
           done
+
+      - name: "Exemples 03 et 05 — entraîner, convertir FP32 et INT8, compiler"
+        run: |
+          set -e
+          uv run python python/train.py
+          uv run python python/convert.py --mode fp32
+          ./scripts/compile.sh examples/03_custom_model | tail -2
+          uv run python python/convert.py --mode int8
+          ./scripts/compile.sh examples/05_int8_model | tail -2
+
+      - name: "TP01 sans carte — features depuis le dataset publié"
+        run: uv run python -m tinyml2027.build_features --data datasets/motion-nano-v1
+
+      - name: "TP02 — entraînement, test sur s05"
+        run: uv run python -m tinyml2027.train_motion --test-session s05
+
+      - name: "TP03 — quantification INT8, test C++ des features, firmware"
+        run: |
+          set -e
+          uv run python -m tinyml2027.quantize_motion
+          uv run pytest -q tests/test_features_cpp.py
+          REV=original ./scripts/compile.sh labs/03-embedded-inference/firmware/infer_nano | tail -2
+          REV=rev2     ./scripts/compile.sh labs/03-embedded-inference/firmware/infer_nano | tail -2
+
+      - name: "Extension MLOps — construire et valider une release"
+        run: |
+          set -e
+          REV=original ./scripts/compile.sh labs/03-embedded-inference/firmware/infer_nano > /dev/null
+          uv run python -m tinyml2027.release build --version ci-${{ matrix.os }}
+          uv run python -m tinyml2027.release validate releases/ci-${{ matrix.os }}
+
+      - name: "Résumé"
+        if: always()
+        run: |
+          {
+            echo "### ${{ matrix.os }}"
+            uv run python - <<'PY'
+          import json, pathlib, hashlib
+          m = pathlib.Path("artifacts/motion/metrics.json")
+          if m.exists():
+              d = json.loads(m.read_text())
+              t = d["test"]["dense"]
+              print(f"- TP02 test s05 (réseau 4-8-3) : accuracy {t['accuracy']:.3f}, macro-F1 {t['macro_f1']:.3f}")
+              print(f"- TP02 validation croisée : macro-F1 moyen {d['cv_train']['dense']['macro_f1_mean']:.3f}")
+          q = pathlib.Path("artifacts/motion/model_int8.tflite")
+          if q.exists():
+              print(f"- modèle INT8 : {q.stat().st_size} octets, sha256 {hashlib.sha256(q.read_bytes()).hexdigest()[:16]}…")
+          PY
+            echo "- Non couvert : tout ce qui demande la carte (port USB, IMU, téléversement, rejeu et direct)."
+          } >> "$GITHUB_STEP_SUMMARY"

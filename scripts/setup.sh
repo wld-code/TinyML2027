@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Installe l'environnement figé de TinyML2027 dans le dossier du projet (macOS Apple Silicon vérifié).
+# Installe l'environnement figé de TinyML2027 dans le dossier du projet.
+# macOS Apple Silicon : vérifié sur poste réel. Linux et Windows (Git Bash) : voir docs/VALIDATION.md.
 #   - Arduino CLI (version et SHA-256 de config/versions.lock) dans .arduino/bin/
 #   - core et bibliothèques Arduino figés dans .arduino/
 #   - Arduino_TensorFlowLite au commit figé dans .arduino/user/libraries/
@@ -17,16 +18,30 @@ A="$ROOT/scripts/arduino.sh"
 step() { printf '\n=== %s\n' "$*"; }
 
 step "Arduino CLI $ARDUINO_CLI_VERSION"
-if [ "$(uname -s)-$(uname -m)" != "Darwin-arm64" ]; then
-  echo "ERREUR : téléchargement figé prévu pour macOS Apple Silicon uniquement (autres OS : non testés, voir docs/installation.md)"; exit 1
-fi
-BIN="$ROOT/.arduino/bin/arduino-cli"
+# Archive officielle selon le système ; Windows : lancer ce script dans Git Bash.
+case "$(uname -s)-$(uname -m)" in
+  Darwin-arm64)              PKG=macOS_ARM64;   EXT=tar.gz; SHA=$ARDUINO_CLI_MACOS_ARM64_SHA256 ;;
+  Darwin-x86_64)             PKG=macOS_64bit;   EXT=tar.gz; SHA=$ARDUINO_CLI_MACOS_64BIT_SHA256 ;;
+  Linux-x86_64)              PKG=Linux_64bit;   EXT=tar.gz; SHA=$ARDUINO_CLI_LINUX_64BIT_SHA256 ;;
+  Linux-aarch64|Linux-arm64) PKG=Linux_ARM64;   EXT=tar.gz; SHA=$ARDUINO_CLI_LINUX_ARM64_SHA256 ;;
+  MINGW64*-x86_64|MSYS*-x86_64|CYGWIN*-x86_64) PKG=Windows_64bit; EXT=zip; SHA=$ARDUINO_CLI_WINDOWS_64BIT_SHA256 ;;
+  *) echo "ERREUR : système $(uname -s)-$(uname -m) non prévu (voir docs/installation.md)"; exit 1 ;;
+esac
+EXE=""; [ "$EXT" = zip ] && EXE=".exe"
+sha256() { if command -v sha256sum >/dev/null; then sha256sum "$1"; else shasum -a 256 "$1"; fi | cut -d' ' -f1; }
+BIN="$ROOT/.arduino/bin/arduino-cli$EXE"
 if ! { [ -x "$BIN" ] && "$BIN" version | grep -q "Version: $ARDUINO_CLI_VERSION "; }; then
   mkdir -p "$ROOT/.arduino/dl" "$ROOT/.arduino/bin"
-  TGZ="arduino-cli_${ARDUINO_CLI_VERSION}_macOS_ARM64.tar.gz"
-  curl -fsSL -o "$ROOT/.arduino/dl/$TGZ" "https://downloads.arduino.cc/arduino-cli/$TGZ"
-  echo "$ARDUINO_CLI_MACOS_ARM64_SHA256  $ROOT/.arduino/dl/$TGZ" | shasum -a 256 -c -
-  tar -xzf "$ROOT/.arduino/dl/$TGZ" -C "$ROOT/.arduino/bin" arduino-cli
+  ARC="arduino-cli_${ARDUINO_CLI_VERSION}_${PKG}.${EXT}"
+  curl -fsSL -o "$ROOT/.arduino/dl/$ARC" "https://downloads.arduino.cc/arduino-cli/$ARC"
+  GOT="$(sha256 "$ROOT/.arduino/dl/$ARC")"
+  [ "$GOT" = "$SHA" ] || { echo "ERREUR : SHA-256 de $ARC = $GOT, attendu $SHA"; exit 1; }
+  echo "$ARC : SHA-256 OK"
+  if [ "$EXT" = zip ]; then
+    powershell -NoProfile -Command "Expand-Archive -Force '$(cygpath -w "$ROOT/.arduino/dl/$ARC")' '$(cygpath -w "$ROOT/.arduino/bin")'"
+  else
+    tar -xzf "$ROOT/.arduino/dl/$ARC" -C "$ROOT/.arduino/bin" arduino-cli
+  fi
 fi
 "$BIN" version
 
@@ -50,7 +65,7 @@ test "$(git -C "$DEST" rev-parse HEAD)" = "$TFLM_ARDUINO_COMMIT"
 echo "Arduino_TensorFlowLite : $(git -C "$DEST" rev-parse HEAD)"
 
 step "Python (uv.lock)"
-command -v uv >/dev/null || { echo "ERREUR : uv absent (brew install uv)"; exit 1; }
+command -v uv >/dev/null || { echo "ERREUR : uv absent (https://docs.astral.sh/uv/getting-started/installation/)"; exit 1; }
 uv sync --frozen
 
 step "Récapitulatif"
