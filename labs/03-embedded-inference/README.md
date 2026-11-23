@@ -94,7 +94,7 @@ Ce test a déjà trouvé un vrai défaut. Sur une fenêtre parfaitement constant
 ./scripts/upload.sh  labs/03-embedded-inference/firmware/infer_nano
 ```
 
-Pour la Rev2, ajoutez `REV=rev2` devant les deux commandes. Dans Arduino IDE, décommentez `#define NANO_REV2` en tête de `infer_nano.ino`.
+Pour la Rev2, ajoutez `REV=rev2` devant les deux commandes. Dans Arduino IDE ([captures](../../tutorials/02-arduino-nano/README.md#arduino-ide-pas-à-pas)), décommentez `#define NANO_REV2` en tête de `infer_nano.ino`.
 
 **Compilation réelle (carte originale) :**
 ```text
@@ -213,6 +213,12 @@ Si un téléversement échoue ou si la carte ne répond plus :
 1. **Double-cliquez sur le bouton RESET** : la LED orange pulse, la carte est en mode bootloader et attend un programme.
 2. Relancez `./scripts/upload.sh labs/03-embedded-inference/firmware/infer_nano` : il retéléverse la dernière version compilée.
 3. Vérifiez le modèle qui tourne vraiment avec `R` : la ligne `# model_sha256=…` doit correspondre à `model_int8_sha256` dans `artifacts/motion/release_manifest.json`.
+
+Avec l'outil de l'[extension MLOps](../../advanced/edge-mlops/README.md), le retour à la version validée et sa vérification tiennent en deux commandes :
+
+![Retour à motion-v1](../../docs/screenshots/tp03-etape07-retour-v1-macos-original.png)
+
+*Capture réelle, Terminal macOS 15.6, carte Nano 33 BLE Sense V1, 23/11/2026.*
 
 **Un téléversement réussi ne prouve pas que le bon modèle tourne.** Seul le SHA-256 annoncé par la carte le prouve.
 

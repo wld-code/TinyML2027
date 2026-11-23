@@ -56,6 +56,10 @@ t_ms,rms,crete,echantillons_par_s
 
 Créez un compte sur <https://studio.edgeimpulse.com>, puis un projet **Personal** et **Private**. Un projet public est visible et copiable par tout le monde : n'y mettez pas de voix. **Avant de commencer, notez** l'offre gratuite et ses limites (le 23/11/2026 : 60 min de calcul par tâche, 4 Go ou 4 h de données, 3 projets privés), où les données sont stockées et la date de la séance.
 
+![Projet privé](../../docs/screenshots/edgeimpulse-etape02-projet-prive-studio.png)
+
+*Capture réelle du Studio, 23/11/2026 : le projet est bien **Private** (encadré « Sharing »).*
+
 Dans le Studio, choisissez la cible **Arduino Nano 33 BLE Sense (Cortex-M4F 64MHz)** (en haut à droite) : les estimations de RAM, de Flash et de latence en dépendent.
 
 ## Étape 3 — Préparer et importer les données
@@ -69,6 +73,10 @@ Le parcours de référence utilise le jeu public **Speech Commands v0.02** (Goog
    ```
    Le script produit 200 clips par classe pour l'entraînement et 50 pour le test, en WAV 16 kHz, mono, 1 s. **Le test et l'entraînement n'ont aucun locuteur en commun** : le script s'arrête en erreur sinon. Résultat réel : 177 à 184 locuteurs par mot en entraînement, 40 à 44 en test ([rapport](../../evidence/edge-impulse/speech-commands-subset_report.json)).
 3. Dans **Data acquisition → Add existing data → Upload data** : sélectionnez les fichiers de `test/`, cochez **Test** et **Infer from filename**, puis **Upload data**. Recommencez avec `train/` et **Training**. Ne choisissez pas « Automatically split » : le Studio mélangerait les locuteurs.
+
+![Données importées](../../docs/screenshots/edgeimpulse-etape03-donnees-studio.png)
+
+*Capture réelle : 600 clips d'entraînement, 150 de test ; à droite, la forme d'onde d'un « stop ».*
 
 Résultat réel : 750 fichiers importés, 0 échec, soit 10 min de données d'entraînement et 150 clips de test.
 

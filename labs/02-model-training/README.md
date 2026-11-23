@@ -54,6 +54,10 @@ Les 4 features n'ont pas du tout la même échelle : `rms_g` varie de 0,0005 à 
 
 On applique ensuite une **standardisation** : (valeur − moyenne) / écart-type. **La moyenne et l'écart-type sont calculés sur l'entraînement seul**, puis appliqués tels quels au test et à la carte. Les calculer sur toutes les données ferait fuir de l'information du test vers le modèle.
 
+![Prétraitement](../../docs/figures/tp02-pretraitement.png)
+
+*Schéma. Les nombres sont la moyenne et l'écart-type réellement appris sur s01 à s04.*
+
 Ces paramètres sont enregistrés dans `artifacts/motion/preprocessing.json`. La carte les utilisera au TP03.
 
 ---
@@ -132,6 +136,14 @@ Dans `artifacts/motion/` :
 | `calibration_train.npy` | entrées standardisées du **train seul**, pour la quantification INT8 |
 | `metrics.json`, `test_predictions.csv` | tous les scores, et la prédiction de chaque fenêtre de test |
 | `training_config.json` | seed (2027), époques, sessions et versions des outils |
+
+![Fichiers du TP02](../../docs/screenshots/tp02-etape05-fichiers-macos.png)
+
+*Capture réelle, Terminal macOS 15.6, 23/11/2026.*
+
+![Du TP02 au TP03](../../docs/figures/tp02-fichiers-vers-tp03.png)
+
+*Schéma : quels fichiers le TP03 utilise.*
 
 > **Mini-exercice.** Dans `preprocessing.json`, remplacez la moyenne de `crest_factor` par 0, puis prédisez sur le test avec ces mauvais paramètres. Combien de fenêtres changent de classe ? C'est ce qui arrive si la carte et Python n'utilisent pas exactement le même prétraitement.
 

@@ -34,7 +34,7 @@ Ce sont des manipulations de laboratoire. Elles ne disent rien de l'état d'un v
    ./scripts/compile.sh labs/01-sensor-data/firmware/imu_capture
    ./scripts/upload.sh  labs/01-sensor-data/firmware/imu_capture
    ```
-   Pour une carte **Rev2**, ajoutez `REV=rev2` devant les deux commandes. Dans Arduino IDE, décommentez la ligne `#define NANO_REV2` en haut du sketch.
+   Pour une carte **Rev2**, ajoutez `REV=rev2` devant les deux commandes. Dans Arduino IDE ([captures](../../tutorials/02-arduino-nano/README.md#arduino-ide-pas-à-pas)), décommentez la ligne `#define NANO_REV2` en haut du sketch.
 3. Interrogez la carte :
    ```sh
    uv run python -m tinyml2027.capture info

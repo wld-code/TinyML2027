@@ -38,6 +38,14 @@ releases/motion-v1/
   release_manifest.json                la carte d'identité de la release
 ```
 
+![Contenu d'une release](../../docs/figures/mlops-release.png)
+
+*Schéma, avec les valeurs réelles de motion-v1.*
+
+![Release réelle](../../docs/screenshots/mlops-etape01-release-contenu-macos.png)
+
+*Capture réelle, Terminal macOS 15.6, 23/11/2026.*
+
 Le `release_manifest.json` contient, entre autres :
 
 | Champ | Exemple (motion-v1) |
@@ -72,6 +80,10 @@ uv run python -m tinyml2027.release build --version motion-v2 --artifacts artifa
 | macro-F1, test s05 | 0,961 | 0,961 (même matrice de confusion) |
 | Taille INT8 | 2 176 octets | 2 264 octets |
 
+![v1 contre v2](../../docs/figures/mlops-v1-v2.png)
+
+*Mesure : métriques et tailles réelles des deux modèles.*
+
 Le candidat n'apporte rien de mesurable sur le test. **Ce constat compte aussi** : une release n'est pas forcément une amélioration.
 
 `build` refuse de créer une release si les en-têtes du firmware ne correspondent pas au modèle, si le firmware compilé est plus ancien que ces en-têtes, ou si la version existe déjà.
@@ -88,6 +100,12 @@ Le candidat n'apporte rien de mesurable sur le test. **Ce constat compte aussi**
 | ordre des classes différent | `labels [...] différents du contrat` |
 | schéma de features différent | `schéma de features différent du contrat` |
 | carte ou core différents de ceux du dépôt | `carte/core ... différents du dépôt` |
+
+Pour le voir vous-même, abîmez une **copie** (jamais la release elle-même) :
+
+![Refus d'un fichier modifié](../../docs/screenshots/mlops-etape03-refus-fichier-modifie-macos.png)
+
+*Capture réelle, Terminal macOS 15.6, 23/11/2026.* Un seul espace ajouté à `labels.json` suffit : son SHA-256 change et la release est refusée. Supprimez ensuite la copie (`rm -rf releases/essai-modifie`).
 
 **Essai réel**, sur deux copies abîmées de motion-v2 ([journal](../../evidence/mlops/mlops-refus-avant-flash-macos15.6-v1.txt)) :
 ```text
@@ -139,6 +157,10 @@ CONFIRMÉ : la carte exécute motion-v1 et rejoue ses golden vectors.
 état confirmé  : motion-v1
 la carte annonce : motion-v1 / 023e01b8d61b1f96… / replay OK
 ```
+
+![Séquence MLOps](../../docs/figures/mlops-sequence.png)
+
+*Schéma de la séquence ci-dessus. Après l'échec, l'outil n'enregistre **aucun** état confirmé, alors que la carte exécute bien v2-defaut.*
 
 **Trois enseignements :**
 1. La release défectueuse a passé **tous les contrôles hors ligne** : fichiers cohérents, SHA-256 corrects, bon schéma. Elle était fausse dès le départ, sans avoir été corrompue après coup.

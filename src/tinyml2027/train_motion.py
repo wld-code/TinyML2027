@@ -173,7 +173,7 @@ def main(argv=None) -> int:
     np.save(out / "calibration_train.npy", Xtr.astype(np.float32))
     (out / "labels.json").write_text(json.dumps(LABELS) + "\n")
     (out / "preprocessing.json").write_text(json.dumps({
-        "contract": "docs/DATA_CONTRACT.md v0.2",
+        "contract": "docs/DATA_CONTRACT.md v0.3",
         "window": {"n": F.N, "hop": F.HOP, "axis": "ax_g", "band_hz": list(F.BAND_HZ)},
         "inputs": ["log10(rms_g + 1e-6)", "crest_factor", "dominant_hz", "log10(band_power_g2 + 1e-12)"],
         "log_eps": LOG_EPS,

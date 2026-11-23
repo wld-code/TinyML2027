@@ -65,6 +65,14 @@ Le navigateur s'ouvre. Double-cliquez sur `01-python-basics.ipynb`.
 | `02-numpy-pandas.ipynb` | `ndarray` contre liste, un signal à 1,5 Hz échantillonné à 100 Hz, bruit reproductible (seed), moyenne, écart-type et RMS, tracé, `DataFrame` |
 | `03-sensor-signals.ipynb` | charger `data/sample_acceleration.csv`, vérifier colonnes, types et valeurs manquantes, mesurer la cadence, tracer, **trouver les défauts cachés**, exporter un PNG et un CSV nettoyé |
 
+![Notebook 01 dans JupyterLab](../../docs/screenshots/tuto01-etape03-notebook01-kernel-macos.png)
+
+*Capture réelle, JupyterLab, macOS 15.6, 23/11/2026. La première cellule du notebook 01 vérifie le kernel : elle doit afficher `Environnement : .venv`.*
+
+![Notebook 02 dans JupyterLab](../../docs/screenshots/tuto01-etape03-notebook02-trace-macos.png)
+
+*Capture réelle. Notebook 02, partie 4 : le tracé du signal simulé (points bruités et sinusoïde sans bruit).*
+
 Exercices : [exercises/README.md](exercises/README.md). Solutions, séparées : [solutions/solutions.ipynb](solutions/solutions.ipynb).
 
 **Le fichier `sample_acceleration.csv` est simulé.** Il est généré par `data/make_sample_data.py` (seed 2027), dans le même format que les enregistrements du TP01. Deux défauts y ont été cachés volontairement : une mesure manquante et deux instants inversés. Il sert à apprendre et ne prouve rien sur le matériel.
@@ -84,6 +92,10 @@ La vérification automatique fait la même chose :
 ```sh
 uv run pytest --nbmake tutorials/01-python-jupyter
 ```
+
+![Vérification automatique des notebooks](../../docs/screenshots/tuto01-etape04-nbmake-macos.png)
+
+*Capture réelle, Terminal macOS 15.6, 23/11/2026.* `4 passed` : les 4 notebooks (dont les solutions) tournent du début à la fin.
 
 ## Dépannage
 

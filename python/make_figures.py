@@ -337,6 +337,7 @@ def main():
     fig_drift(table); fig_split(); fig_leak(); fig_confusion()
     fig_pipeline(); fig_quant(); fig_live(); fig_resources()
     fig_six_positions()
+    fig_preprocess(); fig_artifacts(); fig_release(); fig_v1_v2(); fig_mlops_timeline()
 
 
 
@@ -380,5 +381,138 @@ def fig_six_positions():
     save(fig, "tuto02-six-positions.png")
 
 
+# ------------------------------------------------------------------ schémas ajoutés (TP02, MLOps)
+
+def _box(ax, x, y, w, h, text, fc="#d6e6f2", fs=8.5, weight="normal"):
+    ax.add_patch(patches.FancyBboxPatch((x, y), w, h, boxstyle="round,pad=0.03", fc=fc, ec="#555"))
+    ax.text(x + w / 2, y + h / 2, text, ha="center", va="center", fontsize=fs, weight=weight)
+
+
+def _arrow(ax, x0, y0, x1, y1, text="", color="#333"):
+    ax.annotate("", xy=(x1, y1), xytext=(x0, y0), arrowprops=dict(arrowstyle="->", color=color, lw=1.4))
+    if text:
+        ax.text((x0 + x1) / 2, (y0 + y1) / 2 + 0.08, text, ha="center", fontsize=7.5, color=color)
+
+
+def fig_preprocess():
+    """TP02 étape 2 : transformations, avec les paramètres réellement appris sur le train."""
+    pre = json.loads((ROOT / "artifacts/motion/preprocessing.json").read_text())
+    mu, sd = pre["standardize"]["mean"], pre["standardize"]["std"]
+    names = ["rms_g", "crest_factor", "dominant_hz", "band_power_g2"]
+    trans = ["log10(x + 1e-6)", "x", "x", "log10(x + 1e-12)"]
+    fig, ax = plt.subplots(figsize=(10, 3.6))
+    ax.axis("off"); ax.set_xlim(0, 10); ax.set_ylim(0, 4.3)
+    for i in range(4):
+        y = 3.3 - i * 0.85
+        _box(ax, 0.1, y, 1.7, 0.6, names[i])
+        _arrow(ax, 1.85, y + 0.3, 2.45, y + 0.3)
+        _box(ax, 2.5, y, 2.0, 0.6, trans[i], fc="#e8f1ec")
+        _arrow(ax, 4.55, y + 0.3, 5.15, y + 0.3)
+        _box(ax, 5.2, y, 2.6, 0.6, (f"(x + {-mu[i]:.2f}) / {sd[i]:.2f}" if mu[i] < 0 else f"(x − {mu[i]:.2f}) / {sd[i]:.2f}"), fc="#e8f1ec")
+        _arrow(ax, 7.85, y + 0.3, 8.45, y + 0.3)
+        _box(ax, 8.5, y, 1.3, 0.6, f"entrée {i + 1}")
+    ax.text(3.5, 4.1, "1. écraser les grandes échelles", ha="center", fontsize=9, weight="bold")
+    ax.text(6.5, 4.1, "2. centrer-réduire", ha="center", fontsize=9, weight="bold")
+    ax.text(6.5, -0.05, f"moyenne et écart-type calculés sur le TRAIN SEUL ({', '.join(pre['fitted_on_sessions'])}), "
+            "puis appliqués tels quels au test et à la carte", ha="center", fontsize=8.5, color="#c2410c")
+    ax.set_title("SCHÉMA — préparation des 4 entrées du réseau (valeurs : artifacts/motion/preprocessing.json)", fontsize=10)
+    save(fig, "tp02-pretraitement.png")
+
+
+def fig_artifacts():
+    """TP02 étape 5 : ce qui passe du TP02 au TP03."""
+    fig, ax = plt.subplots(figsize=(10, 3.4))
+    ax.axis("off"); ax.set_xlim(0, 10); ax.set_ylim(0, 3.6)
+    _box(ax, 0.1, 1.3, 1.9, 1.0, "train_motion\n(TP02)", fc="#d6e6f2", weight="bold")
+    files = ["model.keras / model_fp32.tflite", "preprocessing.json", "labels.json", "calibration_train.npy",
+             "metrics.json, test_predictions.csv"]
+    for i, f in enumerate(files):
+        _box(ax, 2.6, 2.9 - i * 0.62, 3.0, 0.48, f, fc="#fff7e6", fs=8)
+        _arrow(ax, 2.0, 1.8, 2.55, 3.13 - i * 0.62)
+    _box(ax, 6.3, 1.3, 1.6, 1.0, "quantize_motion\n(TP03)", fc="#d6e6f2", weight="bold")
+    for i in range(4):
+        _arrow(ax, 5.62, 3.13 - i * 0.62, 6.28, 1.8)
+    outs = ["model_data.h", "model_params.h", "golden.h"]
+    for i, f in enumerate(outs):
+        _box(ax, 8.4, 2.4 - i * 0.62, 1.5, 0.48, f, fc="#e8f1ec", fs=8)
+        _arrow(ax, 7.92, 1.8, 8.38, 2.63 - i * 0.62)
+    ax.text(9.15, 3.05, "firmware infer_nano", ha="center", fontsize=8, weight="bold")
+    ax.text(4.1, 0.05, "metrics et prédictions servent au rapport, pas à la carte", ha="center", fontsize=8, color="#555")
+    ax.set_title("SCHÉMA — les fichiers produits au TP02 et ce que le TP03 en fait", fontsize=10)
+    save(fig, "tp02-fichiers-vers-tp03.png")
+
+
+def fig_release():
+    """MLOps étape 1 : contenu d'une release et rôle du manifest."""
+    man = json.loads((ROOT / "releases/motion-v1/release_manifest.json").read_text())
+    fig, ax = plt.subplots(figsize=(10, 3.8))
+    ax.axis("off"); ax.set_xlim(0, 10); ax.set_ylim(0, 4)
+    ax.add_patch(patches.FancyBboxPatch((0.1, 0.2), 4.6, 3.5, boxstyle="round,pad=0.03", fc="#f7f7f7", ec="#555"))
+    ax.text(2.4, 3.45, "releases/motion-v1/  (on n'y touche plus)", ha="center", fontsize=9, weight="bold")
+    items = ["firmware/infer_nano.ino.bin", "model_int8.tflite, model_fp32.tflite", "preprocessing.json, labels.json",
+             "golden_vectors.npz", "metrics.json, comparison.json"]
+    for i, f in enumerate(items):
+        _box(ax, 0.3, 2.75 - i * 0.55, 4.2, 0.42, f, fc="#fff7e6", fs=8)
+    _box(ax, 5.4, 0.4, 4.4, 3.1, "", fc="#e8f1ec")
+    ax.text(7.6, 3.2, "release_manifest.json", ha="center", fontsize=9, weight="bold")
+    lines = [f"model_version   {man['model_version']}", f"model_int8_sha256  {man['model_int8_sha256'][:16]}…",
+             f"board  {man['board']}", f"core   {man['board_core']}", "labels, feature_schema",
+             "files : SHA-256 de chaque fichier"]
+    for i, l in enumerate(lines):
+        ax.text(5.6, 2.75 - i * 0.4, l, fontsize=7.8, family="monospace")
+    _arrow(ax, 4.55, 1.9, 5.35, 1.9, "décrit et\nscelle")
+    ax.set_title("SCHÉMA — une release = un dossier figé + sa carte d'identité (valeurs réelles de motion-v1)", fontsize=10)
+    save(fig, "mlops-release.png")
+
+
+def fig_v1_v2():
+    """MLOps étape 2 : v1 contre v2, mesures réelles."""
+    m1 = json.loads((ROOT / "artifacts/motion/metrics.json").read_text())
+    m2 = json.loads((ROOT / "artifacts/motion-v2/metrics.json").read_text())
+    s1 = (ROOT / "artifacts/motion/model_int8.tflite").stat().st_size
+    s2 = (ROOT / "artifacts/motion-v2/model_int8.tflite").stat().st_size
+    fig, axs = plt.subplots(1, 3, figsize=(9.5, 2.8))
+    data = [("macro-F1 validation croisée", m1["cv_train"]["dense"]["macro_f1_mean"], m2["cv_train"]["dense"]["macro_f1_mean"], "{:.3f}"),
+            ("macro-F1 test s05", m1["test"]["dense"]["macro_f1"], m2["test"]["dense"]["macro_f1"], "{:.3f}"),
+            ("taille INT8 (octets)", s1, s2, "{:.0f}")]
+    for ax, (t_, a, b, fmt) in zip(axs, data):
+        ax.bar(["v1\n8 neurones", "v2\n16 neurones"], [a, b], color=["#4c72b0", "#dd8452"])
+        for i, v in enumerate((a, b)):
+            ax.text(i, v, fmt.format(v), ha="center", va="bottom", fontsize=8)
+        ax.set_title(t_, fontsize=9)
+        ax.set_ylim(0, max(a, b) * 1.18)
+    fig.suptitle("MESURE — motion-v1 contre motion-v2 : le candidat n'apporte rien de mesurable sur le test", fontsize=10)
+    save(fig, "mlops-v1-v2.png")
+
+
+def fig_mlops_timeline():
+    """MLOps étape 5 : séquence réelle (evidence/mlops/mlops-demo-macos15.6-v1.txt)."""
+    steps = [("flash motion-v1", "motion-v1", "motion-v1", "replay OK", "#55a868"),
+             ("flash motion-v2", "motion-v2", "motion-v2", "replay OK", "#55a868"),
+             ("flash motion-v2-defaut", "motion-v2-defaut", "aucun\n(la carte exécute v2-defaut)", "replay ÉCHEC → refusée", "#c44e52"),
+             ("flash motion-v1 (retour)", "motion-v1", "motion-v1", "replay OK", "#55a868")]
+    fig, ax = plt.subplots(figsize=(10.5, 3.4))
+    ax.axis("off"); ax.set_xlim(0, 10.5); ax.set_ylim(0, 3.6)
+    ax.text(0.05, 2.35, "souhaité", fontsize=8.5, weight="bold"); ax.text(0.05, 1.55, "confirmé\npar la carte", fontsize=8.5, weight="bold")
+    for i, (act, want, conf, rep, col) in enumerate(steps):
+        x = 1.3 + i * 2.3
+        _box(ax, x, 2.9, 2.0, 0.5, act, fc="#d6e6f2", fs=8)
+        _box(ax, x, 2.2, 2.0, 0.45, want, fc="#fff7e6", fs=8)
+        _box(ax, x, 1.4, 2.0, 0.55, conf, fc="#e8f1ec" if col == "#55a868" else "#f3d1c8", fs=8)
+        ax.text(x + 1.0, 1.05, rep, ha="center", fontsize=8, color=col, weight="bold")
+        if i:
+            _arrow(ax, x - 0.28, 3.15, x - 0.02, 3.15)
+    ax.text(5.25, 0.35, "la release défectueuse avait passé validate (fichiers, SHA-256, labels) : seul le rejeu sur la carte l'a arrêtée",
+            ha="center", fontsize=8.5, color="#c44e52")
+    ax.set_title("SCHÉMA de la séquence réelle (journal evidence/mlops) — état souhaité contre état confirmé", fontsize=10)
+    save(fig, "mlops-sequence.png")
+
+
 if __name__ == "__main__":
-    main()
+    # `--only nom1 nom2` : ne régénère que ces figures (ex. --only fig_preprocess)
+    if len(sys.argv) > 2 and sys.argv[1] == "--only":
+        OUT.mkdir(parents=True, exist_ok=True)
+        for name in sys.argv[2:]:
+            globals()[name]()
+    else:
+        main()
