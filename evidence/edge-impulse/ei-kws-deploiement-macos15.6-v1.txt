@@ -1,0 +1,11 @@
+# Edge Impulse — déploiement réel sur Nano 33 BLE Sense (originale, LSM9DS1), macOS 15.6, 23/11/2026
+projet Studio            : TinyML2027-mots (privé), impulse #1 : fenêtre 1000 ms, MFCC (13 coef., trame 20 ms, 32 filtres, FFT 256), classifieur 1D-CNN (8 et 16 filtres), 100 époques, lr 0.0001
+export                   : ei-tinyml2027-mots-arduino-1.0.1-impulse-#1.zip (5 223 027 octets)
+sha256 export            : 27f4041f25e15a369062fed470f54cbd21486500b320f729472c13a6bf4c5891
+moteur                   : EON Compiler, modèle int8
+toolchain                : arduino-cli 1.5.1, arduino:mbed_nano@4.6.0 (scripts/compile.sh --library <export décompressé>, sans installation globale)
+exemple compilé          : nano_ble33_sense_microphone (non modifié)
+Flash                    : 161920 octets (16 %)
+RAM globale              : 51872 octets (19 %) — plus le tampon audio alloué à l'exécution (16000 échantillons int16 = 32000 octets)
+temps mesuré sur la carte: DSP 134 ms, classification 6 ms (identiques sur toutes les fenêtres)
+estimation du Studio     : DSP 258 ms, classification 4 ms, RAM 15.4K, Flash classifieur 30.6K

@@ -16,7 +16,7 @@ Chaque résultat annoncé porte l'un de ces statuts : **non testé**, **compilé
 | [TP01 — Du capteur au dataset](labs/01-sensor-data/README.md) | acquisition, contrôle qualité, fenêtres, 4 features | validé sur matériel |
 | [TP02 — Entraîner sans tricher](labs/02-model-training/README.md) | partition par session, baselines, réseau 4-8-3 | exécuté (données réelles) |
 | [TP03 — Le modèle sur la carte](labs/03-embedded-inference/README.md) | INT8, rejeu des golden vectors, direct, ressources | validé sur matériel |
-| [Pour aller plus loin — Edge Impulse](advanced/edge-impulse/README.md) | audio, plateforme en ligne | non commencé |
+| [Pour aller plus loin — Edge Impulse](advanced/edge-impulse/README.md) | audio, plateforme en ligne | validé sur matériel (Nano V1) ; Rev2 non testée |
 | [Pour aller plus loin — Edge MLOps](advanced/edge-mlops/README.md) | versions, mise à jour USB, retour arrière | non commencé |
 | [Pour aller plus loin — TinyML distribué Nano + ESP32-S3](advanced/distributed-tinyml-esp32s3/) | extension facultative | compilé (ESP32-S3 non détectée par le Mac) |
 

@@ -1,0 +1,33 @@
+{
+  "seed": 2027,
+  "source": "speech_commands_v0.02",
+  "splits": {
+    "train": {
+      "clips_per_class": 200,
+      "speakers_per_class": {
+        "go": 177,
+        "stop": 184,
+        "bruit": 99
+      },
+      "noise_files": [
+        "doing_the_dishes.wav",
+        "dude_miaowing.wav",
+        "exercise_bike.wav",
+        "white_noise.wav"
+      ]
+    },
+    "test": {
+      "clips_per_class": 50,
+      "speakers_per_class": {
+        "go": 44,
+        "stop": 40,
+        "bruit": 24
+      },
+      "noise_files": [
+        "pink_noise.wav",
+        "running_tap.wav"
+      ]
+    }
+  },
+  "speaker_overlap_train_test": 0
+}

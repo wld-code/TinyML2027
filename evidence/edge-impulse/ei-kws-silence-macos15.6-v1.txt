@@ -1,0 +1,40 @@
+	Frame size: 16000
+	Sample length: 1000 ms.
+	No. of classes: 3
+Starting inferencing in 2 seconds...
+Recording...
+Recording done
+Predictions (DSP: 134 ms., Classification: 6 ms., Anomaly: 0 ms.): 
+    bruit: 0.91797
+    go: 0.07031
+    stop: 0.01172
+Starting inferencing in 2 seconds...
+Recording...
+Recording done
+Predictions (DSP: 134 ms., Classification: 6 ms., Anomaly: 0 ms.): 
+    bruit: 0.72266
+    go: 0.25781
+    stop: 0.01953
+Starting inferencing in 2 seconds...
+Recording...
+Recording done
+Predictions (DSP: 134 ms., Classification: 6 ms., Anomaly: 0 ms.): 
+    bruit: 0.97656
+    go: 0.02344
+    stop: 0.00000
+Starting inferencing in 2 seconds...
+Recording...
+Recording done
+Predictions (DSP: 134 ms., Classification: 6 ms., Anomaly: 0 ms.): 
+    bruit: 0.89453
+    go: 0.09375
+    stop: 0.01172
+Starting inferencing in 2 seconds...
+Recording...
+Recording done
+Predictions (DSP: 134 ms., Classification: 6 ms., Anomaly: 0 ms.): 
+    bruit: 0.91406
+    go: 0.06641
+    stop: 0.01953
+Starting inferencing in 2 seconds...
+

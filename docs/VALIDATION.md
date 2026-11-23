@@ -13,7 +13,7 @@
 | TP03 : rejeu 8/8, direct sur 3 gestes | validé sur matériel | evidence/tp03 |
 | MLOps : refus avant téléversement, v1 → v2 → échec → retour à v1 | validé sur matériel | evidence/mlops |
 | Micro PDM | validé sur matériel (niveau ambiant et claquements de mains) | evidence/edge-impulse |
-| Edge Impulse (Studio, export) | non testé | — |
+| Edge Impulse (Studio, export) | validé sur matériel (Nano V1, macOS 15.6) : test Studio 80,67 %, export compilé et exécuté ; voix réelle médiocre sur « stop » ; Rev2 non testée | evidence/edge-impulse |
 | Firmwares Rev2 (`REV=rev2`) | compilé seulement | build logs |
 | CI GitHub Actions (`.github/workflows/ci.yml`) | non testé | — |
 

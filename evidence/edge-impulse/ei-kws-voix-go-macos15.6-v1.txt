@@ -1,0 +1,79 @@
+Recording...
+Recording done
+Predictions (DSP: 134 ms., Classification: 6 ms., Anomaly: 0 ms.): 
+    bruit: 0.08203
+    go: 0.87500
+    stop: 0.04688
+Starting inferencing in 2 seconds...
+Recording...
+Recording done
+Predictions (DSP: 134 ms., Classification: 6 ms., Anomaly: 0 ms.): 
+    bruit: 0.27344
+    go: 0.67578
+    stop: 0.05078
+Starting inferencing in 2 seconds...
+Recording...
+Recording done
+Predictions (DSP: 134 ms., Classification: 6 ms., Anomaly: 0 ms.): 
+    bruit: 0.11328
+    go: 0.83594
+    stop: 0.05078
+Starting inferencing in 2 seconds...
+Recording...
+Recording done
+Predictions (DSP: 134 ms., Classification: 6 ms., Anomaly: 0 ms.): 
+    bruit: 0.96875
+    go: 0.00781
+    stop: 0.01953
+Starting inferencing in 2 seconds...
+Recording...
+Recording done
+Predictions (DSP: 134 ms., Classification: 6 ms., Anomaly: 0 ms.): 
+    bruit: 0.07812
+    go: 0.89062
+    stop: 0.03125
+Starting inferencing in 2 seconds...
+Recording...
+Recording done
+Predictions (DSP: 134 ms., Classification: 6 ms., Anomaly: 0 ms.): 
+    bruit: 0.57031
+    go: 0.06641
+    stop: 0.36328
+Starting inferencing in 2 seconds...
+Recording...
+Recording done
+Predictions (DSP: 134 ms., Classification: 6 ms., Anomaly: 0 ms.): 
+    bruit: 0.05469
+    go: 0.71875
+    stop: 0.22656
+Starting inferencing in 2 seconds...
+Recording...
+Recording done
+Predictions (DSP: 134 ms., Classification: 6 ms., Anomaly: 0 ms.): 
+    bruit: 0.00781
+    go: 0.93359
+    stop: 0.05469
+Starting inferencing in 2 seconds...
+Recording...
+Recording done
+Predictions (DSP: 134 ms., Classification: 6 ms., Anomaly: 0 ms.): 
+    bruit: 0.83594
+    go: 0.13672
+    stop: 0.02734
+Starting inferencing in 2 seconds...
+Recording...
+Recording done
+Predictions (DSP: 134 ms., Classification: 6 ms., Anomaly: 0 ms.): 
+    bruit: 0.71875
+    go: 0.25781
+    stop: 0.02734
+Starting inferencing in 2 seconds...
+Recording...
+Recording done
+Predictions (DSP: 134 ms., Classification: 6 ms., Anomaly: 0 ms.): 
+    bruit: 0.25781
+    go: 0.59766
+    stop: 0.14453
+Starting inferencing in 2 seconds...
+Recording...
+
