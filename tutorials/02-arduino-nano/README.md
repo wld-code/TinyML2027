@@ -76,7 +76,17 @@ Les étapes ci-dessous donnent les commandes du **Terminal** (scripts du dépôt
 
 ## Étape 1 — L'ordinateur voit-il la carte ?
 
-1. Branchez la carte avec le câble. La LED verte **ON** s'allume.
+**Repérez d'abord la carte et le câble :**
+
+![Repères sur la Nano 33 BLE Sense](../../docs/photos/nano33ble-sense-reperes.png)
+
+*Photo Arduino (CC BY-SA 4.0), repères ajoutés pour le cours ([crédits](../../docs/photos/CREDITS.md)). Sur une **Rev2**, la disposition est proche mais les capteurs changent (IMU BMI270).*
+
+![Câble USB-A vers micro-USB](../../docs/photos/cable-usb-micro-b.png)
+
+*Photo Electronicgrup, Wikimedia Commons (CC BY-SA 3.0), repères ajoutés ([crédits](../../docs/photos/CREDITS.md)).*
+
+1. Branchez la carte avec le câble. La LED verte **ON** (repère 3) s'allume.
 2. Listez les ports :
    ```sh
    ./scripts/arduino.sh board list
@@ -96,7 +106,7 @@ Les étapes ci-dessous donnent les commandes du **Terminal** (scripts du dépôt
 **Si rien n'apparaît :**
 - **Changez de câble en premier.** Beaucoup de câbles USB ne transportent que le courant.
 - Essayez une autre prise. Si vous passez par un hub, branchez directement sur l'ordinateur.
-- **Double-cliquez rapidement sur le bouton RESET** : la LED orange se met à pulser, ce qui signifie que la carte attend un programme (mode bootloader). Le port peut alors porter un autre nom.
+- **Double-cliquez rapidement sur le bouton RESET** (repère 2 sur la photo) : la LED orange se met à pulser, ce qui signifie que la carte attend un programme (mode bootloader). Le port peut alors porter un autre nom.
 - *Linux* : si le port existe mais affiche « permission denied », vérifiez votre groupe avec `ls -l /dev/ttyACM0` puis `groups`. Le port appartient en général au groupe `dialout` : demandez à l'administrateur de vous y ajouter. N'utilisez jamais `chmod 777`.
 
 ---
@@ -108,7 +118,7 @@ Les étapes ci-dessous donnent les commandes du **Terminal** (scripts du dépôt
 ./scripts/upload.sh  examples/01_blink
 ```
 
-**Résultat attendu :** la LED orange clignote, allumée 0,5 s puis éteinte 0,5 s. Le moniteur série (voir l'étape 4) affiche `blink 1 LED=ON`, `blink 2 LED=OFF`, etc.
+**Résultat attendu :** la LED orange « L » (repère 4 sur la photo de l'étape 1) clignote, allumée 0,5 s puis éteinte 0,5 s. Le moniteur série (voir l'étape 4) affiche `blink 1 LED=ON`, `blink 2 LED=OFF`, etc.
 
 **Résultat réel :** compilation en 85 504 octets (8 % de la Flash), clignotement confirmé à l'œil ([evidence/phase2](../../evidence/phase2/phase2-blink-macos15.6-v1.txt)).
 
