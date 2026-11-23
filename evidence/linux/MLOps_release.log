@@ -1,0 +1,7 @@
+FP32 2040 octets, INT8 2176 octets ; opérateurs ['FULLY_CONNECTED', 'FULLY_CONNECTED', 'SOFTMAX']
+entrée int8 scale=0.0187017 zp=-57 ; sortie int8 scale=0.00390625 zp=-128
+test s05 : accuracy FP32 0.961, INT8 0.961, accord 1.000, écart max de score 0.0270, entrées saturées 2
+2 golden vectors ; en-têtes écrits dans labs/03-embedded-inference/firmware/infer_nano
+release écrite : /work/releases/ci-linux
+validation : OK
+VALIDE : ci-linux (firmware infer_nano 0.1.0, modèle 23685fb72b3591b4…, 17 fichiers vérifiés)

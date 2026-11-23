@@ -1,0 +1,12 @@
+train : sessions ['s01', 's02', 's03', 's04'], 204 fenêtres ; test : s05, 51 fenêtres
+  CV dummy    : macro-F1 par pli [0.167, 0.167, 0.167, 0.167], moyenne 0.167
+  CV logistic : macro-F1 par pli [0.941, 1.0, 0.669, 0.98], moyenne 0.898
+  CV dense    : macro-F1 par pli [0.941, 1.0, 0.556, 0.961], moyenne 0.864
+  TEST dummy    : accuracy 0.333, macro-F1 0.167
+  TEST logistic : accuracy 0.980, macro-F1 0.980
+  TEST dense    : accuracy 0.961, macro-F1 0.961
+matrice de confusion du réseau sur le test (lignes = vrai, colonnes = prédit, ordre ['stationary', 'periodic', 'impact']) :
+  stationary [15, 0, 2]
+  periodic   [0, 17, 0]
+  impact     [0, 0, 17]
+artefacts : artifacts/motion

@@ -69,6 +69,7 @@ jobs:
       - name: "Extension MLOps — construire et valider une release"
         run: |
           set -e
+          uv run python -m tinyml2027.quantize_motion --model-version ci-${{ matrix.os }}
           REV=original ./scripts/compile.sh labs/03-embedded-inference/firmware/infer_nano > /dev/null
           uv run python -m tinyml2027.release build --version ci-${{ matrix.os }}
           uv run python -m tinyml2027.release validate releases/ci-${{ matrix.os }}

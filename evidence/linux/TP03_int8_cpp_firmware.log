@@ -1,0 +1,10 @@
+FP32 2040 octets, INT8 2176 octets ; opérateurs ['FULLY_CONNECTED', 'FULLY_CONNECTED', 'SOFTMAX']
+entrée int8 scale=0.0187017 zp=-57 ; sortie int8 scale=0.00390625 zp=-128
+test s05 : accuracy FP32 0.961, INT8 0.961, accord 1.000, écart max de score 0.0270, entrées saturées 2
+2 golden vectors ; en-têtes écrits dans labs/03-embedded-inference/firmware/infer_nano
+.                                                                        [100%]
+1 passed in 0.29s
+Sketch uses 171152 bytes (17%) of program storage space. Maximum is 983040 bytes.
+Global variables use 61792 bytes (23%) of dynamic memory, leaving 200352 bytes for local variables. Maximum is 262144 bytes.
+Sketch uses 192120 bytes (19%) of program storage space. Maximum is 983040 bytes.
+Global variables use 62448 bytes (23%) of dynamic memory, leaving 199696 bytes for local variables. Maximum is 262144 bytes.

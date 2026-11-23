@@ -15,15 +15,16 @@
 | Micro PDM | validé sur matériel (niveau ambiant et claquements de mains) | evidence/edge-impulse |
 | Edge Impulse (Studio, export) | validé sur matériel (Nano V1, macOS 15.6) : test Studio 80,67 %, export compilé et exécuté ; voix réelle médiocre sur « stop » ; Rev2 non testée | evidence/edge-impulse |
 | Firmwares Rev2 (`REV=rev2`) | compilé seulement | build logs |
-| CI GitHub Actions (`.github/workflows/ci.yml`) | non testé | — |
+| CI GitHub Actions (`.github/workflows/ci.yml`, Windows/Linux/macOS) | **non exécutée** : les jobs ne démarrent pas (facturation du compte GitHub, dépôt privé) | — |
+| Parcours sans carte dans un **Linux neuf** (Debian 12 arm64, conteneur, clone propre) | exécuté : 9/9 étapes OK, TP02 test 0,961 / CV 0,864 comme sur macOS ; modèle INT8 de même taille mais SHA-256 différent ; `infer_nano` 171 152 octets contre 183 968 sur macOS (écart non expliqué) | evidence/linux |
 
 ## Matrice de vérification
 | Cas | Sans matériel (CI) | Originale LSM9DS1 | Rev2 BMI270 |
 |---|---|---|---|
-| Windows 11 | à réaliser | à réaliser | à réaliser |
+| Windows 11 | à réaliser (consignes : docs/TEST_WINDOWS.md) | à réaliser | à réaliser |
 | macOS Intel | à réaliser | à réaliser | à réaliser |
 | macOS Apple Silicon | exécuté en local (CI non lancée) | **validé** (23/11/2026) | compilé seulement |
-| Ubuntu LTS | à réaliser | à réaliser | à réaliser |
+| Ubuntu LTS | Debian 12 arm64 en conteneur : exécuté (23/11/2026) ; Ubuntu x86-64 à réaliser | à réaliser | à réaliser |
 
 Ne cocher une combinaison qu'avec OS/version, carte exacte, paquet Arduino, bibliothèque IMU, runtime, commandes, date, résultats et captures/logs correspondants. Les tests CI ne prouvent pas que l'USB, la compilation ou le capteur fonctionnent.
 

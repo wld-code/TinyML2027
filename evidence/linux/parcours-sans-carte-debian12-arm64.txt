@@ -1,0 +1,37 @@
+debconf: delaying package configuration, since apt-utils is not installed
+apt OK
+b53c623 docs/TEST_WINDOWS.md : consignes de la campagne de test sur PC Windows
+
+=== setup
+OK (37 s)
+
+=== tuto01 notebooks
+OK (4 s)
+
+=== tests
+OK (4 s)
+
+=== tuto02 compilation
+OK (26 s)
+
+=== exemples 03 05
+OK (239 s)
+
+=== TP01 features
+OK (0 s)
+
+=== TP02 entrainement
+OK (24 s)
+
+=== TP03 int8 cpp firmware
+OK (209 s)
+
+=== MLOps release
+OK (7 s)
+
+=== RÉSUMÉ
+Linux aarch64
+PRETTY_NAME="Debian GNU/Linux 12 (bookworm)"
+TP02 test s05 : accuracy 0.961 macro-F1 0.961 ; CV 0.864
+INT8 2176 octets sha256 23685fb72b3591b4
+fin docker: 0
