@@ -8,7 +8,10 @@ bit-exact avec TFLM : voir docs/AUDIT.md §11.4.
 
 from __future__ import annotations
 
+import contextlib
 import hashlib
+import os
+import sys
 from dataclasses import dataclass
 
 import numpy as np
@@ -42,6 +45,27 @@ class ModelReport:
     outputs: list[TensorInfo]
     tensor_dtypes: dict[str, str]
     per_channel_tensors: list[str]
+
+
+@contextlib.contextmanager
+def quiet():
+    """Masque temporairement tout ce que TensorFlow écrit sur la sortie standard et
+    d'erreur, y compris depuis son code C++ (redirection des descripteurs 1 et 2).
+    Désactivé si la variable d'environnement TINYML_VERBOSE est définie."""
+    if os.environ.get("TINYML_VERBOSE"):
+        yield
+        return
+    sys.stdout.flush(); sys.stderr.flush()
+    saved = os.dup(1), os.dup(2)
+    null = os.open(os.devnull, os.O_WRONLY)
+    try:
+        os.dup2(null, 1); os.dup2(null, 2)
+        yield
+    finally:
+        sys.stdout.flush(); sys.stderr.flush()
+        os.dup2(saved[0], 1); os.dup2(saved[1], 2)
+        for fd in (*saved, null):
+            os.close(fd)
 
 
 def _interpreter(model_bytes: bytes):
@@ -182,4 +206,5 @@ def convert_int8(keras_model, calibration: np.ndarray) -> bytes:
     conv.inference_input_type = tf.int8
     conv.inference_output_type = tf.int8
     conv._experimental_disable_per_channel_quantization_for_dense_layers = True
-    return conv.convert()
+    with quiet():
+        return conv.convert()

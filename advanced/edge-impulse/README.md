@@ -38,6 +38,10 @@ t_ms,rms,crete,echantillons_par_s
 7266,17.7,50,16384
 ```
 
+![Moniteur série du micro, pièce calme](../../docs/screenshots/edgeimpulse-etape01-micro-moniteur-macos-original.png)
+
+*Capture réelle, Terminal macOS 15.6, carte Nano 33 BLE Sense V1, 23/11/2026.*
+
 - `echantillons_par_s` alterne entre 15 360 et 16 384, car le micro livre ses données par blocs de 512 octets (256 échantillons). La moyenne est bien d'environ 16 000.
 - Les premières lignes sont plus fortes : c'est la mise en route du micro, qui se stabilise en environ 1 s.
 - Dans le calme, le niveau RMS reste autour de 10 (unités brutes, sur une échelle de 0 à 32 767).

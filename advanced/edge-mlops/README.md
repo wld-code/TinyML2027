@@ -109,6 +109,10 @@ Dans les deux cas, **rien n'a été téléversé**. Ces refus sont aussi couvert
 
 L'outil distingue **l'état souhaité** (la version qu'on a voulu installer) et **l'état confirmé** (ce que la carte a prouvé). Les deux sont écrits dans `releases/device_state.json`.
 
+![validate, flash et status sur motion-v1](../../docs/screenshots/mlops-validate-flash-status-macos-original.png)
+
+*Capture réelle, Terminal macOS 15.6, carte Nano 33 BLE Sense V1, 23/11/2026.*
+
 **Un téléversement réussi ne prouve rien sur le modèle qui tourne.** Seule la réponse de la carte compte.
 
 ## Étape 5 — Un échec volontaire, puis le retour à v1

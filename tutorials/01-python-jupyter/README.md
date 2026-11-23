@@ -2,7 +2,7 @@
 
 **Durée :** environ 2 h. **Matériel :** l'ordinateur seul.
 
-**Statut : exécuté sur macOS 15.6 (Apple Silicon) le 23/11/2026.** Les 4 notebooks tournent de bout en bout (`uv run pytest --nbmake tutorials/01-python-jupyter` : 4 passed). Windows et Linux ne sont **pas testés**. Captures d'écran de JupyterLab : `TODO: CAPTURE RÉELLE`.
+**Statut : exécuté sur macOS 15.6 (Apple Silicon) le 23/11/2026.** Les 4 notebooks tournent de bout en bout (`uv run pytest --nbmake tutorials/01-python-jupyter` : 4 passed). Windows et Linux ne sont **pas testés**. Les captures d'écran (Terminal et JupyterLab) sont réelles, prises sur macOS ; il n'y en a pas encore pour Windows et Linux.
 
 ## Ce que vous allez faire
 
@@ -37,6 +37,10 @@ uv run python --version          # Python 3.12.7
 uv run python -c "import numpy, pandas, matplotlib, scipy; print('OK')"
 ```
 
+![Contrôle de l'environnement Python](../../docs/screenshots/tuto01-etape01-python-et-tests-macos.png)
+
+*Capture réelle, Terminal macOS 15.6, 23/11/2026.*
+
 ## Étape 2 — Ouvrir JupyterLab
 
 ```sh
@@ -46,6 +50,10 @@ uv run jupyter lab tutorials/01-python-jupyter/notebooks
 Le navigateur s'ouvre. Double-cliquez sur `01-python-basics.ipynb`.
 
 **Vérifier le kernel :** exécutez la première cellule (**Maj + Entrée**). Elle doit afficher `Environnement : .venv`. Si elle affiche une erreur « Mauvais kernel », c'est que JupyterLab n'a pas été lancé avec `uv run`. Fermez-le, puis relancez la commande ci-dessus.
+
+![JupyterLab avec le notebook 03](../../docs/screenshots/tuto01-etape02-jupyterlab-notebook03-macos.png)
+
+*Capture réelle, JupyterLab dans Chrome, macOS 15.6, 23/11/2026. À gauche, les 3 notebooks ; en haut à droite, le kernel « Python 3 (ipykernel) » ; la cellule [1] a chargé le CSV.*
 
 **Autre possibilité : VS Code.** Installez les extensions « Python » et « Jupyter », ouvrez le dossier `TinyML2027`, ouvrez un notebook, puis cliquez sur **Select Kernel** en haut à droite et choisissez l'interpréteur `.venv/bin/python` (`.venv\Scripts\python.exe` sous Windows).
 

@@ -17,6 +17,10 @@ Vous allez apprendre à un petit réseau de neurones à reconnaître le geste (`
 uv run python -m tinyml2027.train_motion --test-session s05
 ```
 
+![Entraînement train_motion](../../docs/screenshots/tp02-train-motion-macos.png)
+
+*Capture réelle, Terminal macOS 15.6, 23/11/2026.*
+
 Le reste de ce document explique ce que fait cette commande, étape par étape.
 
 ---

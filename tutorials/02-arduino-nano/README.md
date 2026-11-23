@@ -29,6 +29,10 @@ Toutes les commandes se lancent depuis le dossier `TinyML2027`.
    uv run python -m serial.tools.list_ports -v
    ```
 
+![Résultat de board list](../../docs/screenshots/tuto02-etape01-board-list-macos-original.png)
+
+*Capture réelle, Terminal macOS 15.6, carte Nano 33 BLE Sense V1, 23/11/2026.* La carte est la ligne « Arduino Nano 33 BLE » ; les deux autres ports appartiennent au Mac.
+
 **Notez votre port.** Il peut changer si vous branchez la carte sur une autre prise : sur la carte de référence, il est passé de `usbmodem31201` à `usbmodem314101`. Les scripts du cours ne supposent jamais un nom de port. Si plusieurs cartes sont branchées, ils refusent de choisir à votre place.
 
 **Si rien n'apparaît :**
@@ -49,6 +53,10 @@ Toutes les commandes se lancent depuis le dossier `TinyML2027`.
 **Résultat attendu :** la LED orange clignote, allumée 0,5 s puis éteinte 0,5 s. Le moniteur série (voir l'étape 4) affiche `blink 1 LED=ON`, `blink 2 LED=OFF`, etc.
 
 **Résultat réel :** compilation en 85 504 octets (8 % de la Flash), clignotement confirmé à l'œil ([evidence/phase2](../../evidence/phase2/phase2-blink-macos15.6-v1.txt)).
+
+![Compilation et téléversement de Blink](../../docs/screenshots/tuto02-etape02-blink-compile-upload-macos-original.png)
+
+*Capture réelle, Terminal macOS 15.6, carte Nano 33 BLE Sense V1, 23/11/2026.*
 
 **Si le téléversement échoue :** double-cliquez sur RESET (la LED orange pulse), puis relancez `upload.sh`.
 
@@ -81,6 +89,10 @@ lsm9ds1_whoami=0x68
 verdict=nano33ble_sense_original
 ```
 
+![Identification de la révision](../../docs/screenshots/tuto02-etape03-identification-macos-original.png)
+
+*Capture réelle, Terminal macOS 15.6, carte Nano 33 BLE Sense V1, 23/11/2026.*
+
 Une Rev2 affiche `verdict=nano33ble_sense_rev2`. **Pour une Rev2, tous les sketches suivants se compilent avec `REV=rev2` devant la commande**, par exemple `REV=rev2 ./scripts/compile.sh examples/04_imu`. Dans Arduino IDE, décommentez la ligne `#define NANO_REV2` en tête du sketch.
 
 Si vous vous trompez de révision, la carte affiche une erreur claire, par exemple `ERREUR imu_begin : LSM9DS1 absent : carte Rev2 ? Decommentez #define NANO_REV2.`
@@ -102,6 +114,10 @@ Si vous vous trompez de révision, la carte affiche une erreur claire, par exemp
 t_ms,ax_g,ay_g,az_g,gx_dps,gy_dps,gz_dps,fs_acc_hz,fs_gyr_hz,gravite
 4038,-0.0006,-0.0117,0.9528,3.54,0.43,0.61,115.8,115.8,+Z
 ```
+
+![Moniteur série de 04_imu](../../docs/screenshots/tuto02-etape04-imu-moniteur-macos-original.png)
+
+*Capture réelle, Terminal macOS 15.6, carte Nano 33 BLE Sense V1 posée à plat, 23/11/2026. Une ligne toutes les 100 ms ; `az_g` proche de 1 et `gravite=+Z` : la gravité est sur l'axe Z.*
 
 | Colonne | Signification | Unité |
 |---|---|---|
@@ -158,4 +174,4 @@ Les mesures sont dans [evidence/phase6](../../evidence/phase6/README.md). Le pre
 
 ## Captures d'écran à faire
 
-Les captures d'écran d'Arduino IDE 2 et du Terminal doivent être prises sur un vrai poste. Aucune n'est encore faite : `TODO: CAPTURE RÉELLE` pour le gestionnaire de cartes, le choix du port, le téléversement de Blink et le moniteur série de `04_imu`.
+Les captures du Terminal (étapes 1 à 4) sont réelles, prises sur macOS 15.6 avec la carte de référence. Restent à faire sur un vrai poste : `TODO: CAPTURE RÉELLE` pour Arduino IDE 2 (gestionnaire de cartes, choix du port, téléversement de Blink, moniteur série), ainsi que pour Windows et Linux.

@@ -14,6 +14,10 @@ uv run python python/convert.py --mode int8
 uv run python python/verify.py --mode int8 --port PORT
 ```
 
+![Vérification INT8 sur la carte](../../docs/screenshots/ex05-verification-carte-macos-original.png)
+
+*Capture réelle, Terminal macOS 15.6, carte Nano 33 BLE Sense V1, 23/11/2026.*
+
 ## Ce que fait la conversion INT8
 
 - **Calibration sur le train uniquement.** Le convertisseur fait passer les 600 x d'entraînement dans le réseau pour mesurer la plage de chaque tenseur. Le jeu de test n'y participe jamais.

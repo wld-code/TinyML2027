@@ -91,7 +91,8 @@ def convert(model, mode: str, x_calib: np.ndarray | None = None) -> bytes:
         conv.inference_input_type = tf.int8
         conv.inference_output_type = tf.int8
         conv._experimental_disable_per_channel_quantization_for_dense_layers = True
-    return conv.convert()
+    with tt.quiet():
+        return conv.convert()
 
 
 def check_int8(report: tt.ModelReport) -> None:

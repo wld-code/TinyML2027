@@ -85,6 +85,7 @@ def fit_predict(kind: str, Xtr, ytr, Xev):
         m = LogisticRegression(max_iter=2000).fit(Xtr, ytr)
         return m.predict_proba(Xev), m
     import tensorflow as tf
+    tf.get_logger().setLevel("ERROR")   # avertissements de « retracing » sans conséquence ici
     tf.keras.utils.set_random_seed(SEED)
     m = make_dense()
     m.compile(optimizer=tf.keras.optimizers.Adam(0.01), loss="sparse_categorical_crossentropy")
@@ -164,8 +165,11 @@ def main(argv=None) -> int:
     out = args.out
     out.mkdir(parents=True, exist_ok=True)
     dense.save(out / "model.keras")
+    from .tflite_tools import quiet
     conv = tf.lite.TFLiteConverter.from_keras_model(dense)
-    (out / "model_fp32.tflite").write_bytes(conv.convert())
+    with quiet():
+        flat32 = conv.convert()
+    (out / "model_fp32.tflite").write_bytes(flat32)
     np.save(out / "calibration_train.npy", Xtr.astype(np.float32))
     (out / "labels.json").write_text(json.dumps(LABELS) + "\n")
     (out / "preprocessing.json").write_text(json.dumps({

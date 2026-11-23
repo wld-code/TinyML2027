@@ -43,6 +43,14 @@ Lancez toutes les commandes depuis la racine du dépôt.
 
    La dernière ligne doit être `RÉSULTAT : OK`. On peut aussi ouvrir le moniteur avec `./scripts/arduino.sh monitor -p PORT -c baudrate=115200`, puis appuyer sur Entrée pour relancer les 23 tests.
 
+![Entraînement et conversion](../../docs/screenshots/ex03-entrainement-conversion-macos.png)
+
+*Capture réelle, Terminal macOS 15.6, 23/11/2026.*
+
+![Vérification sur la carte](../../docs/screenshots/ex03-verification-carte-macos-original.png)
+
+*Capture réelle, Terminal macOS 15.6, carte Nano 33 BLE Sense V1, 23/11/2026.*
+
 ## Lire la sortie de la carte
 
 ```text

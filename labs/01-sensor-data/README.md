@@ -45,6 +45,10 @@ Ce sont des manipulations de laboratoire. Elles ne disent rien de l'état d'un v
 /dev/cu.usbmodem314101 : INFO firmware=imu_capture 0.1.0 board_revision=original imu=LSM9DS1 odr_nominal_hz=119.00
 ```
 
+![capture ports et capture info](../../docs/screenshots/tp01-etape01-capture-info-macos-original.png)
+
+*Capture réelle, Terminal macOS 15.6, carte Nano 33 BLE Sense V1, 23/11/2026.*
+
 **Si ça ne marche pas :**
 - `0 carte(s) Arduino détectée(s)` : changez de câble. Beaucoup de câbles ne font que la charge.
 - `pas de réponse « INFO »` : un autre firmware tourne sur la carte. Refaites l'étape 2.
@@ -102,6 +106,10 @@ fenêtres de 256  : 17 sans lacune
 VERDICT           : VALIDE
   -> ACCEPTÉ : data/raw/s01/s01_stationary_t01.csv
 ```
+
+![Enregistrement et contrôle qualité](../../docs/screenshots/tp01-etape02-enregistrement-qc-macos-original.png)
+
+*Capture réelle, Terminal macOS 15.6, carte Nano 33 BLE Sense V1, 23/11/2026.*
 
 **Lire le contrôle qualité :**
 - **cadence mesurée** : la carte annonce 119 Hz, mais on en mesure 116. C'est la valeur mesurée qui compte, jamais la valeur annoncée.
@@ -212,6 +220,10 @@ s01             17        17          17
 ...
 s05             17        17          17
 ```
+
+![Construction de la table de features](../../docs/screenshots/tp01-etape06-build-features-macos.png)
+
+*Capture réelle, Terminal macOS 15.6, 23/11/2026.*
 
 La commande produit deux fichiers :
 - `results/tp01/features.csv` : une ligne par fenêtre (session, geste, position, validité, `fs_win_hz` et les 4 features) ;

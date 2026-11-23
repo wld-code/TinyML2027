@@ -17,7 +17,12 @@ from __future__ import annotations
 import argparse
 import json
 import math
+import os
 import platform
+
+# Masque les journaux C++ de TensorFlow (inoffensifs mais très verbeux). TINYML_VERBOSE=1 pour les voir.
+if not os.environ.get("TINYML_VERBOSE"):
+    os.environ.setdefault("TF_CPP_MIN_LOG_LEVEL", "3")
 from pathlib import Path
 
 import numpy as np
