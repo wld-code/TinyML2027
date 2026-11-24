@@ -248,7 +248,7 @@ def fig_leak():
 
 
 def fig_confusion():
-    m = json.loads((ROOT / "artifacts/motion/metrics.json").read_text())["test"]["dense"]
+    m = json.loads((ROOT / "artifacts/motion/metrics.json").read_text(encoding="utf-8"))["test"]["dense"]
     cm = np.array(m["confusion"])
     fig, ax = plt.subplots(figsize=(4.2, 3.6))
     ax.imshow(cm, cmap="Blues")
@@ -281,7 +281,7 @@ def fig_pipeline():
 
 
 def fig_quant():
-    man = json.loads((ROOT / "artifacts/motion/release_manifest.json").read_text())
+    man = json.loads((ROOT / "artifacts/motion/release_manifest.json").read_text(encoding="utf-8"))
     s, z = man["int8_input"]["scale"], man["int8_input"]["zero_point"]
     x = np.linspace(-4, 4, 800)
     q = np.clip(np.round(x / s + z), -128, 127)
@@ -300,7 +300,7 @@ def fig_quant():
 def fig_live():
     fig, axs = plt.subplots(1, 3, figsize=(10, 2.8), sharey=True)
     for ax, cond in zip(axs, ("stationary", "periodic", "impact")):
-        lines = (ROOT / f"evidence/tp03/tp03-live-{cond}-macos15.6-v1.txt").read_text().splitlines()
+        lines = (ROOT / f"evidence/tp03/tp03-live-{cond}-macos15.6-v1.txt").read_text(encoding="utf-8").splitlines()
         rows = [dict(re.findall(r"(stationary|periodic|impact)=([0-9.]+)", l)) for l in lines
                 if l.startswith("LIVE ") and "=" in l]
         k = np.arange(1, len(rows) + 1) * 128 / 116.2
@@ -344,7 +344,7 @@ def main():
 
 def fig_six_positions():
     """Schéma des 6 positions + valeurs MESURÉES (evidence/phase6/imu_steps-macos15.6-v1.jsonl)."""
-    rows = [json.loads(l) for l in (ROOT / "evidence/phase6/imu_steps-macos15.6-v1.jsonl").read_text().splitlines()]
+    rows = [json.loads(l) for l in (ROOT / "evidence/phase6/imu_steps-macos15.6-v1.jsonl").read_text(encoding="utf-8").splitlines()]
     best = {}
     for r in rows:                     # garde la dernière mesure de chaque étape (l'étape 1 a été refaite)
         if r["etape"] <= 6:
@@ -396,7 +396,7 @@ def _arrow(ax, x0, y0, x1, y1, text="", color="#333"):
 
 def fig_preprocess():
     """TP02 étape 2 : transformations, avec les paramètres réellement appris sur le train."""
-    pre = json.loads((ROOT / "artifacts/motion/preprocessing.json").read_text())
+    pre = json.loads((ROOT / "artifacts/motion/preprocessing.json").read_text(encoding="utf-8"))
     mu, sd = pre["standardize"]["mean"], pre["standardize"]["std"]
     names = ["rms_g", "crest_factor", "dominant_hz", "band_power_g2"]
     trans = ["log10(x + 1e-6)", "x", "x", "log10(x + 1e-12)"]
@@ -444,7 +444,7 @@ def fig_artifacts():
 
 def fig_release():
     """MLOps étape 1 : contenu d'une release et rôle du manifest."""
-    man = json.loads((ROOT / "releases/motion-v1/release_manifest.json").read_text())
+    man = json.loads((ROOT / "releases/motion-v1/release_manifest.json").read_text(encoding="utf-8"))
     fig, ax = plt.subplots(figsize=(10, 3.8))
     ax.axis("off"); ax.set_xlim(0, 10); ax.set_ylim(0, 4)
     ax.add_patch(patches.FancyBboxPatch((0.1, 0.2), 4.6, 3.5, boxstyle="round,pad=0.03", fc="#f7f7f7", ec="#555"))
@@ -467,8 +467,8 @@ def fig_release():
 
 def fig_v1_v2():
     """MLOps étape 2 : v1 contre v2, mesures réelles."""
-    m1 = json.loads((ROOT / "artifacts/motion/metrics.json").read_text())
-    m2 = json.loads((ROOT / "artifacts/motion-v2/metrics.json").read_text())
+    m1 = json.loads((ROOT / "artifacts/motion/metrics.json").read_text(encoding="utf-8"))
+    m2 = json.loads((ROOT / "artifacts/motion-v2/metrics.json").read_text(encoding="utf-8"))
     s1 = (ROOT / "artifacts/motion/model_int8.tflite").stat().st_size
     s2 = (ROOT / "artifacts/motion-v2/model_int8.tflite").stat().st_size
     fig, axs = plt.subplots(1, 3, figsize=(9.5, 2.8))

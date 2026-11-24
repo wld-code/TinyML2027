@@ -1,0 +1,4 @@
+recording_id,session_id,condition,trial,board_revision,board_id,source,requested_fs_hz,measured_fs_hz,valid,notes
+w01_stationary_t01,w01,stationary,1,original,ef6f1ae1,hardware,119.00,116.145,1,
+w01_periodic_t01,w01,periodic,1,original,ef6f1ae1,hardware,119.00,116.107,1,
+w01_impact_t01,w01,impact,1,original,ef6f1ae1,hardware,119.00,116.122,1,

@@ -90,7 +90,7 @@ def main() -> None:
         "versions": {"python": platform.python_version(), "tensorflow": tf.__version__,
                      "keras": keras.__version__, "numpy": np.__version__},
     }
-    (args.out / "train_log.json").write_text(json.dumps(log, indent=2) + "\n")
+    (args.out / "train_log.json").write_text(json.dumps(log, indent=2) + "\n", encoding="utf-8", newline="\n")
     print(json.dumps({k: log[k] for k in ("params", "train_mse", "val_mse", "test_mse", "noise_floor_mse")}, indent=2))
     print(f"modèle écrit dans {args.out / 'model.keras'}")
 

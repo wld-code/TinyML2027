@@ -1,0 +1,8 @@
+$ ./scripts/upload.sh labs/01-sensor-data/firmware/imu_capture
+Done in 4.098 seconds
+New upload port: COM12 (serial)
+PORT=COM12
+EXIT=0
+$ uv run python -m tinyml2027.capture info
+COM12 : INFO firmware=imu_capture 0.1.0 board_revision=original imu=LSM9DS1 odr_nominal_hz=119.00
+EXIT=0

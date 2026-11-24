@@ -120,7 +120,7 @@ def main(argv: list[str] | None = None) -> int:
         ok_all = False
     if args.log:
         args.log.parent.mkdir(parents=True, exist_ok=True)
-        args.log.write_text("\n".join(out) + "\n")
+        args.log.write_text("\n".join(out) + "\n", encoding="utf-8", newline="\n")
         print(f"journal : {args.log}")
     return 0 if ok_all else 1
 

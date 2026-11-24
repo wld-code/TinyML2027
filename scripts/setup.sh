@@ -12,7 +12,7 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 while IFS='=' read -r key value; do
   case "$key" in ''|\#*) continue ;; esac
   printf -v "$key" '%s' "$value"
-done < "$ROOT/config/versions.lock"
+done < <(tr -d '\r' < "$ROOT/config/versions.lock")  # \r : fichier en CRLF sous Windows
 A="$ROOT/scripts/arduino.sh"
 
 step() { printf '\n=== %s\n' "$*"; }

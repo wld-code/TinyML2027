@@ -1,0 +1,8 @@
+# compile.sh REV=original sketch=examples/03_custom_model
+[92mUsed library[0m           [92mVersion[0m     [90mPath[0m
+[93mArduino_TensorFlowLite[0m 2.4.0-ALPHA [90mC:\Users\Administrateur\Documents\TinyML2027\.arduino\user\libraries\Arduino_TensorFlowLite[0m
+[93mWire[0m                               [90mC:\Users\Administrateur\Documents\TinyML2027\.arduino\data\packages\arduino\hardware\mbed_nano\4.6.0\libraries\Wire[0m
+
+[92mUsed platform[0m     [92mVersion[0m [90mPath[0m
+[93marduino:mbed_nano[0m 4.6.0   [90mC:\Users\Administrateur\Documents\TinyML2027\.arduino\data\packages\arduino\hardware\mbed_nano\4.6.0[0m
+Error during build: exit status 0xc0000142

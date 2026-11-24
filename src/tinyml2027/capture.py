@@ -28,8 +28,8 @@ from . import dataset, recording
 ARDUINO_VID = 0x2341
 INSTRUCTIONS = {
     "stationary": "Posez la carte à plat sur la table et NE LA TOUCHEZ PLUS (câble immobile aussi).",
-    "periodic": "Faites glisser la carte de gauche à droite, régulièrement (environ 1 aller-retour par seconde), "
-                "sans la tourner.",
+    "periodic": "Faites glisser la carte en avant et en arrière DANS LE SENS DU CÂBLE (axe x), régulièrement "
+                "(environ 1 aller-retour par seconde), sans la tourner.",
     "impact": "Carte posée à plat. Tapotez doucement la table à côté de la carte, 1 à 2 fois par seconde, "
               "pendant TOUT l'enregistrement. Ne frappez jamais la carte.",
 }
@@ -197,7 +197,7 @@ def record_one(ser, usb_serial, args, condition: str, trial: int) -> bool:
         "os": f"{platform.system()} {platform.release()}", "python": platform.python_version(),
         "protocol": INSTRUCTIONS[condition], "quality": qc.to_dict(), "notes": notes, "accepted": accepted,
     }
-    path.with_suffix(".json").write_text(json.dumps(meta, indent=2, ensure_ascii=False) + "\n")
+    path.with_suffix(".json").write_text(json.dumps(meta, indent=2, ensure_ascii=False) + "\n", encoding="utf-8", newline="\n")
     dataset.append_manifest(root, {
         "recording_id": rid, "session_id": args.session, "condition": condition, "trial": trial,
         "board_revision": info.get("board_revision"), "board_id": meta["board_id"], "source": "hardware",

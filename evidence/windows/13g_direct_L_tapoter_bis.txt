@@ -1,0 +1,2 @@
+$ envoi 'L' sur COM12, lecture 35 s
+LIVE fin

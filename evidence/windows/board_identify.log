@@ -1,0 +1,3 @@
+# compile.sh REV=original sketch=tutorials/02-arduino-nano/sketches/board_identify
+Le croquis utilise 93264 octets (9%) de l'espace de stockage de programmes. Le maximum est de 983040 octets.
+Les variables globales utilisent 45912 octets (17%) de mémoire dynamique, ce qui laisse 216232 octets pour les variables locales. Le maximum est de 262144 octets.

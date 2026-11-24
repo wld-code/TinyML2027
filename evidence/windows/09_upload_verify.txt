@@ -1,0 +1,33 @@
+$ ./scripts/upload.sh examples/03_custom_model
+Téléversement de 03_custom_model sur COM12
+Error finding build artifacts: looking for build artifacts: could not find a valid build artifact
+EXIT=1
+$ uv run python python/verify.py --mode fp32 --port COM12
+modèle fp32 : 3216 octets, sha256 8adc218b92887437a708c1ce2ca6db21721cb06cd16f6525305339d2d00b00bb
+Keras vs LiteRT (fp32) : écart max 1.19e-07 (sur [0, 2π] : 1.19e-07)
+ERREUR : la carte n'a pas renvoyé de série de tests complète.
+  3509353,0.0034,-0.0123,0.9664,3.66,0.24,0.55,111.0,111.0,+Z
+  3509454,0.0020,-0.0126,0.9661,3.60,0.37,0.61,111.0,111.0,+Z
+  3509554,0.0028,-0.0133,0.9683,3.66,0.18,0.73,111.0,111.0,+Z
+  3509655,0.0029,-0.0128,0.9664,3.66,0.31,0.49,114.9,112.9,+Z
+  3509755,0.0026,-0.0127,0.9674,3.54,0.49,0.73,114.9,112.9,+Z
+EXIT=2
+
+$ ./scripts/upload.sh examples/05_int8_model
+[                              ] 0% (0/35 pages)[=                             ] 5% (2/35 pages)[==                            ] 8% (3/35 pages)[===                           ] 11% (4/35 pages)[====                          ] 14% (5/35 pages)[=====                         ] 17% (6/35 pages)[======                        ] 20% (7/35 pages)[======                        ] 22% (8/35 pages)[=======                       ] 25% (9/35 pages)[========                      ] 28% (10/35 pages)[=========                     ] 31% (11/35 pages)[==========                    ] 34% (12/35 pages)[===========                   ] 37% (13/35 pages)[============                  ] 40% (14/35 pages)[============                  ] 42% (15/35 pages)[=============                 ] 45% (16/35 pages)[==============                ] 48% (17/35 pages)[===============               ] 51% (18/35 pages)[================              ] 54% (19/35 pages)[=================             ] 57% (20/35 pages)[==================            ] 60% (21/35 pages)[==================            ] 62% (22/35 pages)[===================           ] 65% (23/35 pages)[====================          ] 68% (24/35 pages)[=====================         ] 71% (25/35 pages)[======================        ] 74% (26/35 pages)[=======================       ] 77% (27/35 pages)[========================      ] 80% (28/35 pages)[========================      ] 82% (29/35 pages)[=========================     ] 85% (30/35 pages)[==========================    ] 88% (31/35 pages)[===========================   ] 91% (32/35 pages)[============================  ] 94% (33/35 pages)[============================= ] 97% (34/35 pages)[==============================] 100% (35/35 pages)
+Done in 5.946 seconds
+New upload port: COM12 (serial)
+PORT=COM12
+EXIT=0
+$ uv run python python/verify.py --mode int8 --port COM12
+modèle int8 : 2704 octets, sha256 488d5de462f85e161eb4c86f6481777c4ba499587b1271975bafb3b9fce98d98
+Keras vs LiteRT (int8) : écart max 0.174 (sur [0, 2π] : 0.084)
+  1 LSB de sortie = 0.00804 ; erreur de quantification attendue ≤ ~0.00402 + erreur d'entrée
+Nano vs LiteRT : écart max 1 LSB (tolérance 1), 22/23 codes identiques
+Nano INT8 vs Keras FP32 sur [0, 2π] : écart max 0.0840
+  hors domaine x=-0,5 : +0.0080 (Keras +0.0150) ; x=7,0 : -0.1528 (Keras +0.0208) <- saturation de l'entrée
+Invoke() sur la Nano : min 119 µs, médiane 149 µs, max 177 µs
+arena : 820 / 4096 octets utilisés
+RÉSULTAT : OK
+EXIT=0
+

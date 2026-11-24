@@ -1,0 +1,27 @@
+
+=== 02 tuto01 notebooks
+OK (30 s)
+
+=== 03 tests
+OK (23 s)
+
+=== 04-08 tuto02 compilation
+OK (567 s)
+
+=== 09 exemples 03 05
+OK (658 s)
+
+=== 11 TP01 features
+OK (3 s)
+
+=== 12 TP02 entrainement
+OK (116 s)
+
+=== 13 TP03 int8 cpp firmware
+OK (1148 s)
+
+=== RÉSUMÉ
+Microsoft Windows [version 10.0.19045.6456]
+MINGW64_NT-10.0-19045 x86_64
+TP02 test s05 : accuracy 0.961 macro-F1 0.961 ; CV 0.864
+INT8 2176 octets sha256 c9219c4993e27abb

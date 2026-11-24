@@ -1,0 +1,3 @@
+# compile.sh REV=original sketch=examples/04_imu
+Le croquis utilise 95416 octets (9%) de l'espace de stockage de programmes. Le maximum est de 983040 octets.
+Les variables globales utilisent 45992 octets (17%) de mémoire dynamique, ce qui laisse 216152 octets pour les variables locales. Le maximum est de 262144 octets.

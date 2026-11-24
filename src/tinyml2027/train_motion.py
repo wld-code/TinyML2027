@@ -171,7 +171,7 @@ def main(argv=None) -> int:
         flat32 = conv.convert()
     (out / "model_fp32.tflite").write_bytes(flat32)
     np.save(out / "calibration_train.npy", Xtr.astype(np.float32))
-    (out / "labels.json").write_text(json.dumps(LABELS) + "\n")
+    (out / "labels.json").write_text(json.dumps(LABELS) + "\n", encoding="utf-8", newline="\n")
     (out / "preprocessing.json").write_text(json.dumps({
         "contract": "docs/DATA_CONTRACT.md v0.3",
         "window": {"n": F.N, "hop": F.HOP, "axis": "ax_g", "band_hz": list(F.BAND_HZ)},
@@ -179,15 +179,15 @@ def main(argv=None) -> int:
         "log_eps": LOG_EPS,
         "standardize": {"mean": scaler.mean.tolist(), "std": scaler.std.tolist()},
         "fitted_on_sessions": train_sessions,
-    }, indent=2) + "\n")
+    }, indent=2) + "\n", encoding="utf-8", newline="\n")
     (out / "training_config.json").write_text(json.dumps({
         "seed": SEED, "epochs": EPOCHS, "optimizer": "adam lr=0.01", "batch_size": 16,
         "architecture": f"4 -> Dense {HIDDEN} ReLU -> Dense 3 softmax", "params": int(dense.count_params()),
         "train_sessions": train_sessions, "test_session": args.test_session,
-        "features_file": str(args.features),
+        "features_file": Path(args.features).as_posix(),  # même texte sur les 3 OS
         "versions": {"python": platform.python_version(), "tensorflow": tf.__version__, "numpy": np.__version__},
-    }, indent=2) + "\n")
-    (out / "metrics.json").write_text(json.dumps({"cv_train": cv, "test": results}, indent=2) + "\n")
+    }, indent=2) + "\n", encoding="utf-8", newline="\n")
+    (out / "metrics.json").write_text(json.dumps({"cv_train": cv, "test": results}, indent=2) + "\n", encoding="utf-8", newline="\n")
     test_out = test[["recording_id", "session_id", "condition", "start", "end", *F.FEATURES]].copy()
     test_out["pred"] = [LABELS[i] for i in dense_test_proba.argmax(axis=1)]
     for i, lab in enumerate(LABELS):

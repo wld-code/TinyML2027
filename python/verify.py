@@ -105,7 +105,7 @@ def main() -> int:
     lines = read_board(args.port)
     if args.log:
         args.log.parent.mkdir(parents=True, exist_ok=True)
-        args.log.write_text("\n".join(lines) + "\n")
+        args.log.write_text("\n".join(lines) + "\n", encoding="utf-8", newline="\n")
     if not any(l.startswith("STATUT") for l in lines):
         print("ERREUR : la carte n'a pas renvoyé de série de tests complète.", *lines[-5:], sep="\n  ")
         return 2

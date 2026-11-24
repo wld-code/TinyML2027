@@ -19,7 +19,7 @@ case "$REV" in
   rev2) NAME="$NAME-rev2"; EXTRA=(--build-property "compiler.cpp.extra_flags=-DNANO_REV2") ;;
   *) echo "REV doit valoir original ou rev2 (reçu : $REV)" >&2; exit 2 ;;
 esac
-FQBN="$(grep -E '^ARDUINO_FQBN=' "$ROOT/config/versions.lock" | cut -d= -f2)"
+FQBN="$(grep -E '^ARDUINO_FQBN=' "$ROOT/config/versions.lock" | cut -d= -f2 | tr -d '\r')"
 mkdir -p "$ROOT/build"
 echo "# compile.sh REV=$REV sketch=$SKETCH" > "$ROOT/build/$NAME.log"
 "$ROOT/scripts/arduino.sh" compile --fqbn "$FQBN" --build-path "$ROOT/build/$NAME" \

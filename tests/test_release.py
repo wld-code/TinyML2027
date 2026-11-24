@@ -22,14 +22,14 @@ def good_release(tmp_path):
            "files": files, "board": lock["ARDUINO_FQBN"], "board_core": lock["ARDUINO_CORE"],
            "board_revision": "original", "runtime": "x", "feature_schema": R.EXPECTED_SCHEMA,
            "labels": R.EXPECTED_LABELS, "tested_os": [], "acceptance_status": "candidate"}
-    (d / "release_manifest.json").write_text(json.dumps(man))
+    (d / "release_manifest.json").write_text(json.dumps(man), encoding="utf-8", newline="\n")
     return d
 
 
 def _edit(d, **changes):
-    m = json.loads((d / "release_manifest.json").read_text())
+    m = json.loads((d / "release_manifest.json").read_text(encoding="utf-8"))
     m.update(changes)
-    (d / "release_manifest.json").write_text(json.dumps(m))
+    (d / "release_manifest.json").write_text(json.dumps(m), encoding="utf-8", newline="\n")
 
 
 def test_good_release_is_valid(good_release):
@@ -37,7 +37,7 @@ def test_good_release_is_valid(good_release):
 
 
 def test_corrupted_json_refused(good_release):
-    (good_release / "release_manifest.json").write_text("{pas du json")
+    (good_release / "release_manifest.json").write_text("{pas du json", encoding="utf-8", newline="\n")
     with pytest.raises(R.ReleaseError, match="illisible"):
         R.validate(good_release)
 
@@ -63,9 +63,9 @@ def test_other_feature_schema_refused(good_release):
 def test_missing_field_and_missing_file_refused(good_release, tmp_path):
     other = tmp_path / "copie"
     shutil.copytree(good_release, other)
-    m = json.loads((other / "release_manifest.json").read_text())
+    m = json.loads((other / "release_manifest.json").read_text(encoding="utf-8"))
     del m["board_revision"]
-    (other / "release_manifest.json").write_text(json.dumps(m))
+    (other / "release_manifest.json").write_text(json.dumps(m), encoding="utf-8", newline="\n")
     with pytest.raises(R.ReleaseError, match="champs absents"):
         R.validate(other)
     (good_release / "golden_vectors.npz").unlink()

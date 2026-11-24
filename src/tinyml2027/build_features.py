@@ -90,7 +90,7 @@ def main(argv=None) -> int:
     table, summary = build(args.data)
     args.out.mkdir(parents=True, exist_ok=True)
     table.to_csv(args.out / "features.csv", index=False, float_format="%.9g")
-    (args.out / "quality_report.md").write_text(report(table, summary))
+    (args.out / "quality_report.md").write_text(report(table, summary), encoding="utf-8", newline="\n")
     v = table[table.valid]
     print(f"{len(table)} fenêtres, {len(v)} valides -> {args.out / 'features.csv'}")
     print(v.groupby(["session_id", "condition"]).size().unstack(fill_value=0).to_string())

@@ -1,0 +1,15 @@
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1795511774.733848   12980 port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1795511780.091528   12980 port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+WARNING:tensorflow:TensorFlow GPU support is not available on native Windows for TensorFlow >= 2.11. Even if CUDA/cuDNN are installed, GPU will not be used. Please use WSL2 or the TensorFlow-DirectML plugin.
+FP32 2040 octets, INT8 2176 octets ; opérateurs ['FULLY_CONNECTED', 'FULLY_CONNECTED', 'SOFTMAX']
+entrée int8 scale=0.0187017 zp=-57 ; sortie int8 scale=0.00390625 zp=-128
+test s05 : accuracy FP32 0.961, INT8 0.961, accord 1.000, écart max de score 0.0270, entrées saturées 2
+2 golden vectors ; en-têtes écrits dans labs\03-embedded-inference\firmware\infer_nano
+s                                                                        [100%]
+1 skipped in 0.30s
+Le croquis utilise 171504 octets (17%) de l'espace de stockage de programmes. Le maximum est de 983040 octets.
+Les variables globales utilisent 61792 octets (23%) de mÃ©moire dynamique, ce qui laisse 200352 octets pour les variables locales. Le maximum est de 262144 octets.
+Le croquis utilise 192472 octets (19%) de l'espace de stockage de programmes. Le maximum est de 983040 octets.
+Les variables globales utilisent 62448 octets (23%) de mÃ©moire dynamique, ce qui laisse 199696 octets pour les variables locales. Le maximum est de 262144 octets.

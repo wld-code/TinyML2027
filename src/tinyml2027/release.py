@@ -49,9 +49,27 @@ def sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def arduino_cli(*args: str) -> subprocess.CompletedProcess:
+    """arduino-cli isolé du dépôt, comme scripts/arduino.sh, mais sans bash.
+
+    Windows ne peut pas exécuter un .sh via subprocess (WinError 193, constaté le 2026-11-24),
+    et le « bash » du PATH peut y être celui de WSL : on appelle donc l'exécutable directement.
+    """
+    import os
+    exe = ROOT / ".arduino/bin" / ("arduino-cli.exe" if os.name == "nt" else "arduino-cli")
+    if not exe.exists():
+        raise ReleaseError(f"{exe} absent : lancez ./scripts/setup.sh")
+    env = dict(os.environ,
+               ARDUINO_DIRECTORIES_DATA=str(ROOT / ".arduino/data"),
+               ARDUINO_DIRECTORIES_DOWNLOADS=str(ROOT / ".arduino/staging"),
+               ARDUINO_DIRECTORIES_USER=str(ROOT / ".arduino/user"))
+    return subprocess.run([str(exe), "--config-file", str(ROOT / "arduino-cli.yaml"), *args],
+                          capture_output=True, text=True, env=env)
+
+
 def versions_lock() -> dict:
     out = {}
-    for line in (ROOT / "config/versions.lock").read_text().splitlines():
+    for line in (ROOT / "config/versions.lock").read_text(encoding="utf-8").splitlines():
         if "=" in line and not line.startswith("#"):
             k, v = line.split("=", 1)
             out[k] = v
@@ -59,19 +77,19 @@ def versions_lock() -> dict:
 
 
 def firmware_version() -> str:
-    m = re.search(r'kFirmware\[\] = "([^"]+)"', (SKETCH / "infer_nano.ino").read_text())
+    m = re.search(r'kFirmware\[\] = "([^"]+)"', (SKETCH / "infer_nano.ino").read_text(encoding="utf-8"))
     return m.group(1) if m else "inconnu"
 
 
 # ------------------------------------------------------------------ build
 
 def build(version: str, artifacts: Path, build_dir: Path, sketch: Path, out_root: Path) -> Path:
-    params = (sketch / "model_params.h").read_text()
+    params = (sketch / "model_params.h").read_text(encoding="utf-8")
     m = re.search(r'kModelVersion\[\] = "([^"]+)"', params)
     if not m or m.group(1) != version:
         raise ReleaseError(f"model_params.h annonce {m.group(1) if m else '?'} et non {version} : "
                            f"relancez quantize_motion --model-version {version}, puis compilez")
-    model_h = (sketch / "model_data.h").read_text()
+    model_h = (sketch / "model_data.h").read_text(encoding="utf-8")
     sha_h = re.search(r'g_model_sha256\[\] = "([0-9a-f]{64})"', model_h).group(1)
     if sha_h != sha256(artifacts / "model_int8.tflite"):
         raise ReleaseError("model_data.h ne correspond pas à model_int8.tflite : régénérez les en-têtes")
@@ -95,8 +113,8 @@ def build(version: str, artifacts: Path, build_dir: Path, sketch: Path, out_root
         shutil.copy2(sketch / f, dest / "firmware" / f)
 
     lock = versions_lock()
-    prep = json.loads((artifacts / "preprocessing.json").read_text())
-    metrics = json.loads((artifacts / "metrics.json").read_text())
+    prep = json.loads((artifacts / "preprocessing.json").read_text(encoding="utf-8"))
+    metrics = json.loads((artifacts / "metrics.json").read_text(encoding="utf-8"))
     files = {str(p.relative_to(dest)): sha256(p) for p in sorted(dest.rglob("*")) if p.is_file()}
     manifest = {
         "model_version": version,
@@ -109,14 +127,14 @@ def build(version: str, artifacts: Path, build_dir: Path, sketch: Path, out_root
         "board_revision": "rev2" if build_dir.name.endswith("-rev2") else "original",
         "runtime": f"Arduino_TensorFlowLite@{lock['TFLM_ARDUINO_COMMIT'][:8]}",
         "feature_schema": prep["inputs"],
-        "labels": json.loads((artifacts / "labels.json").read_text()),
-        "test_metrics": {"session": json.loads((artifacts / "training_config.json").read_text())["test_session"],
+        "labels": json.loads((artifacts / "labels.json").read_text(encoding="utf-8")),
+        "test_metrics": {"session": json.loads((artifacts / "training_config.json").read_text(encoding="utf-8"))["test_session"],
                          "macro_f1": metrics["test"]["dense"]["macro_f1"]},
         "tested_os": [],
         "acceptance_status": "candidate",
         "created_utc": datetime.now(timezone.utc).isoformat(timespec="seconds"),
     }
-    (dest / "release_manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
+    (dest / "release_manifest.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8", newline="\n")
     return dest
 
 
@@ -128,7 +146,7 @@ def validate(release: Path) -> dict:
     if not mpath.exists():
         raise ReleaseError(f"{mpath} absent")
     try:
-        man = json.loads(mpath.read_text())
+        man = json.loads(mpath.read_text(encoding="utf-8"))
     except json.JSONDecodeError as e:
         raise ReleaseError(f"manifest illisible (JSON invalide) : {e}") from e
     missing = [k for k in REQUIRED if k not in man]
@@ -202,9 +220,8 @@ def flash(release: Path, port: str | None, yes: bool) -> int:
         print("Annulé : rien n'a été téléversé.")
         return 1
     _write_state({"desired": man["model_version"], "confirmed": None, "port": port})
-    r = subprocess.run([str(ROOT / "scripts/arduino.sh"), "upload", "-p", port, "--fqbn", man["board"],
-                        "--input-file", str(release / "firmware" / man["firmware_bin"])],
-                       capture_output=True, text=True)
+    r = arduino_cli("upload", "-p", port, "--fqbn", man["board"],
+                    "--input-file", str(release / "firmware" / man["firmware_bin"]))
     if r.returncode != 0:
         print(r.stdout[-500:], r.stderr[-500:])
         print("ÉCHEC DU TÉLÉVERSEMENT. La carte peut être dans l'ancien état ou sans programme : "
@@ -221,7 +238,7 @@ def flash(release: Path, port: str | None, yes: bool) -> int:
     }
     ok = all(checks.values())
     log = release.parent / f"flash-{man['model_version']}-{datetime.now(timezone.utc):%Y%m%dT%H%M%SZ}.log"
-    log.write_text("\n".join(dev["log"]) + f"\n# contrôles {checks}\n")
+    log.write_text("\n".join(dev["log"]) + f"\n# contrôles {checks}\n", encoding="utf-8", newline="\n")
     if ok:
         _write_state({"desired": man["model_version"], "confirmed": man["model_version"], "port": port})
         print(f"CONFIRMÉ : la carte exécute {man['model_version']} et rejoue ses golden vectors. Journal : {log.name}")
@@ -236,7 +253,7 @@ def flash(release: Path, port: str | None, yes: bool) -> int:
 def _write_state(state: dict) -> None:
     STATE.parent.mkdir(parents=True, exist_ok=True)
     state["updated_utc"] = datetime.now(timezone.utc).isoformat(timespec="seconds")
-    STATE.write_text(json.dumps(state, indent=2) + "\n")
+    STATE.write_text(json.dumps(state, indent=2) + "\n", encoding="utf-8", newline="\n")
 
 
 def main(argv=None) -> int:
@@ -272,7 +289,7 @@ def main(argv=None) -> int:
         if args.cmd == "flash":
             return flash(args.release, args.port, args.yes)
         dev = read_device(pick_port(args.port))
-        state = json.loads(STATE.read_text()) if STATE.exists() else {}
+        state = json.loads(STATE.read_text(encoding="utf-8")) if STATE.exists() else {}
         print(f"état souhaité  : {state.get('desired')}")
         print(f"état confirmé  : {state.get('confirmed')}")
         print(f"la carte annonce : {dev.get('model_version')} / {str(dev.get('model_sha256'))[:16]}… / replay {dev.get('replay')}")

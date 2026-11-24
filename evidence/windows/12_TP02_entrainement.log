@@ -1,0 +1,16 @@
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1795511663.373574    6892 port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1795511667.654406    6892 port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+train : sessions ['s01', 's02', 's03', 's04'], 204 fenêtres ; test : s05, 51 fenêtres
+  CV dummy    : macro-F1 par pli [0.167, 0.167, 0.167, 0.167], moyenne 0.167
+  CV logistic : macro-F1 par pli [0.941, 1.0, 0.669, 0.98], moyenne 0.898
+  CV dense    : macro-F1 par pli [0.941, 1.0, 0.556, 0.961], moyenne 0.864
+  TEST dummy    : accuracy 0.333, macro-F1 0.167
+  TEST logistic : accuracy 0.980, macro-F1 0.980
+  TEST dense    : accuracy 0.961, macro-F1 0.961
+matrice de confusion du réseau sur le test (lignes = vrai, colonnes = prédit, ordre ['stationary', 'periodic', 'impact']) :
+  stationary [15, 0, 2]
+  periodic   [0, 17, 0]
+  impact     [0, 0, 17]
+artefacts : artifacts\motion

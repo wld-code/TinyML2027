@@ -1,0 +1,40 @@
+$ uv run python -m tinyml2027.quantize_motion --data datasets/motion-nano-v1 --model-version motion-win
+WARNING:tensorflow:TensorFlow GPU support is not available on native Windows for TensorFlow >= 2.11. Even if CUDA/cuDNN are installed, GPU will not be used. Please use WSL2 or the TensorFlow-DirectML plugin.
+FP32 2040 octets, INT8 2176 octets ; opérateurs ['FULLY_CONNECTED', 'FULLY_CONNECTED', 'SOFTMAX']
+entrée int8 scale=0.0187017 zp=-57 ; sortie int8 scale=0.00390625 zp=-128
+test s05 : accuracy FP32 0.961, INT8 0.961, accord 1.000, écart max de score 0.0270, entrées saturées 2
+8 golden vectors ; en-têtes écrits dans labs\03-embedded-inference\firmware\infer_nano
+EXIT=0
+
+$ ./scripts/compile.sh labs/03-embedded-inference/firmware/infer_nano
+Library Arduino_TensorFlowLite has been declared precompiled:
+Precompiled library in "C:\Users\Administrateur\Documents\TinyML2027\.arduino\user\libraries\Arduino_TensorFlowLite\src\cortex-m4\-mfpu=fpv4-sp-d16--mfloat-abi=softfp" not found
+Precompiled library in "C:\Users\Administrateur\Documents\TinyML2027\.arduino\user\libraries\Arduino_TensorFlowLite\src\cortex-m4" not found
+Le croquis utilise 184088 octets (18%) de l'espace de stockage de programmes. Le maximum est de 983040 octets.
+Les variables globales utilisent 61792 octets (23%) de mémoire dynamique, ce qui laisse 200352 octets pour les variables locales. Le maximum est de 262144 octets.
+EXIT=0
+
+$ uv run python -m tinyml2027.release build --version motion-win
+release écrite : C:\Users\Administrateur\Documents\TinyML2027\releases\motion-win
+validation : OK
+EXIT=0
+
+$ uv run python -m tinyml2027.release validate releases/motion-win
+VALIDE : motion-win (firmware infer_nano 0.1.0, modèle c9219c4993e27abb…, 17 fichiers vérifiés)
+EXIT=0
+
+$ uv run python -m tinyml2027.release flash releases/motion-win
+Release motion-win VALIDE (fichiers, SHA-256, labels, schéma, carte).
+Plan :
+  1. téléverser releases\motion-win\firmware\infer_nano.ino.bin sur COM12 (USB, supervisé)
+  2. lire ce que la carte annonce et exiger model_version=motion-win, model_sha256=c9219c4993e27abb…
+  3. exiger REPLAY STATUT OK sur les golden vectors
+Continuer ? [o/N] 
+EXIT=1
+
+$ uv run python -m tinyml2027.release status
+état souhaité  : None
+état confirmé  : None
+la carte annonce : motion-v1 / c9219c4993e27abb… / replay OK
+EXIT=0
+

@@ -45,6 +45,12 @@ def _cf(v: float) -> str:
 
 def golden_windows(data_root: Path, test_session: str, per_class: int = 2) -> list[dict]:
     rows = [r for r in dataset.read_manifest(data_root) if r["session_id"] == test_session and r["valid"] == "1"]
+    missing = sorted(set(LABELS) - {r["condition"] for r in rows})
+    if missing:
+        # Sans cet arrêt, golden.h ne contiendrait que les 2 vecteurs synthétiques (rejeu « 2/2 » au lieu de 8/8).
+        raise SystemExit(f"aucun enregistrement valide de la session {test_session} pour {', '.join(missing)} "
+                         f"dans {data_root} : indiquez le dataset utilisé au TP01/TP02, par exemple "
+                         f"--data datasets/motion-nano-v1")
     out = []
     for r in sorted(rows, key=lambda r: LABELS.index(r["condition"])):
         df = recording.read_csv(dataset.recording_path(data_root, r["session_id"], r["recording_id"], True))
@@ -72,8 +78,8 @@ def main(argv=None) -> int:
 
     import keras
     model = keras.models.load_model(A / "model.keras")
-    prep = json.loads((A / "preprocessing.json").read_text())
-    cfg = json.loads((A / "training_config.json").read_text())
+    prep = json.loads((A / "preprocessing.json").read_text(encoding="utf-8"))
+    cfg = json.loads((A / "training_config.json").read_text(encoding="utf-8"))
     scaler = Scaler(np.array(prep["standardize"]["mean"]), np.array(prep["standardize"]["std"]))
     calib = np.load(A / "calibration_train.npy")
 
@@ -108,7 +114,7 @@ def main(argv=None) -> int:
         "input_saturation": int(((tt.quantize(X, qi.scale, qi.zero_point) == 127) |
                                  (tt.quantize(X, qi.scale, qi.zero_point) == -128)).sum()),
     }
-    (A / "comparison.json").write_text(json.dumps(comp, indent=2) + "\n")
+    (A / "comparison.json").write_text(json.dumps(comp, indent=2) + "\n", encoding="utf-8", newline="\n")
     print(f"test {cfg['test_session']} : accuracy FP32 {comp['accuracy']['fp32']:.3f}, INT8 {comp['accuracy']['int8']:.3f}, "
           f"accord {comp['agreement_fp32_int8']:.3f}, écart max de score {comp['max_abs_score_diff']:.4f}, "
           f"entrées saturées {comp['input_saturation']}")
@@ -134,7 +140,7 @@ def main(argv=None) -> int:
     # En-têtes du firmware
     FIRMWARE.mkdir(parents=True, exist_ok=True)
     (FIRMWARE / "model_data.h").write_text(tt.c_array(flat8, "g_model", "artifacts/motion/model_int8.tflite "
-                                                                        "(python -m tinyml2027.quantize_motion)"))
+                                                                        "(python -m tinyml2027.quantize_motion)"), encoding="utf-8", newline="\n")
     mean, std = prep["standardize"]["mean"], prep["standardize"]["std"]
     (FIRMWARE / "model_params.h").write_text("\n".join([
         "// Généré par python -m tinyml2027.quantize_motion : ne pas modifier à la main.",
@@ -149,7 +155,7 @@ def main(argv=None) -> int:
         "const float kMean[4] = {" + ", ".join(_cf(v) for v in mean) + "};",
         "const float kStd[4] = {" + ", ".join(_cf(v) for v in std) + "};",
         "",
-    ]))
+    ]), encoding="utf-8", newline="\n")
     lines = [
         "// Généré par python -m tinyml2027.quantize_motion : ne pas modifier à la main.",
         "// Golden vectors : fenêtres brutes de la session de test et cas synthétiques,",
@@ -174,7 +180,7 @@ def main(argv=None) -> int:
         *["  {" + ", ".join(str(int(v)) for v in q) + "}," for q in G["yq"]], "};",
         "",
     ]
-    (FIRMWARE / "golden.h").write_text("\n".join(lines))
+    (FIRMWARE / "golden.h").write_text("\n".join(lines), encoding="utf-8", newline="\n")
 
     sha = lambda b: hashlib.sha256(b).hexdigest()  # noqa: E731
     (A / "release_manifest.json").write_text(json.dumps({
@@ -186,7 +192,7 @@ def main(argv=None) -> int:
         "board": "arduino:mbed_nano:nano33ble@4.6.0", "board_revision": "original (LSM9DS1)",
         "tolerances": TOL, "int8_input": asdict(qi), "int8_output": asdict(qo),
         "acceptance_status": "non testé sur carte",
-    }, indent=2) + "\n")
+    }, indent=2) + "\n", encoding="utf-8", newline="\n")
     print(f"{len(gold)} golden vectors ; en-têtes écrits dans {FIRMWARE.relative_to(ROOT)}")
     return 0
 

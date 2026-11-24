@@ -1,0 +1,10 @@
+$ uv run pytest -q
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+39 passed, 1 skipped, 1 warning in 17.34s
+
+$ REV=original ./scripts/compile.sh labs/03-embedded-inference/firmware/infer_nano
+Le croquis utilise 184088 octets (18%) de l'espace de stockage de programmes. Le maximum est de 983040 octets.
+Les variables globales utilisent 61792 octets (23%) de mémoire dynamique, ce qui laisse 200352 octets pour les variables locales. Le maximum est de 262144 octets.
+EXIT=0

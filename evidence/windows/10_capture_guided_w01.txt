@@ -1,0 +1,6 @@
+$ uv run python -m tinyml2027.capture guided --session w01
+COM12 : INFO firmware=imu_capture 0.1.0 board_revision=original imu=LSM9DS1 odr_nominal_hz=119.00
+
+=== w01_stationary_t01 ===
+Posez la carte à plat sur la table et NE LA TOUCHEZ PLUS (câble immobile aussi).
+Appuyez sur Entrée pour lancer le compte à rebours… EXIT=127

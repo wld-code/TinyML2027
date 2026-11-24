@@ -1,0 +1,3 @@
+# compile.sh REV=rev2 sketch=labs/01-sensor-data/firmware/imu_capture
+Le croquis utilise 116768 octets (11%) de l'espace de stockage de programmes. Le maximum est de 983040 octets.
+Les variables globales utilisent 46712 octets (17%) de mémoire dynamique, ce qui laisse 215432 octets pour les variables locales. Le maximum est de 262144 octets.

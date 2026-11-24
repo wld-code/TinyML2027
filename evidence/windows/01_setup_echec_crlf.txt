@@ -1,0 +1,2 @@
+./scripts/setup.sh: line 14: printf: `': not a valid identifier
+EXIT=2

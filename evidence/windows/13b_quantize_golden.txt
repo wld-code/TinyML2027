@@ -1,0 +1,10 @@
+$ quantize_motion (sans --data, data/ absent)
+entrée int8 scale=0.0187017 zp=-57 ; sortie int8 scale=0.00390625 zp=-128
+test s05 : accuracy FP32 0.961, INT8 0.961, accord 1.000, écart max de score 0.0270, entrées saturées 2
+EXIT=1
+
+$ quantize_motion --data datasets/motion-nano-v1
+entrée int8 scale=0.0187017 zp=-57 ; sortie int8 scale=0.00390625 zp=-128
+test s05 : accuracy FP32 0.961, INT8 0.961, accord 1.000, écart max de score 0.0270, entrées saturées 2
+8 golden vectors ; en-têtes écrits dans labs\03-embedded-inference\firmware\infer_nano
+EXIT=0

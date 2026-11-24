@@ -1,0 +1,14 @@
+$ ./scripts/arduino.sh board list
+Port  Protocol Type              Board Name          FQBN                        Core
+COM12 serial   Serial Port (USB) Arduino Nano 33 BLE arduino:mbed_nano:nano33ble arduino:mbed_nano
+
+
+# Gestionnaire de périphériques (Get-PnpDevice, VID_2341)
+
+Status Class FriendlyName                   InstanceId                                   
+------ ----- ------------                   ----------                                   
+OK     USB   Périphérique USB composite     USB\VID_2341&PID_805A\E011A05896DEE871       
+OK     Ports Périphérique série USB (COM12) USB\VID_2341&PID_805A&MI_00\6&1DE0AE95&0&0000
+
+
+

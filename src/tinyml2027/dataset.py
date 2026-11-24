@@ -44,7 +44,7 @@ def read_manifest(root: Path) -> list[dict]:
     path = Path(root) / "manifest.csv"
     if not path.exists():
         return []
-    with path.open(newline="") as f:
+    with path.open(newline="", encoding="utf-8") as f:
         return list(csv.DictReader(f))
 
 
@@ -55,7 +55,7 @@ def append_manifest(root: Path, row: dict) -> None:
     if row["recording_id"] in existing:
         raise ValueError(f"{row['recording_id']} existe déjà dans {path} : choisissez un autre numéro d'essai")
     new = not path.exists()
-    with path.open("a", newline="") as f:
+    with path.open("a", newline="", encoding="utf-8") as f:
         w = csv.DictWriter(f, fieldnames=MANIFEST_COLUMNS)
         if new:
             w.writeheader()

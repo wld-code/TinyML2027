@@ -126,9 +126,9 @@ def main() -> None:
 
     out = args.artifacts / f"model_{args.mode}.tflite"
     out.write_bytes(flat)
-    (args.artifacts / f"model_{args.mode}.report.json").write_text(json.dumps(asdict(report), indent=2) + "\n")
-    HEADER[args.mode].write_text(tt.c_array(flat, "g_model", f"artifacts/sine/{out.name} (python/convert.py --mode {args.mode})"))
-    (HEADER[args.mode].parent / "test_vectors.h").write_text(test_vectors_header(args.mode, flat, model, report))
+    (args.artifacts / f"model_{args.mode}.report.json").write_text(json.dumps(asdict(report), indent=2) + "\n", encoding="utf-8", newline="\n")
+    HEADER[args.mode].write_text(tt.c_array(flat, "g_model", f"artifacts/sine/{out.name} (python/convert.py --mode {args.mode})"), encoding="utf-8", newline="\n")
+    (HEADER[args.mode].parent / "test_vectors.h").write_text(test_vectors_header(args.mode, flat, model, report), encoding="utf-8", newline="\n")
 
     print(f"{out.relative_to(ROOT)} : {report.size_bytes} octets, sha256 {report.sha256[:16]}…")
     print(f"schéma {report.schema_version}, opérateurs {report.ops}")

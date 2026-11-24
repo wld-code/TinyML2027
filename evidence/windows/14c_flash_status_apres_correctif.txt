@@ -1,0 +1,18 @@
+# 1er essai de flash : bloqué sur « Continuer ? [o/N] » (question masquée par le filtre du script), arrêté ; rien téléversé.
+# 2e essai : WinError 193, release.py lançait scripts/arduino.sh (voir 14b_flash_status.txt).
+# 3e essai après correctif (arduino_cli() sans bash) ; --yes : confirmation donnée en conversation par la personne présente.
+$ uv run python -m tinyml2027.release flash releases/motion-win --yes
+Release motion-win VALIDE (fichiers, SHA-256, labels, schéma, carte).
+Plan :
+  1. téléverser releases\motion-win\firmware\infer_nano.ino.bin sur COM12 (USB, supervisé)
+  2. lire ce que la carte annonce et exiger model_version=motion-win, model_sha256=c9219c4993e27abb…
+  3. exiger REPLAY STATUT OK sur les golden vectors
+La carte annonce : model_version=motion-win model_sha256=c9219c4993e27abb… replay=OK
+CONFIRMÉ : la carte exécute motion-win et rejoue ses golden vectors. Journal : flash-motion-win-20261124T121057Z.log
+EXIT=0
+
+$ uv run python -m tinyml2027.release status
+état souhaité  : motion-win
+état confirmé  : motion-win
+la carte annonce : motion-win / c9219c4993e27abb… / replay OK
+EXIT=0

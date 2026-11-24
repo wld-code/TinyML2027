@@ -1,0 +1,11 @@
+$ git checkout labs/03-embedded-inference/firmware/infer_nano
+Updated 3 paths from the index
+$ ./scripts/compile.sh labs/03-embedded-inference/firmware/infer_nano
+Le croquis utilise 184088 octets (18%) de l'espace de stockage de programmes. Le maximum est de 983040 octets.
+Les variables globales utilisent 61792 octets (23%) de mémoire dynamique, ce qui laisse 200352 octets pour les variables locales. Le maximum est de 262144 octets.
+EXIT=0
+$ ./scripts/upload.sh labs/03-embedded-inference/firmware/infer_nano
+Done in 7.796 seconds
+New upload port: COM12 (serial)
+PORT=COM12
+EXIT=0

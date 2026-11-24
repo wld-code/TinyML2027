@@ -1,0 +1,3 @@
+# compile.sh REV=original sketch=advanced/edge-impulse/sketches/mic_check
+Le croquis utilise 88168 octets (8%) de l'espace de stockage de programmes. Le maximum est de 983040 octets.
+Les variables globales utilisent 45720 octets (17%) de mémoire dynamique, ce qui laisse 216424 octets pour les variables locales. Le maximum est de 262144 octets.

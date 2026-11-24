@@ -1,0 +1,36 @@
+# 1er essai de flash : bloqué sur la question « Continuer ? [o/N] » (sortie filtrée par le script, invisible), arrêté à 13h10 ; rien téléversé.
+# 2e essai : --yes, confirmation donnée en conversation par la personne présente (étape 14 validée).
+$ uv run python -m tinyml2027.release flash releases/motion-win --yes
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\Administrateur\Documents\TinyML2027\src\tinyml2027\release.py", line 286, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "C:\Users\Administrateur\Documents\TinyML2027\src\tinyml2027\release.py", line 273, in main
+    return flash(args.release, args.port, args.yes)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrateur\Documents\TinyML2027\src\tinyml2027\release.py", line 205, in flash
+    r = subprocess.run([str(ROOT / "scripts/arduino.sh"), "upload", "-p", port, "--fqbn", man["board"],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrateur\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\Lib\subprocess.py", line 548, in run
+    with Popen(*popenargs, **kwargs) as process:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrateur\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\Lib\subprocess.py", line 1026, in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+  File "C:\Users\Administrateur\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\Lib\subprocess.py", line 1538, in _execute_child
+    hp, ht, pid, tid = _winapi.CreateProcess(executable, args,
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: [WinError 193] %1 n’est pas une application Win32 valide
+Release motion-win VALIDE (fichiers, SHA-256, labels, schéma, carte).
+Plan :
+  1. téléverser releases\motion-win\firmware\infer_nano.ino.bin sur COM12 (USB, supervisé)
+  2. lire ce que la carte annonce et exiger model_version=motion-win, model_sha256=c9219c4993e27abb…
+  3. exiger REPLAY STATUT OK sur les golden vectors
+EXIT=1
+
+$ uv run python -m tinyml2027.release status
+état souhaité  : motion-win
+état confirmé  : None
+la carte annonce : motion-v1 / c9219c4993e27abb… / replay OK
+EXIT=0

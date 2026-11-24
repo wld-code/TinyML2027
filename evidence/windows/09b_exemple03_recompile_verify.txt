@@ -1,0 +1,18 @@
+$ ./scripts/compile.sh examples/03_custom_model  (2e essai)
+Le croquis utilise 142552 octets (14%) de l'espace de stockage de programmes. Le maximum est de 983040 octets.
+Les variables globales utilisent 50432 octets (19%) de mémoire dynamique, ce qui laisse 211712 octets pour les variables locales. Le maximum est de 262144 octets.
+EXIT=0
+$ ./scripts/upload.sh examples/03_custom_model
+Done in 5.954 seconds
+New upload port: COM12 (serial)
+PORT=COM12
+EXIT=0
+$ uv run python python/verify.py --mode fp32 --port COM12
+modèle fp32 : 3216 octets, sha256 8adc218b92887437a708c1ce2ca6db21721cb06cd16f6525305339d2d00b00bb
+Keras vs LiteRT (fp32) : écart max 1.19e-07 (sur [0, 2π] : 1.19e-07)
+Nano vs LiteRT : écart max 2.38e-07 (tolérance 1e-05), 8/23 sorties identiques au bit près
+Nano vs Keras  : écart max 2.38e-07
+Invoke() sur la Nano : min 129 µs, médiane 159 µs, max 187 µs
+arena : 880 / 4096 octets utilisés
+RÉSULTAT : OK
+EXIT=0
