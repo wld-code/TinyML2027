@@ -1,2 +1,8 @@
-# Scripts bash : toujours en fins de ligne LF, même sous Windows (sinon « $'\r': command not found »)
+# Fins de ligne : LF partout, même sous Windows (Git for Windows extrait en CRLF par défaut,
+# ce qui casse les scripts bash et la lecture de config/versions.lock).
+* text=auto eol=lf
 *.sh text eol=lf
+# Données et preuves : octets conservés tels quels (empreintes SHA-256, manifestes CSV d'origine).
+*.csv -text
+*.jsonl -text
+evidence/** -text

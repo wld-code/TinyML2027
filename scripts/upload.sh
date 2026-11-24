@@ -12,7 +12,7 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 SKETCH="${1:?usage: upload.sh <dossier_du_sketch> [port]}"
 NAME="$(basename "$SKETCH")"
 [ "${REV:-original}" = "rev2" ] && NAME="$NAME-rev2"
-FQBN="$(grep -E '^ARDUINO_FQBN=' "$ROOT/config/versions.lock" | cut -d= -f2)"
+FQBN="$(grep -E '^ARDUINO_FQBN=' "$ROOT/config/versions.lock" | cut -d= -f2 | tr -d '\r')"
 BUILD="$ROOT/build/$NAME"
 [ -d "$BUILD" ] || { echo "Pas de build pour $NAME : lancez d'abord ./scripts/compile.sh $SKETCH" >&2; exit 1; }
 

@@ -338,8 +338,30 @@ def main():
     fig_pipeline(); fig_quant(); fig_live(); fig_resources()
     fig_six_positions()
     fig_preprocess(); fig_artifacts(); fig_release(); fig_v1_v2(); fig_mlops_timeline()
+    fig_parcours()
 
 
+
+
+def fig_parcours():
+    """README : le parcours du cours, du capteur au modèle embarqué."""
+    fig, ax = plt.subplots(figsize=(11, 2.6))
+    ax.axis("off"); ax.set_xlim(0, 11); ax.set_ylim(0, 2.6)
+    steps = [("Tutoriels\nPython · Nano", "#eeeeee"), ("TP01\ncapteur → dataset", "#d6e6f2"),
+             ("TP02\nentraîner, évaluer", "#d6e6f2"), ("TP03\nINT8 → carte", "#d6e6f2"),
+             ("Pour aller\nplus loin", "#eeeeee")]
+    notes = ["installer, Blink,\nlire l'IMU", "3 gestes, contrôle\nqualité, 4 features",
+             "split par session,\nréseau 4-8-3", "rejeu des golden\nvectors, direct",
+             "Edge Impulse (audio),\nMLOps (versions)"]
+    w, gap = 1.85, 0.32
+    for i, ((t, fc), n) in enumerate(zip(steps, notes)):
+        x = 0.15 + i * (w + gap)
+        _box(ax, x, 1.15, w, 0.95, t, fc=fc, fs=9.5, weight="bold")
+        ax.text(x + w / 2, 0.75, n, ha="center", va="top", fontsize=8, color="#444")
+        if i < len(steps) - 1:
+            _arrow(ax, x + w + 0.03, 1.62, x + w + gap - 0.03, 1.62)
+    ax.set_title("SCHÉMA — le parcours : une seule Nano 33 BLE Sense, un câble USB, aucun cloud obligatoire", fontsize=10)
+    save(fig, "parcours.png")
 
 
 def fig_six_positions():

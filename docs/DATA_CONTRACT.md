@@ -1,73 +1,98 @@
-# Contrat de données et de modèle — référence à implémenter et vérifier
+# Contrat de données et de modèle
 
-**Version 0.3 (23/11/2026).** Le contrat est **une proposition pédagogique**, fondée sur le Lab 7–8 du livre. Toute modification de définition de feature doit provoquer une régénération du dataset, un nouvel entraînement, une nouvelle quantification et de nouveaux tests embarqués.
+**Version 0.3 (23/11/2026).** Ce document définit exactement ce que Python et la carte doivent calculer. Python (`src/tinyml2027/features.py`) et le firmware (`labs/03-embedded-inference/firmware/infer_nano/features.h`) l'implémentent tous deux. Toute modification d'une définition oblige à refaire les features, l'entraînement, la quantification et le rejeu sur la carte.
 
-## Enregistrement brut
-Chaque capture est associée à un `recording_id` unique et à un `session_id`. Un fichier CSV par enregistrement :
+## 1. Enregistrement brut
+
+Un fichier CSV par enregistrement :
+
 ```csv
 seq,t_us,ax_g,ay_g,az_g
-0,0,0.01,-0.02,1.01
-1,10000,0.02,-0.01,0.99
 ```
-**Exemple purement illustratif, non mesuré.** `seq` est monotone et sans duplication, `t_us` correspond au temps d'échantillonnage côté carte, les accélérations sont en g. Pour ne pas masquer les pertes, la cadence doit être évaluée à partir de ces marqueurs, et non supposée égale à une fréquence nominale. Les données sont rejetées ou explicitement marquées invalides si cadence, timestamp ou séquence échouent; aucune interpolation silencieuse.
 
-`manifest.csv` : `recording_id,session_id,condition,trial,board_revision,board_id,source,requested_fs_hz,measured_fs_hz,valid,notes`. `source` est `hardware` ou `simulated`. Un fichier de métadonnées JSON optionnel peut documenter OS, firmware, version du protocole, opérateur et paramètres de capture. Les données personnelles restent locales; ne pas enregistrer nom/voix ni identifiant durable de l'étudiant par défaut.
+*(Format seulement ; les valeurs réelles sont dans `datasets/motion-nano-v1/raw/`.)*
 
-## Classes et protocole
-`stationary`, `periodic`, `impact`. Préparer au minimum plusieurs sessions **indépendantes**, chacune contenant toutes les classes. Repositionner la carte et varier modérément le protocole entre sessions pour tester la généralisation; documenter les conditions. Les fenêtres proches d'une transition ne reçoivent pas automatiquement le label du fichier si le contenu est ambigu.
+| Colonne | Sens |
+|---|---|
+| `seq` | numéro de la mesure, croissant, sans doublon |
+| `t_us` | instant de la mesure sur la carte (µs) |
+| `ax_g`, `ay_g`, `az_g` | accélération (g) |
 
-## Fenêtrage et cadence (décision validée le 23/11/2026)
-- **Cadence native, sans réglage de registre.** Carte originale : ODR 119 Hz nominal, 114,2 Hz médian mesuré (`evidence/lot0`). Rev2 : 100 Hz nominal (bibliothèque), à mesurer. La cible de 50 Hz est abandonnée. Le manifest enregistre `requested_fs_hz` (ODR nominale) et `measured_fs_hz`.
-- Fenêtre `N = 256` échantillons, pas `128` (50 % de recouvrement). Durée ≈ 2,2 s (originale) et 2,6 s (Rev2).
-- **Fréquence d'échantillonnage par fenêtre**, calculée de façon identique en Python et en C++ :
-  `fs_win = (N − 1) / ((t_us[N−1] − t_us[0]) · 10⁻⁶)`, en Hz.
-- **Validité d'une fenêtre** : `seq` strictement consécutif, `t_us` strictement croissant, et aucun intervalle `> 1,5 ×` la médiane des intervalles de la fenêtre. Une fenêtre invalide est marquée, jamais interpolée.
-- Un modèle est entraîné et validé pour une révision donnée. Le transfert entre révisions n'est pas garanti et doit être mesuré.
+La cadence est **mesurée** à partir de `seq` et `t_us`, jamais supposée. Une mesure perdue n'est jamais interpolée : l'enregistrement ou la fenêtre est marqué invalide.
 
-## Caractéristiques de référence (décision validée le 23/11/2026)
-Axe `ax_g`, fenêtre valide de N = 256 échantillons `x[n]` en g, `fs = fs_win`.
+`manifest.csv` : `recording_id,session_id,condition,trial,board_revision,board_id,source,requested_fs_hz,measured_fs_hz,valid,notes`. `source` vaut `hardware` ou `simulated`. Aucune donnée personnelle (nom, voix, identifiant durable) n'est enregistrée.
 
-1. Centrage : `c[n] = x[n] − mean(x)`.
-2. `rms_g = sqrt(mean(c²))` (g).
-3. `crest_factor = max|c| / rms_g`. **Si `rms_g < 1e−6 g`**, l'indicateur `rms_zero = 1` est levé et `crest_factor = dominant_hz = band_power_g2 = 0`. Pas de NaN dans le contrat embarqué. *Changement v0.3 :* le seuil v0.2 (1e−9 g) était inférieur au résidu d'arrondi float32 du centrage (7·10⁻⁹ g mesuré sur une fenêtre constante par le test hôte `tests/test_features_cpp.py`) : Python donnait crest = 0, le C++ crest = 1. 1e−6 g reste 100 fois sous la résolution du LSM9DS1 (1,2·10⁻⁴ g).
-4. PSD une face, à un seul segment, fenêtre de Hann périodique `w[n] = 0,5 − 0,5·cos(2πn/N)` :
-   `X[k] = Σ c[n]·w[n]·e^(−2iπkn/N)`, puis `P[k] = a_k·|X[k]|² / (fs·Σw²)` en g²/Hz, avec `a_k = 1` pour k = 0 et k = N/2, et `a_k = 2` sinon.
-   Fréquences : `f[k] = k·fs/N`. Cette formule est équivalente à `scipy.signal.welch(c, fs, window="hann", nperseg=N, scaling="density")`, ce qui doit être vérifié par un test à 1e−12 près.
+## 2. Classes et protocole
+
+Trois classes, dans cet ordre : `stationary`, `periodic`, `impact`. Chaque session contient les trois. Entre deux sessions, la carte est déplacée et les gestes varient un peu.
+
+- `stationary` : carte posée, personne ne la touche.
+- `periodic` : glisser la carte dans le sens du câble, environ 1 aller-retour par seconde.
+- `impact` : tapoter la table à côté de la carte, 1 à 2 fois par seconde, **pendant tout l'enregistrement** ; ne jamais frapper la carte.
+
+## 3. Fenêtres
+
+- Cadence native du capteur, sans réglage de registre : 119 Hz annoncés sur la carte originale (≈ 116 Hz mesurés), 100 Hz annoncés sur la Rev2 (non mesuré).
+- Fenêtre de **N = 256** mesures, pas de **128** (recouvrement de 50 %).
+- Cadence de chaque fenêtre, calculée de la même façon en Python et en C++ :
+  `fs_win = (N − 1) / ((t_us[N−1] − t_us[0]) · 10⁻⁶)` Hz.
+- Une fenêtre est **valide** si `seq` est consécutif, `t_us` strictement croissant, et aucun intervalle ne dépasse 1,5 fois la médiane de la fenêtre.
+- Un modèle est entraîné pour une révision de carte. Le passage à l'autre révision doit être mesuré.
+
+## 4. Les 4 features
+
+Sur l'axe `ax_g` d'une fenêtre valide, x[n] en g, n = 0 … 255, fs = fs_win.
+
+1. Centrage : `c[n] = x[n] − moyenne(x)`.
+2. `rms_g = √(moyenne(c²))` (g).
+3. `crest_factor = max|c| / rms_g`. **Si `rms_g < 10⁻⁶ g`**, alors `crest_factor = dominant_hz = band_power_g2 = 0` (pas de NaN).
+4. Densité spectrale, un seul segment, fenêtre de Hann périodique `w[n] = 0,5 − 0,5·cos(2πn/N)` :
+   `X[k] = Σ c[n]·w[n]·e^(−2iπkn/N)`, puis `P[k] = a_k·|X[k]|² / (fs·Σw²)` en g²/Hz, avec `a_k = 1` pour k = 0 et k = N/2, `a_k = 2` sinon. Fréquences : `f[k] = k·fs/N`.
+   C'est l'équivalent de `scipy.signal.welch(c, fs, window="hann", nperseg=N, scaling="density")` ; un test le vérifie à 10⁻¹² près.
 5. Bande `B = {k : 0,5 Hz ≤ f[k] ≤ 10 Hz}`.
-6. `dominant_hz = f[argmax_{k∈B} P[k]]`. En cas d'égalité, on prend le **plus petit indice**.
-7. `band_power_g2 = Σ_{k∈B} P[k] · fs/N` (g²).
+6. `dominant_hz = f[argmax P[k]]` sur B ; en cas d'égalité, le plus petit indice.
+7. `band_power_g2 = Σ P[k] · fs/N` sur B (g²).
 
-**Tolérances Python (float64) / C++ (float32)** sur les golden vectors :
-- `rms_g`, `crest_factor` et `band_power_g2` : erreur relative ≤ 1e−4 (à confirmer par l'essai E6) ;
-- `dominant_hz` : au plus 1 bin d'écart.
-On compte les fenêtres « ambiguës », dont les deux plus grands bins de B diffèrent de moins de 1e−4 en relatif.
+**Pourquoi 10⁻⁶ g (v0.3) ?** Le seuil de la v0.2 (10⁻⁹ g) était sous le résidu d'arrondi du float32 : sur une fenêtre constante, le C++ trouvait 7·10⁻⁹ g et Python 0. 10⁻⁶ g reste 100 fois sous la résolution du LSM9DS1.
 
-Implémentation embarquée : FFT radix-2 de 256 points en float32, écrite pour le cours (`labs/03-embedded-inference/firmware/infer_nano/features.h`), plutôt que la kissfft de la bibliothèque TFLM, compilée en virgule fixe pour le micro-frontend audio. Parité vérifiée d'abord sur le poste (`tests/test_features_cpp.py`), puis sur la carte (mode REPLAY du firmware).
-Ne pas appliquer de filtrage différent au moment de l'inférence : le filtre de visualisation du TP01 n'entre pas dans les features.
+Sur la carte, la FFT est la **kissfft** livrée avec la bibliothèque officielle `Arduino_TensorFlowLite`, compilée en float32.
 
-## Protocole `impact` (décision validée le 23/11/2026)
-Tapotements doux et **réguliers pendant tout l'enregistrement**, environ 1 à 2 par seconde, sur la table à côté de la carte, sans frapper la carte. Lors de l'essai E3, ils ont donné des pics |Δa| de 0,09 à 0,26 g. Cette consigne évite les fenêtres sans aucun impact mais étiquetées `impact`. L'étiquetage par fenêtre fondé sur un détecteur d'événement reste une question d'interprétation.
+## 5. Entrées du réseau
 
-## Modèle et ensembles
-Les partitions doivent être réalisées par `session_id`, **avant** apprentissage de normalisation, imputation, calibration ou sélection. Parcours de référence (décision du 23/11/2026, 3 sessions) : 2 sessions d'entraînement, 1 session de test. La sélection de modèle se fait par validation croisée « une session laissée de côté » sur les sessions d'entraînement. Avec plus de sessions, le même code accepte N sessions d'entraînement. Ne jamais disperser les fenêtres voisines d'une même session entre partitions. Réserver le test jusqu'à la validation de l'architecture.
+Appris **sur l'entraînement seul** et enregistrés dans `preprocessing.json` :
 
-**Prétraitement des entrées du réseau** (appris sur le train uniquement, `preprocessing.json`) : `log10(rms_g + 1e−6)`, `crest_factor`, `dominant_hz`, `log10(band_power_g2 + 1e−12)`, puis standardisation (moyenne et écart-type du train). Le passage en log10 ramène rms et band power, étalés sur 4 à 5 ordres de grandeur, à une échelle comparable aux deux autres entrées.
-Comparer dummy, régression logistique et réseau dense compact, par exemple 4 entrées → 8 neurones → 3 sorties, en expliquant l'arbitrage taille/précision. Classes dans l'ordre `stationary,periodic,impact`.
+1. `log10(rms_g + 10⁻⁶)`, `crest_factor`, `dominant_hz`, `log10(band_power_g2 + 10⁻¹²)` ;
+2. puis standardisation : (valeur − moyenne) / écart-type de l'entraînement.
 
-## Artefacts exportés
-- `features.csv`, `splits.csv`, `metrics.json`, matrice de confusion, courbes
-- `model_fp32.tflite`, `model_int8.tflite`
-- `preprocessing.json` (ordre des features, normalisation, valeurs d'imputation et unités)
-- `labels.json` (ordre strict), `training_config.json` (seed, versions et splits)
-- `calibration_train.npy` issu exclusivement de train
-- `golden_vectors.npz` avec entrées brutes, features, valeurs normalisées, codes int8 et scores. Les sorties INT8 de LiteRT desktop ne sont pas forcément bit-exactes avec TFLM (écart de 2 LSB mesuré, voir AUDIT §11.4) : la tolérance de parité sera fixée et justifiée au TP03 à partir de mesures sur la carte
-- `model_int8.h`, `release_manifest.json` avec SHA-256, versions et cibles
-Les artefacts générés restent ignorés par git par défaut, sauf petits exemples de référence explicitement autorisés.
+## 6. Entraînement et évaluation
 
-## Vérifications obligatoires
-- Séquences et timestamps croissants, cadence plausible, aucune valeur manquante utilisée sans décision explicite.
-- Aucun chevauchement de sessions entre train/validation/test.
-- Dimensions et ordre des entrées/sorties identiques entre Python, LiteRT et C++.
-- Comparaison FP32/INT8 sur exemples appariés, attention aux erreurs dues aux scales/zero-points.
-- Comparaison des caractéristiques Python/C++ sur signaux connus, **avant** test live.
-- Les prédictions des classes inconnues ne doivent pas être présentées comme des certitudes.
+- Séparation **par session**, avant toute normalisation, calibration ou sélection de modèle. Les fenêtres d'une même session restent ensemble.
+- Choix du modèle par validation croisée « une session de côté » sur les sessions d'entraînement.
+- Une session de test, regardée **une seule fois** à la fin. Parcours de référence : s01 à s04 pour l'entraînement, s05 pour le test.
+- Comparaison obligatoire avec la classe majoritaire et une régression logistique.
+
+## 7. Fichiers exportés
+
+| Fichier | Contenu |
+|---|---|
+| `features.csv` | une ligne par fenêtre |
+| `metrics.json`, `test_predictions.csv` | scores et prédictions |
+| `model_fp32.tflite`, `model_int8.tflite` | le modèle |
+| `preprocessing.json`, `labels.json` | entrées et ordre des classes |
+| `calibration_train.npy` | données de calibration INT8, issues de l'entraînement seul |
+| `golden_vectors.npz` | fenêtres brutes, features, codes int8 et scores attendus |
+| `release_manifest.json` | versions, cibles et SHA-256 |
+
+## 8. Tolérances carte / Python
+
+Fixées avant l'essai sur la carte (TP03) :
+
+| Grandeur | Tolérance |
+|---|---|
+| `rms_g`, `crest_factor`, `band_power_g2` | 10⁻⁴ en relatif |
+| `dominant_hz` | 1 case de fréquence |
+| codes int8 d'entrée | 1 cran |
+| codes int8 de sortie | 2 crans |
+| classe prédite | identique |
+
+Les sorties INT8 de LiteRT (ordinateur) et de TFLM (carte) peuvent différer de quelques crans : les golden vectors utilisent donc TFLM comme référence.
