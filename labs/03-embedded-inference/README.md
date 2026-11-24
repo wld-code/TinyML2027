@@ -1,227 +1,99 @@
-# TP03 — Le modèle sur la carte : INT8, rejeu, puis direct
+# TP03 — Quantification et inférence sur la Nano
 
-**Durée :** environ 4 h. **Matériel :** la même Nano 33 BLE Sense, son câble USB et l'ordinateur. **Entrée :** `artifacts/motion/`, produit par le [TP02](../02-model-training/README.md).
+**Objectif.** Quantifier le réseau en INT8, vérifier les calculs sur la Nano et classer les gestes mesurés par son accéléromètre.
 
-> **Testé** sur une carte originale avec macOS 15.6 le 23/11/2026, puis avec Windows 10 le 24/11/2026 : rejeu 8/8 et direct sur les 3 gestes ([preuves macOS](../../evidence/tp03/README.md), [preuves Windows](../../evidence/windows/RAPPORT.md)). Rev2 : compilé seulement. Les captures viennent de l'essai macOS.
+**Durée.** Environ 4 h.
 
-## Ce que vous allez faire
+**Matériel.** La Nano 33 BLE Sense utilisée pour les acquisitions, son câble USB de données et un ordinateur.
 
-![Chaîne embarquée](../../docs/figures/tp03-chaine-embarquee.png)
+**Prérequis.** Ayez terminé le [TP02](../02-model-training/README.md) et conservé `artifacts/motion/`, la table de caractéristiques et les enregistrements bruts utilisés. Lancez les commandes depuis la racine du dépôt.
 
-Toutes les 128 mesures (≈ 1,1 s), la Nano reprend les 256 dernières mesures et refait **exactement** les calculs de Python : les features, le prétraitement, puis le réseau. Elle affiche ensuite le geste reconnu. Le TP se déroule en trois temps :
+![Chaîne d’inférence embarquée](../../docs/figures/tp03-chaine-embarquee.png)
 
-1. **Quantifier** le réseau en entiers 8 bits (INT8) et vérifier ce que l'on perd.
-2. **Rejouer** sur la carte des fenêtres enregistrées dont on connaît la réponse : ce sont les *golden vectors*. Si la carte ne retrouve pas les mêmes valeurs que Python, inutile de passer au direct.
-3. **Passer en direct** avec le capteur.
+Toutes les 128 mesures, la carte reprend les 256 dernières, calcule les quatre caractéristiques, applique le prétraitement du TP02 et classe la fenêtre. Nous vérifions cette chaîne sur des fenêtres connues avant d’utiliser le capteur en direct. Sans carte, réalisez les étapes 1 et 2.
 
-Bibliothèques utilisées, toutes officielles :
-- **Arduino_TensorFlowLite** (TensorFlow Lite Micro, commit figé `7948b85e`), qui fournit aussi la FFT **kissfft** ;
-- **Arduino_LSM9DS1** pour la carte originale, ou **Arduino_BMI270_BMM150** pour la Rev2.
+## 1. Quantifier le modèle
 
----
+La quantification représente les valeurs réelles par des entiers. Avec une échelle `scale` et un décalage entier `zero_point`, une valeur `x` devient `round(x / scale) + zero_point`, ramenée dans l’intervalle [−128, 127]. On retrouve une approximation de `x` par `(q − zero_point) · scale`. Lorsqu’une valeur dépasse la plage représentable, elle est saturée à la borne correspondante.
 
-## Étape 1 — Quantifier en INT8
+La calibration utilise `calibration_train.npy`, issu de l’entraînement, pour régler la représentation des activations. Le script désactive la quantification des poids par canal pour utiliser une seule échelle par tenseur de poids, compatible avec la bibliothèque Arduino. Il contrôle les types entiers (INT8 et INT32) et les opérateurs du modèle.
+
+Avec vos données du TP01, lancez la première commande. Si le TP02 utilisait le jeu publié, lancez la seconde pour que les fenêtres témoins proviennent du même jeu.
 
 ```sh
 uv run python -m tinyml2027.quantize_motion
 ```
 
-**Sans données du TP01 ?** Si vous avez entraîné au TP02 sur le dataset de référence, indiquez-le ici aussi, car les golden vectors sont pris dans la session de test :
 ```sh
 uv run python -m tinyml2027.quantize_motion --data datasets/motion-nano-v1
 ```
-Sans cela, le script s'arrête avec le message `aucun enregistrement valide de la session s05…`.
 
-**Résultat réel :**
-```text
-FP32 2040 octets, INT8 2176 octets ; opérateurs ['FULLY_CONNECTED', 'FULLY_CONNECTED', 'SOFTMAX']
-entrée int8 scale=0.0187017 zp=-57 ; sortie int8 scale=0.00390625 zp=-128
-test s05 : accuracy FP32 0.961, INT8 0.961, accord 1.000, écart max de score 0.0270, entrées saturées 2
-8 golden vectors ; en-têtes écrits dans labs/03-embedded-inference/firmware/infer_nano
-```
+Dans `artifacts/motion/comparison.json`, comparez les tailles, les scores et les classes prédites sur les mêmes fenêtres de test. Vérifiez que la commande annonce huit fenêtres témoins (*golden vectors*) et produit les en-têtes du firmware.
 
-![Quantification INT8](../../docs/screenshots/tp03-etape01-quantification-macos.png)
+![Quantification de l’entrée INT8](../../docs/figures/tp03-quantification-entree.png)
 
-### Ce que veut dire « quantifier »
+*Paramètres du modèle de référence. Deux valeurs d’entrée du test atteignent une borne de la plage INT8.*
 
-Chaque nombre réel x est remplacé par un entier q compris entre −128 et 127 :
+Sur le test de référence, les versions FP32 et INT8 obtiennent toutes deux une accuracy de 0,961 et prédisent la même classe pour les 51 fenêtres. Le modèle INT8 occupe 2 176 octets contre 2 040 pour le FP32. Pour ce réseau de 67 paramètres, les métadonnées de quantification occupent plus d’espace que l’économie réalisée sur les poids.
 
-`q = clamp(round(x / scale) + zero_point, −128, 127)` et, dans l'autre sens, `x ≈ (q − zero_point) · scale`.
+## 2. Vérifier les caractéristiques en C++ sur l’ordinateur
 
-![Quantification de l'entrée](../../docs/figures/tp03-quantification-entree.png)
-
-*Paramètres réels de notre modèle. Au-delà de x ≈ 3,4, l'entrée est **saturée** : 2 valeurs du test sont dans ce cas.*
-
-- `scale` et `zero_point` sont choisis par le convertisseur, d'après les valeurs vues pendant la **calibration**. Celle-ci se fait sur `calibration_train.npy`, c'est-à-dire sur l'**entraînement seul**, jamais sur le test.
-- La bibliothèque Arduino ne gère qu'**une échelle par tenseur de poids**. Le script désactive donc la quantification par canal et **refuse** tout modèle qui en contiendrait.
-- Le script vérifie aussi que **tous** les tenseurs sont entiers (int8 ou int32), et que les opérateurs sont ceux que le firmware enregistre.
-
-### FP32 contre INT8, sur les mêmes fenêtres
-
-| | FP32 | INT8 |
-|---|---|---|
-| Taille du fichier | 2 040 octets | **2 176 octets** |
-| Accuracy sur le test s05 | 0,961 | 0,961 |
-| Même classe prédite | — | 51/51 fenêtres |
-| Plus grand écart de score | — | 0,027 |
-
-**Surprise : le modèle INT8 est plus gros que le FP32.** Le réseau n'a que 67 paramètres, et ce que la quantification ajoute (échelles, zero-points, informations de format) pèse plus lourd que ce qu'elle fait gagner sur les poids. Sur un modèle de plusieurs milliers de paramètres, l'INT8 divise la taille par près de 4. **L'INT8 n'est pas automatiquement plus petit.**
-
-> **Question 1.** Pourquoi la calibration ne doit-elle pas utiliser le test ?
->
-> **Question 2.** Que répond le réseau pour une entrée saturée à 127 ? Est-ce grave pour ce modèle ? Indice : regardez si ces 2 fenêtres sont bien classées dans `artifacts/motion/test_predictions.csv`.
-
----
-
-## Étape 2 — Vérifier le calcul des features en C++… sur l'ordinateur
-
-Avant de toucher à la carte, on compile le code C++ des features (`firmware/infer_nano/features.h`, qui s'appuie sur la kissfft officielle) **sur l'ordinateur**, puis on le compare à Python :
+Le firmware utilise la FFT kissfft fournie avec Arduino_TensorFlowLite. Lancez le test qui compile le calcul C++ sur l’ordinateur et le compare aux résultats Python. Attendez `1 passed`. Si le test est ignoré, vérifiez que l’étape 1 a produit `golden_vectors.npz`.
 
 ```sh
 uv run pytest tests/test_features_cpp.py -v
 ```
 
-Résultat attendu : `1 passed`.
-
-![Test des features C++ sur l'ordinateur](../../docs/screenshots/tp03-etape02-test-cpp-hote-macos.png)
-
-Ce test a déjà trouvé un vrai défaut. Sur une fenêtre parfaitement constante, le calcul en float32 laisse un résidu de 7·10⁻⁹ g, alors que Python (float64) obtient 0. Le seuil « fenêtre immobile » du contrat, qui était de 10⁻⁹ g, a donc été porté à 10⁻⁶ g, sur le Mac comme sur la carte. Sans ce test, la carte et Python auraient donné un facteur de crête différent (1 contre 0).
-
----
-
-## Étape 3 — Compiler et téléverser le firmware
+## 3. Compiler et téléverser
 
 ```sh
 ./scripts/compile.sh labs/03-embedded-inference/firmware/infer_nano
 ./scripts/upload.sh  labs/03-embedded-inference/firmware/infer_nano
 ```
 
-Pour la Rev2, ajoutez `REV=rev2` devant les deux commandes. Dans Arduino IDE ([captures](../../tutorials/02-arduino-nano/README.md#arduino-ide-pas-à-pas)), décommentez `#define NANO_REV2` en tête de `infer_nano.ino`.
+Pour la Rev2, ajoutez `REV=rev2` devant les deux commandes. Dans [Arduino IDE](../../tutorials/02-arduino-nano/README.md#arduino-ide-pas-à-pas), décommentez `#define NANO_REV2` en tête d’`infer_nano.ino`. La carte originale utilise `Arduino_LSM9DS1` et la Rev2 `Arduino_BMI270_BMM150`.
 
-**Compilation réelle (carte originale) :**
-```text
-Sketch uses 183872 bytes (18%) of program storage space. Maximum is 983040 bytes.
-Global variables use 61792 bytes (23%) of dynamic memory, leaving 200352 bytes for local variables.
+Relevez la Flash et la RAM statique annoncées à la compilation. La Flash stocke le programme. La RAM statique inclut l’*arena*, le tampon de 4 096 octets réservé à l’interpréteur TensorFlow Lite Micro. Après le téléversement, toute ligne `ERREUR` à l’initialisation doit être résolue avant de poursuivre.
+
+## 4. Rejouer les fenêtres témoins sur la carte
+
+Ouvrez le moniteur série en remplaçant `PORT` par le port de la carte. Envoyez `R`.
+
+```sh
+./scripts/arduino.sh monitor -p PORT -c baudrate=115200
 ```
 
-![Compilation et téléversement du firmware](../../docs/screenshots/tp03-etape03-compilation-televersement-macos-original.png)
+Le mode `REPLAY` exécute la chaîne embarquée sur six fenêtres prises dans le test et deux cas synthétiques (une fenêtre constante et un sinus à 2 Hz). Pour chaque fenêtre, lisez le statut et les écarts en crans de quantification (`lsb`). Les tolérances du [contrat de données](../../docs/DATA_CONTRACT.md#8-tolérances-carte--python) s’appliquent aux quatre caractéristiques, aux codes INT8 d’entrée et de sortie, et à la classe.
 
-*Ici 183 968 octets, contre 183 872 au premier essai : notez vos propres chiffres.*
+Attendez `REPLAY RESUME n=8 ok=8` et `REPLAY STATUT OK`. En cas d’échec, vérifiez que le firmware a été compilé après la génération de `model_data.h`, `model_params.h` et `golden.h`. Corrigez l’écart avant de passer au direct.
 
-Sous Windows, comptez quelques dizaines d'octets de plus (184 088). Pour la Rev2, 204 912 octets ([toutes les tailles](../../evidence/compilation/README.md)). Si vous obtenez environ 171 000 octets, `golden.h` ne contient que 2 vecteurs au lieu de 8 : refaites l'étape 1.
+## 5. Classer les gestes en direct
 
-### Ce que contient le dossier du sketch
+Envoyez `L`. La carte affiche la classe, les scores, les caractéristiques et les temps de calcul. Reprenez les [gestes du TP01](../01-sensor-data/README.md#2-enregistrer-les-trois-gestes) dans les conditions de capture. Pour le glissement, suivez l’axe du câble. Pour les tapotements, retrouvez la position et la force utilisées à la capture. **Ne frappez jamais la carte.**
 
-| Fichier | Rôle | Généré ? |
-|---|---|---|
-| `infer_nano.ino` | lecture de l'IMU, modes REPLAY et LIVE, affichage | non |
-| `features.h` | les 4 features en float32, avec la FFT kissfft | non |
-| `kissfft_float.cpp` | compile en float les sources kissfft **de la bibliothèque officielle**, sans les modifier | non |
-| `prediction.h` | la structure qui regroupe le résultat d'une classification | non |
-| `model_data.h` | le modèle INT8 sous forme de tableau C, avec son SHA-256 | oui (`quantize_motion`) |
-| `model_params.h` | labels, log10, moyenne et écart-type du train | oui |
-| `golden.h` | 8 fenêtres brutes avec les valeurs attendues | oui |
+Attendez environ une fenêtre complète après chaque changement de geste avant d’interpréter les prédictions. Les tapotements excitent surtout l’axe z alors que le modèle exploite l’axe x. Si les tapotements sont classés `stationary`, comparez leur RMS à celle mesurée au repos et reprenez le geste de capture.
 
-**Le firmware n'ignore aucune erreur.** Schéma incompatible, opérateur manquant, mémoire de travail (arena) trop petite, mauvaise dimension d'entrée, IMU absente : chaque cas affiche une ligne `ERREUR ...` au lieu de planter ou de classer n'importe quoi.
+![Scores de classification en direct sur la carte originale](../../docs/figures/tp03-live-scores.png)
 
----
+*Essai de référence. La dernière fenêtre de tapotement, prise pendant l’arrêt du geste, a été classée `stationary`.*
 
-## Étape 4 — Le rejeu (REPLAY)
+Un meilleur score sous 0,6 déclenche l’indication `(incertain)`. Un score élevé peut aussi accompagner une erreur, notamment pour un geste absent de l’entraînement.
 
-Au démarrage, puis chaque fois qu'on envoie `R`, la carte rejoue les golden vectors : 6 fenêtres brutes de la session de test et 2 cas synthétiques (une fenêtre constante et un sinus à 2 Hz). Pour chacune, elle compare **ses** résultats à ceux de Python :
+## 6. Mesurer les ressources et vérifier la version
 
-| Contrôle | Tolérance déclarée **avant** l'essai |
-|---|---|
-| rms, crest, band power | 10⁻⁴ en relatif |
-| dominant_hz | 1 case de fréquence |
-| codes int8 d'entrée | 1 cran |
-| codes int8 de sortie | 2 crans |
-| classe prédite | identique |
+Comparez `feat_us` (calcul des caractéristiques) et `invoke_us` (exécution du modèle) à l’intervalle entre deux décisions. Cet intervalle vaut environ 1,1 s à 116 Hz. Dans l’essai de référence, le calcul des caractéristiques prend 0,62 à 0,67 ms et l’inférence 0,09 à 0,13 ms. Relevez vos mesures ainsi que la mémoire utilisée par le modèle dans l’*arena* (champ `arena_used` dans l’en-tête du rejeu).
 
-Ouvrez le moniteur (`./scripts/arduino.sh monitor -p PORT -c baudrate=115200`) et tapez `R`.
+En cas d’échec du téléversement, fermez le moniteur et appuyez deux fois rapidement sur RESET. La LED orange pulse quand la carte attend un programme. Relancez `./scripts/upload.sh labs/03-embedded-inference/firmware/infer_nano` avec `REV=rev2` devant la commande si nécessaire. Envoyez ensuite `R` et comparez l’empreinte `# model_sha256` annoncée par la carte à `model_int8_sha256` dans `artifacts/motion/release_manifest.json`. L’[extension MLOps](../../advanced/edge-mlops/README.md) reprend cette vérification pour gérer plusieurs versions.
 
-**Sortie réelle de la carte :**
-```text
-nom,rms,crest,dominant_hz,band_power,features,xq,yq,classe,attendu,feat_us,invoke_us,statut
-s05_stationary_t01@0,0.0008959,3.54686,6.8082,0.000000608,OK,0lsb,0lsb,stationary,stationary,668,108,OK
-s05_periodic_t01@0,0.0902025,2.67306,1.3611,0.007496708,OK,0lsb,0lsb,periodic,periodic,620,100,OK
-s05_impact_t01@0,0.0033917,6.38233,7.7097,0.000001503,OK,0lsb,0lsb,impact,impact,667,108,OK
-synthetique_constante,0.0000000,0.00000,0.0000,0.000000000,OK,0lsb,0lsb,stationary,stationary,184,91,OK
-...
-REPLAY RESUME n=8 ok=8 feat_us_max=668 invoke_us_max=108
-REPLAY STATUT OK
-```
+Le rejeu et le direct ont été vérifiés sur la Nano originale. La validation de la Rev2 se limite à la compilation. Les [mesures sur carte](../../evidence/tp03/README.md), les [tailles compilées](../../evidence/compilation/README.md) et la [synthèse des essais](../../docs/VALIDATION.md) donnent les résultats de référence.
 
-![Rejeu des golden vectors dans le moniteur](../../docs/screenshots/tp03-etape04-replay-moniteur-macos-original.png)
+## Questions et livrables
 
-**8/8, et 0 cran d'écart** sur les entrées comme sur les sorties. La carte fait exactement les mêmes calculs que Python.
+1. Pourquoi les données de calibration proviennent-elles de l’entraînement ? Que devient une entrée qui dépasse la borne INT8 ?
+2. Pourquoi vérifier les codes INT8 d’entrée et de sortie alors que la classe prédite est déjà comparée ?
+3. Faites un mouvement absent de l’entraînement. Quelle classe et quel score obtenez-vous ? Que peut-on déduire du seuil d’incertitude ?
+4. Si l’*arena* est réduite à 512 octets, que se passe-t-il à l’initialisation sachant que le modèle de référence en utilise 788 ?
 
-> **Si le rejeu échoue, on ne passe pas au direct.** Une erreur dans le prétraitement C++ (un mauvais ordre de features, un log10 oublié…) donnerait des prédictions fausses en direct, sans aucun message d'erreur.
+Remettez `comparison.json`, votre relevé du rejeu, des prédictions et des ressources, ainsi que vos réponses. Pour le parcours sur ordinateur, remettez le résultat du test C++.
 
----
-
-## Étape 5 — En direct (LIVE)
-
-Tapez `L` dans le moniteur. La carte classe une fenêtre toutes les 128 mesures. Faites les 3 gestes du TP01, **exactement comme pendant la capture** : glisser dans le sens du câble, tapoter la table au même endroit et avec la même force.
-
-> **Attention à « tapoter ».** Le modèle ne regarde que l'axe x (le sens du câble). Or un tapotement sur la table secoue surtout l'axe z : sur l'axe x, il ne laisse qu'une trace faible. Des coups trop doux, ou donnés ailleurs sur la table, sont classés `stationary`. Sous Windows, un premier essai a donné 2 « impact » sur 21 (rms 0,0005 g, le bruit d'une carte immobile) ; en tapotant comme à la capture, 28 sur 30. C'est une limite du choix d'un seul axe, pas un défaut du firmware.
-
-```text
-LIVE periodic stationary=0.00 periodic=1.00 impact=0.00 | rms=0.0589 crest=2.91 dom=0.91Hz fs=116.4 feat_us=659 invoke_us=107
-```
-
-![Classification en direct dans le moniteur](../../docs/screenshots/tp03-etape05-live-moniteur-macos-original.png)
-
-![Scores en direct](../../docs/figures/tp03-live-scores.png)
-
-*Mesure réelle : 20 s par geste, une classification toutes les 1,1 s.*
-
-| Consigne | Classifications | Correctes |
-|---|---|---|
-| immobile | 17 | 17 |
-| glisser | 17 | 17 |
-| tapoter | 17 | 16 (la dernière, prise pendant l'arrêt du geste : « stationary ») |
-
-**Un score de 1,00 ne veut pas dire « certain ».** La fenêtre mal classée affichait aussi 1,00. La sortie softmax d'un petit réseau est souvent très tranchée, même quand il se trompe ou quand le geste ne fait partie d'aucune des 3 classes. Le firmware ajoute « (incertain) » quand le meilleur score est sous 0,6, mais cela ne détecte pas tout.
-
-> **Question 3.** Secouez la carte dans tous les sens, un geste jamais appris. Que répond-elle, et avec quel score ? Qu'en concluez-vous sur l'état « inconnu » ?
-
----
-
-## Étape 6 — Mesurer les ressources
-
-| Mesure | Valeur sur la Nano V1 |
-|---|---|
-| Flash du programme | 183 872 octets (18 %) |
-| RAM statique (arena de 4 096 octets comprise) | 61 792 octets (23 %) |
-| Arena réellement utilisée par le modèle | **788 octets** |
-| Calcul des 4 features (FFT comprise) | 0,62 à 0,67 ms |
-| Inférence `Invoke()` | 0,09 à 0,13 ms |
-
-![Flash des programmes](../../docs/figures/tp03-flash-programmes.png)
-
-*Mesures réelles. L'exemple officiel `hello_world` charge tous les opérateurs (`AllOpsResolver`) ; nos firmwares n'enregistrent que ceux du modèle.*
-
-**Le réseau est le calcul le plus léger.** La FFT et les features coûtent 6 fois plus de temps que l'inférence. Tout le traitement d'une fenêtre (≈ 0,8 ms) tient très largement dans l'intervalle entre deux classifications (1,1 s).
-
-> **Question 4.** On réduit `kArenaSize` à 512. Que se passe-t-il ? Essayez : la carte doit afficher `ERREUR init=AllocateTensors`. L'exemple 03 a été vérifié ainsi sur la carte.
-
----
-
-## Étape 7 — Revenir à une version qui marche
-
-Si un téléversement échoue ou si la carte ne répond plus :
-
-1. **Double-cliquez sur le bouton RESET** : la LED orange pulse, la carte est en mode bootloader et attend un programme.
-2. Relancez `./scripts/upload.sh labs/03-embedded-inference/firmware/infer_nano` : il retéléverse la dernière version compilée.
-3. Vérifiez le modèle qui tourne vraiment avec `R` : la ligne `# model_sha256=…` doit correspondre à `model_int8_sha256` dans `artifacts/motion/release_manifest.json`.
-
-Avec l'outil de l'[extension MLOps](../../advanced/edge-mlops/README.md), le retour à la version validée et sa vérification tiennent en deux commandes :
-
-![Retour à motion-v1](../../docs/screenshots/tp03-etape07-retour-v1-macos-original.png)
-
-**Un téléversement réussi ne prouve pas que le bon modèle tourne.** Seul le SHA-256 annoncé par la carte le prouve.
-
-## Source
-
-Ce TP adapte les chapitres 11 et 12 de [AIoT-Book](https://github.com/wld-code/AIoT-Book/tree/main/labs), ainsi que la documentation [LiteRT for Microcontrollers](https://ai.google.dev/edge/litert/microcontrollers/overview). Le code est réécrit pour ce dépôt.
+Ce TP adapte les chapitres 11 et 12 d’[AIoT-Book](../../docs/REFERENCES.md).

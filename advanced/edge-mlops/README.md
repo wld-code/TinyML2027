@@ -1,18 +1,18 @@
-# Pour aller plus loin B — Edge MLOps sur une seule Nano
+# Extension — Versionner et vérifier un modèle sur la Nano
 
-**Durée :** 2 à 3 h. **Matériel :** la même Nano et son câble USB. Pas de cloud, pas de mise à jour à distance. **Prérequis :** le [TP03](../../labs/03-embedded-inference/README.md) terminé.
+**Objectif.** Préparer une version déployable, vérifier le modèle exécuté sur la carte et revenir à une version confirmée.
 
-> **Testé** sur une carte originale avec macOS 15.6, le 23/11/2026 ([journaux](../../evidence/mlops/)). Les captures viennent de cet essai.
+**Durée.** 2 à 3 h. **Matériel.** Une Nano 33 BLE Sense originale et son câble USB de données. **Prérequis.** Terminez le [TP03](../../labs/03-embedded-inference/README.md) et gardez son modèle `motion-v1`, ses en-têtes générés et le binaire compilé pour la carte originale. Lancez les commandes depuis la racine du dépôt.
 
-## L'idée
+Le MLOps regroupe les pratiques qui permettent de suivre, déployer et vérifier les versions d’un modèle. Dans cette extension, nous effectuons la mise à jour par USB et vérifions les calculs par rejeu sur la carte.
 
-Téléverser un modèle ne suffit pas. Il faut aussi pouvoir :
-1. savoir **quelle version** tourne vraiment sur la carte ;
-2. **refuser** une version incohérente **avant** de la téléverser ;
-3. **vérifier** une nouvelle version sur la carte, et pas seulement sur l'ordinateur ;
-4. **revenir** à la dernière version qui marchait.
+## 1. Construire la version de référence
 
-Tout se fait avec un seul outil :
+Une *release* est un ensemble de fichiers associés à une version. Elle contient le firmware compilé, le modèle, le prétraitement, les classes, les fenêtres témoins et un manifeste qui décrit la cible et les fichiers. Un SHA-256 est une empreinte calculée à partir des octets d’un fichier. Le manifeste enregistre ces empreintes pour détecter une modification après la construction de la release.
+
+![Contenu de la release motion-v1](../../docs/figures/mlops-release.png)
+
+Avant de construire `motion-v2`, créez `motion-v1` avec les fichiers préparés au TP03. Si cette version existe déjà, passez directement à sa validation. Le programme compare l’empreinte dans `model_data.h` à celle du fichier INT8 et vérifie que le binaire est au moins aussi récent que cet en-tête.
 
 ```sh
 uv run python -m tinyml2027.release build    --version motion-v1     # crée releases/motion-v1/
@@ -21,47 +21,11 @@ uv run python -m tinyml2027.release flash    releases/motion-v1      # téléver
 uv run python -m tinyml2027.release status                           # que tourne-t-il vraiment ?
 ```
 
----
+Attendez `VALIDE` après le contrôle hors ligne. Fermez le moniteur série avant `flash`. Lisez le plan, puis confirmez le téléversement. La carte doit annoncer la version et le SHA-256 du modèle attendus, puis `REPLAY STATUT OK`. Vérifiez que `status` indique `motion-v1` comme état souhaité et confirmé.
 
-## Étape 1 — Une release, c'est quoi ?
+## 2. Construire un candidat
 
-Une release est un **dossier qu'on ne modifie plus jamais** :
-
-```text
-releases/motion-v1/
-  firmware/infer_nano.ino.bin          le programme compilé, prêt à téléverser
-  firmware/model_data.h, model_params.h, golden.h
-  model_int8.tflite, model_fp32.tflite
-  preprocessing.json, labels.json      le contrat d'entrée/sortie
-  golden_vectors.npz                   les fenêtres témoins
-  metrics.json, comparison.json, training_config.json
-  release_manifest.json                la carte d'identité de la release
-```
-
-![Contenu d'une release](../../docs/figures/mlops-release.png)
-
-*Schéma, avec les valeurs réelles de motion-v1.*
-
-![Release réelle](../../docs/screenshots/mlops-etape01-release-contenu-macos.png)
-
-Le `release_manifest.json` contient, entre autres :
-
-| Champ | Exemple (motion-v1) |
-|---|---|
-| `model_version` | `motion-v1` |
-| `firmware_version` | `infer_nano 0.1.0` |
-| `model_int8_sha256` | `023e01b8d61b1f96…` |
-| `board`, `board_core`, `board_revision` | `arduino:mbed_nano:nano33ble`, `arduino:mbed_nano@4.6.0`, `original` |
-| `runtime` | `Arduino_TensorFlowLite@7948b85e` |
-| `feature_schema`, `labels` | l'ordre exact des 4 entrées et des 3 classes |
-| `files` | le SHA-256 de **chaque** fichier de la release |
-| `acceptance_status` | `candidate` |
-
-**Le SHA-256** est une empreinte de 64 caractères calculée sur le contenu d'un fichier. Si un seul octet change, l'empreinte change complètement.
-
-## Étape 2 — Construire deux versions
-
-**motion-v1** est le modèle du TP03 (réseau 4-8-3). **motion-v2** est un candidat avec 16 neurones cachés au lieu de 8, entraîné sur les mêmes sessions et évalué sur la même session de test s05, qu'on n'a pas utilisée pour le régler.
+Nous passons de 8 à 16 neurones cachés. Gardez les mêmes sessions pour comparer les modèles. Si votre session de test porte un autre identifiant, remplacez `s05` par cet identifiant. Le parcours ci-dessous utilise les enregistrements locaux de `data/`. Si vous avez suivi le parcours avec le jeu publié, utilisez la même option `--data datasets/motion-nano-v1` qu’au TP03 lors de la quantification.
 
 ```sh
 uv run python -m tinyml2027.train_motion --test-session s05 --hidden 16 --out artifacts/motion-v2
@@ -70,117 +34,50 @@ uv run python -m tinyml2027.quantize_motion --artifacts artifacts/motion-v2 --mo
 uv run python -m tinyml2027.release build --version motion-v2 --artifacts artifacts/motion-v2
 ```
 
-**Résultats réels :**
+Comparez les deux fichiers `metrics.json`. Dans l’essai de référence, le macro-F1 moyen en validation croisée passe de 0,864 à 0,874. Les deux modèles obtiennent 0,961 sur `s05). Cette comparaison fait partie de la démonstration. Pour choisir ou régler un modèle, utilisez les résultats de validation croisée et gardez une session indépendante pour l’évaluation finale.
 
-| | motion-v1 (8 neurones) | motion-v2 (16 neurones) |
-|---|---|---|
-| macro-F1, validation croisée | 0,864 | 0,874 |
-| macro-F1, test s05 | 0,961 | 0,961 (même matrice de confusion) |
-| Taille INT8 | 2 176 octets | 2 264 octets |
+## 3. Vérifier l’intégrité avant le téléversement
 
-![v1 contre v2](../../docs/figures/mlops-v1-v2.png)
+Copiez `releases/motion-v2/` dans `releases/essai-modifie/` et ajoutez un espace dans le fichier `labels.json` de la copie. Le JSON reste lisible, mais son empreinte change.
 
-*Mesure : métriques et tailles réelles des deux modèles.*
-
-Le candidat n'apporte rien de mesurable sur le test. **Ce constat compte aussi** : une release n'est pas forcément une amélioration.
-
-`build` refuse de créer une release si les en-têtes du firmware ne correspondent pas au modèle, si le firmware compilé est plus ancien que ces en-têtes, ou si la version existe déjà.
-
-## Étape 3 — Refuser avant de téléverser
-
-`validate`, lancé automatiquement par `flash`, refuse une release dans les cas suivants :
-
-| Défaut | Message |
-|---|---|
-| manifest tronqué ou illisible | `REFUSÉ : manifest illisible (JSON invalide)` |
-| un fichier modifié après la release | `fichier modifié depuis la release (SHA-256 différent)` |
-| un fichier manquant (golden vectors, binaire…) | `fichier manquant` |
-| ordre des classes différent | `labels [...] différents du contrat` |
-| schéma de features différent | `schéma de features différent du contrat` |
-| carte ou core différents de ceux du dépôt | `carte/core ... différents du dépôt` |
-
-Pour le voir vous-même, abîmez une **copie** (jamais la release elle-même) :
-
-![Refus d'un fichier modifié](../../docs/screenshots/mlops-etape03-refus-fichier-modifie-macos.png)
-
-Un seul espace ajouté à `labels.json` suffit : son SHA-256 change et la release est refusée. Supprimez ensuite la copie (`rm -rf releases/essai-modifie`).
-
-**Essai réel**, sur deux copies abîmées de motion-v2 ([journal](../../evidence/mlops/mlops-refus-avant-flash-macos15.6-v1.txt)) :
-```text
-===== manifest tronqué =====
-REFUSÉ : manifest illisible (JSON invalide) : Expecting property name enclosed in double quotes: line 1 column 32 (char 31)
-===== labels inversés =====
-REFUSÉ : labels ['periodic', 'stationary', 'impact'] différents du contrat ['stationary', 'periodic', 'impact']
+```sh
+uv run python -m tinyml2027.release validate releases/essai-modifie
 ```
 
-Dans les deux cas, **rien n'a été téléversé**. Ces refus sont aussi couverts par les tests automatiques (`uv run pytest tests/test_release.py`).
+Vérifiez que la commande refuse la copie en signalant un SHA-256 différent. Supprimez ensuite uniquement la copie. `flash` lance le même contrôle avant de proposer un téléversement. La validation vérifie aussi les fichiers attendus, la cible et l’ordre des classes et des entrées.
 
-## Étape 4 — Téléverser, puis vérifier ce que la carte annonce
-
-`flash` affiche son plan, demande confirmation, téléverse **par USB**, puis interroge la carte :
-
-1. la carte doit annoncer **la bonne version** (`# model_version=…`) ;
-2. elle doit annoncer **le bon SHA-256 du modèle** (`# model_sha256=…`) ;
-3. elle doit **rejouer ses golden vectors** sans écart (`REPLAY STATUT OK`).
-
-L'outil distingue **l'état souhaité** (la version qu'on a voulu installer) et **l'état confirmé** (ce que la carte a prouvé). Les deux sont écrits dans `releases/device_state.json`.
-
-![validate, flash et status sur motion-v1](../../docs/screenshots/mlops-validate-flash-status-macos-original.png)
-
-**Un téléversement réussi ne prouve rien sur le modèle qui tourne.** Seule la réponse de la carte compte.
-
-## Étape 5 — Un échec volontaire, puis le retour à v1
-
-Pour la démonstration, on fabrique une release **motion-v2-defaut** : le même modèle que v2, mais avec une erreur dans le prétraitement C++ (l'écart-type de `crest_factor` est doublé dans `model_params.h`). C'est le genre d'erreur qui arrive en recopiant des paramètres à la main.
-
-**Séquence réelle** ([journal complet](../../evidence/mlops/mlops-demo-macos15.6-v1.txt)) :
-
-```text
-===== flash motion-v1 =====
-La carte annonce : model_version=motion-v1 model_sha256=023e01b8d61b1f96… replay=OK
-CONFIRMÉ : la carte exécute motion-v1 et rejoue ses golden vectors.
-===== flash motion-v2 =====
-La carte annonce : model_version=motion-v2 model_sha256=9acece88c0e4579a… replay=OK
-CONFIRMÉ : la carte exécute motion-v2 et rejoue ses golden vectors.
-===== flash motion-v2-defaut =====
-Release motion-v2-defaut VALIDE (fichiers, SHA-256, labels, schéma, carte).
-La carte annonce : model_version=motion-v2-defaut model_sha256=9acece88c0e4579a… replay=ECHEC
-ACCEPTATION REFUSÉE ['replay'].
-===== flash motion-v1 =====
-CONFIRMÉ : la carte exécute motion-v1 et rejoue ses golden vectors.
-===== status =====
-état souhaité  : motion-v1
-état confirmé  : motion-v1
-la carte annonce : motion-v1 / 023e01b8d61b1f96… / replay OK
+```sh
+uv run pytest tests/test_release.py
 ```
 
-![Séquence MLOps](../../docs/figures/mlops-sequence.png)
+Les tests ci-dessus couvrent les contrôles logiciels. Utilisez la release d’origine pour la manipulation sur carte.
 
-*Schéma de la séquence ci-dessus. Après l'échec, l'outil n'enregistre **aucun** état confirmé, alors que la carte exécute bien v2-defaut.*
+## 4. Téléverser le candidat puis restaurer la référence
 
-**Trois enseignements :**
-1. La release défectueuse a passé **tous les contrôles hors ligne** : fichiers cohérents, SHA-256 corrects, bon schéma. Elle était fausse dès le départ, sans avoir été corrompue après coup.
-2. **Le SHA-256 du modèle était le bon**, car le défaut ne se trouvait pas dans le modèle mais dans le prétraitement. Seul le **rejeu sur la carte** l'a détecté.
-3. Dans le rejeu, **les classes prédites étaient toutes correctes**. Les scores étant déjà saturés à 1,00, l'erreur ne se voyait pas en sortie. Ce sont les **codes int8 d'entrée** (jusqu'à 42 crans d'écart, [journal](../../evidence/mlops/)) qui l'ont révélée. Un contrôle limité à « la carte donne-t-elle la bonne classe ? » l'aurait laissée passer.
+```sh
+uv run python -m tinyml2027.release flash releases/motion-v2
+uv run python -m tinyml2027.release status
+```
 
-Le retour à v1 se fait simplement en **téléversant à nouveau la release v1**. Elle est immuable, son binaire n'a donc pas bougé, et la carte confirme à nouveau `motion-v1`.
+Vérifiez que `motion-v2` est confirmée. Dans `releases/device_state.json`, l’état souhaité indique la version demandée. L’état confirmé indique celle que la carte a annoncée et dont le rejeu a réussi.
+
+![Séquence de vérification et de retour à la version de référence](../../docs/figures/mlops-sequence.png)
+
+Dans l’essai de référence, une version construite avec un écart-type erroné pour `crest_factor` a passé la validation hors ligne. Le modèle et son empreinte correspondaient au manifeste. Le rejeu a détecté l’écart dans les codes INT8 d’entrée, bien que les classes prédites soient restées identiques. Examinez le [journal du déploiement](../../evidence/mlops/mlops-demo-macos15.6-v1.txt).
+
+Pour revenir à la référence, retéléversez sa release et vérifiez l’état annoncé.
+
+```sh
+uv run python -m tinyml2027.release flash releases/motion-v1
+uv run python -m tinyml2027.release status
+```
+
+Attendez l’état confirmé `motion-v1`. Après une interruption du téléversement, utilisez au besoin le mode bootloader décrit au [TP03](../../labs/03-embedded-inference/README.md#6-mesurer-les-ressources-et-vérifier-la-version).
 
 ## Questions
 
-1. Pourquoi la release v2-defaut a-t-elle passé `validate` ? Que faudrait-il ajouter au manifest pour la refuser plus tôt ?
-2. Que se passerait-il si l'on reconstruisait `motion-v1` aujourd'hui avec un nouvel entraînement ? Pourquoi une release doit-elle être immuable ?
-3. Si le câble se débranche pendant le téléversement, dans quel état est la carte ? Comment la récupérer ? (Indice : double appui sur RESET, mode bootloader.)
+1. Pourquoi une release peut-elle passer `validate` alors qu’un calcul du firmware est erroné ?
+2. Pourquoi conserver le binaire de chaque version confirmée ?
+3. Quel état la carte annonce-t-elle après le retour à `motion-v1` ? Quels contrôles permettent de le confirmer ?
 
-## Ce que cette extension ne fait pas : la mise à jour à distance (OTA)
-
-Une vraie mise à jour à distance demanderait au minimum :
-- une **signature** cryptographique du firmware, vérifiée par la carte, pour qu'elle n'accepte que des firmwares authentifiés ;
-- **deux emplacements** en mémoire Flash (A/B), pour écrire la nouvelle version sans effacer celle qui tourne ;
-- un **basculement atomique** et un **chien de garde** (*watchdog*) qui revient à l'ancienne version si la nouvelle ne démarre pas ;
-- un canal **authentifié et chiffré**.
-
-Rien de cela n'est implémenté ici. Le cours n'utilise qu'une mise à jour **USB supervisée**.
-
-## Source
-
-Ce TP adapte le chapitre 13 de [AIoT-Book](https://github.com/wld-code/AIoT-Book/tree/main/labs/ch13-edge-model-update). Le code est réécrit pour ce dépôt.
+Les [essais sur carte originale](../../evidence/mlops/) documentent le refus avant téléversement, l’échec au rejeu et le retour à la version confirmée. Cette extension adapte le chapitre 13 d’[AIoT-Book](../../docs/REFERENCES.md).

@@ -1,16 +1,12 @@
-# Pour aller plus loin A — Reconnaître des mots avec Edge Impulse
+# Extension — Reconnaître des mots avec Edge Impulse
 
-**Durée :** 2 à 3 h. **Matériel :** la même Nano 33 BLE **Sense**, avec son microphone intégré, plus une connexion Internet et un compte Edge Impulse. Facultatif : les TP01 à TP03 fonctionnent sans ce service.
+**Objectif.** Entraîner un classifieur audio et comparer ses résultats sur des clips de test et sur le microphone de la Nano.
 
-> **Testé** sur une carte originale avec macOS 15.6, le 23/11/2026 ([preuves](../../evidence/edge-impulse/)) : micro, Studio (test 80,67 %), export compilé et exécuté sur la carte. Avec une vraie voix, « stop » est mal reconnu (étape 6). Rev2 : non testée. Le Studio évolue : notez la date de votre séance.
+**Durée.** 2 à 3 h. **Matériel.** Une Nano 33 BLE Sense avec son microphone intégré et un câble USB de données. **Prérequis.** Un poste préparé selon le [guide d’installation](../../docs/INSTALLATION.md), une connexion Internet et un compte Edge Impulse. Lancez les commandes depuis la racine du dépôt.
 
-## Ce que vous allez faire
+Nous utiliserons trois classes, `go`, `stop` et `bruit`. Le Studio prépare les entrées du modèle, l’entraîne et exporte une bibliothèque Arduino. Nous reprenons ainsi sur des signaux audio les étapes des TP01 à TP03.
 
-Comparer le travail « à la main » des TP01 à TP03 (features, entraînement, conversion, firmware) avec une plateforme qui automatise ces étapes. Le but est de reconnaître **« go »**, **« stop »** et une classe **« bruit / inconnu »**, puis de **mesurer** la qualité obtenue, au-delà de la simple démonstration.
-
----
-
-## Étape 1 — Vérifier le microphone (sans Internet)
+## 1. Vérifier le microphone (sans Internet)
 
 ```sh
 ./scripts/compile.sh advanced/edge-impulse/sketches/mic_check
@@ -18,67 +14,37 @@ Comparer le travail « à la main » des TP01 à TP03 (features, entraînement, 
 ./scripts/arduino.sh monitor -p PORT -c baudrate=115200
 ```
 
-Le sketch utilise la bibliothèque **PDM**, fournie avec le core officiel `arduino:mbed_nano`. Rien n'est à installer.
+Remplacez `PORT` par le port de la carte. Le sketch utilise la bibliothèque PDM du support Arduino Mbed Nano. Attendez que le microphone se stabilise, puis observez le niveau RMS et la crête au calme et pendant quelques claquements de mains. Vérifiez que les crêtes augmentent et que la cadence moyenne est proche de 16 000 échantillons par seconde. Les valeurs fluctuent d’une ligne à l’autre car le microphone livre les données par blocs. Une erreur `PDM.begin` signale un échec d’initialisation. Vérifiez que vous utilisez bien une carte **Sense**.
 
-**Sortie réelle (pièce calme, carte de référence) :**
-```text
-t_ms,rms,crete,echantillons_par_s
-4016,310.5,370,16384
-4516,217.4,282,15360
-5266,27.7,66,16384
-6266,6.7,13,16384
-7266,17.7,50,16384
-```
+## 2. Compte et projet Edge Impulse
 
-![Moniteur série du micro, pièce calme](../../docs/screenshots/edgeimpulse-etape01-micro-moniteur-macos-original.png)
-
-- `echantillons_par_s` alterne entre 15 360 et 16 384, car le micro livre ses données par blocs de 512 octets (256 échantillons). La moyenne est bien d'environ 16 000.
-- Les premières lignes sont plus fortes : c'est la mise en route du micro, qui se stabilise en environ 1 s.
-- Dans le calme, le niveau RMS reste autour de 10 (unités brutes, sur une échelle de 0 à 32 767).
-
-**Claquements de mains (essai réel, à environ 30 cm) :** la crête passe d'environ 50 au calme à une valeur comprise entre 913 et 3 658 à chaque claquement. On a compté 10 pics, pour 3 claquements demandés : une ligne couvre 250 ms, si bien qu'un même claquement et son écho peuvent tomber sur deux lignes. Le journal ne permet pas de compter exactement les claquements. Une carte **sans Sense** n'a pas de micro : le sketch affiche alors `ERREUR PDM.begin`.
-
----
-
-## Étape 2 — Compte et projet Edge Impulse
-
-Créez un compte sur <https://studio.edgeimpulse.com>, puis un projet **Personal** et **Private**. Un projet public est visible et copiable par tout le monde : n'y mettez pas de voix. **Avant de commencer, notez** l'offre gratuite et ses limites (le 23/11/2026 : 60 min de calcul par tâche, 4 Go ou 4 h de données, 3 projets privés), où les données sont stockées et la date de la séance.
-
-![Projet privé](../../docs/screenshots/edgeimpulse-etape02-projet-prive-studio.png)
-
-*Le projet est bien **Private** (encadré « Sharing »).*
+Fermez le moniteur série après le contrôle du microphone. Créez un projet **Personal** et **Private** dans [Edge Impulse Studio](https://studio.edgeimpulse.com). Vérifiez la visibilité dans **Sharing**. Utilisez les clips publics du jeu fourni et gardez vos enregistrements personnels hors du service et de Git. Notez la date de la séance et vérifiez les conditions d’utilisation de votre offre avant d’importer les données.
 
 Dans le Studio, choisissez la cible **Arduino Nano 33 BLE Sense (Cortex-M4F 64MHz)** (en haut à droite) : les estimations de RAM, de Flash et de latence en dépendent.
 
-## Étape 3 — Préparer et importer les données
+## 3. Préparer et importer les données
 
-Le parcours de référence utilise le jeu public **Speech Commands v0.02** (Google, Pete Warden, licence CC BY 4.0) : aucune voix personnelle n'est envoyée. Il ne contient pas « start » : on prend **`go`**, **`stop`** et une classe **`bruit`** (bruits de fond découpés en 1 s et autres mots : yes, no, up, down, left, right).
+Utilisez le jeu public **Speech Commands v0.02** (Google, Pete Warden, CC BY 4.0). La classe `bruit` regroupe des bruits de fond découpés en clips d’une seconde et les mots yes, no, up, down, left et right.
 
-1. Téléchargez `speech_commands_v0.02.tar.gz` (2,3 Go) depuis `download.tensorflow.org/data/` et décompressez-le **hors du dépôt Git**.
+1. Téléchargez `speech_commands_v0.02.tar.gz` (2,3 Go) depuis le [serveur TensorFlow](https://storage.googleapis.com/download.tensorflow.org/data/speech_commands_v0.02.tar.gz) et décompressez-le **hors du dépôt Git**.
 2. Construisez le sous-ensemble :
    ```sh
    uv run python advanced/edge-impulse/prepare_speech_commands.py --src CHEMIN/speech_commands --out CHEMIN/ei_kws
    ```
-   Le script produit 200 clips par classe pour l'entraînement et 50 pour le test, en WAV 16 kHz, mono, 1 s. **Le test et l'entraînement n'ont aucun locuteur en commun** : le script s'arrête en erreur sinon. Résultat réel : 177 à 184 locuteurs par mot en entraînement, 40 à 44 en test ([rapport](../../evidence/edge-impulse/speech-commands-subset_report.json)).
-3. Dans **Data acquisition → Add existing data → Upload data** : sélectionnez les fichiers de `test/`, cochez **Test** et **Infer from filename**, puis **Upload data**. Recommencez avec `train/` et **Training**. Ne choisissez pas « Automatically split » : le Studio mélangerait les locuteurs.
+   Choisissez un dossier de sortie vide. Le script produit des WAV mono de 1 s à 16 kHz, avec 200 clips d’entraînement et 50 de test par classe. Il vérifie que les locuteurs sont distincts entre les deux ensembles.
+3. Dans **Data acquisition → Add existing data → Upload data**, importez les fichiers de `test/` avec **Test** et **Infer from filename**, puis ceux de `train/` avec **Training**. Gardez cette séparation pour évaluer des voix absentes de l’entraînement.
 
-![Données importées](../../docs/screenshots/edgeimpulse-etape03-donnees-studio.png)
+Vérifiez que le Studio affiche 600 clips d’entraînement et 150 de test, répartis entre les trois classes. Gardez le dossier de sortie hors du dépôt Git.
 
-*600 clips d'entraînement, 150 de test ; à droite, la forme d'onde d'un « stop ».*
+## 4. Créer l'« Impulse »
 
-Résultat réel : 750 fichiers importés, 0 échec, soit 10 min de données d'entraînement et 150 clips de test.
+Dans **Create impulse**, choisissez une fenêtre de **1000 ms** à **16 000 Hz**, le bloc **Audio (MFCC)** et le bloc **Classification**, puis cliquez sur **Save Impulse**. Les MFCC sont des coefficients qui résument la forme du spectre audio sur une échelle liée à la perception des fréquences.
 
-**Ne mettez jamais d'enregistrements de voix dans Git** (le dossier de sortie doit rester hors du dépôt).
+Dans **MFCC**, gardez 13 coefficients, des trames de 20 ms, 32 filtres et une FFT de 256 points. Cliquez sur **Save parameters**, puis **Generate features**. Dans **Classifier**, gardez deux couches de convolution 1D à 8 et 16 filtres, 100 époques et un taux d’apprentissage de 0,0001. Cliquez sur **Save & train**.
 
-## Étape 4 — Créer l'« Impulse »
+Vérifiez que l’entraînement se termine. Le Studio calcule son score de validation sur une partie des données d’entraînement. Un même locuteur peut apparaître dans les deux parties. Utilisez l’étape suivante pour évaluer les clips de locuteurs réservés au test.
 
-**Create impulse** : fenêtre **1000 ms**, 16 000 Hz, bloc de traitement **Audio (MFCC)**, bloc d'apprentissage **Classification**, puis **Save Impulse**. Dans **MFCC**, gardez les paramètres par défaut (13 coefficients, trames de 20 ms, 32 filtres, FFT 256), **Save parameters**, puis **Generate features**. Dans **Classifier**, gardez le réseau par défaut (deux couches de convolution 1D à 8 et 16 filtres, 100 époques, taux d'apprentissage 0,0001), puis **Save & train**.
-
-![Estimation du Studio pour la Nano](../../docs/screenshots/edgeimpulse-etape04-estimation-nano-studio.png)
-
-*Le score affiché au-dessus (85,8 %) est celui de la « validation », un tirage aléatoire du train par le Studio : un même locuteur peut s'y trouver des deux côtés, ce score est donc optimiste.*
-
-## Étape 5 — Évaluer sur le test
+## 5. Évaluer sur le test
 
 **Model testing → Classify all.** Pour évaluer aussi le modèle int8 (celui qui sera déployé), cochez **Test 'Quantized (int8)' model** dans la roue dentée, puis relancez.
 
@@ -86,22 +52,11 @@ Résultat réel : 750 fichiers importés, 0 échec, soit 10 min de données d'en
 
 *Modèle int8, 150 clips de locuteurs jamais vus. Le float32 donne exactement la même matrice.*
 
-| vrai ↓ / prédit → | bruit | go | stop | incertain |
-|---|---|---|---|---|
-| bruit | 74 % | 10 % | 2 % | 14 % |
-| go | 0 % | 80 % | 4 % | 16 % |
-| stop | 2 % | 4 % | 88 % | 6 % |
+Le modèle INT8 de référence a classé correctement 80,67 % des clips du test. Dans la matrice de confusion, repérez les faux positifs, c’est-à-dire les clips de bruit pris pour une commande. Dans l’essai de référence, 10 % des clips de bruit sont classés `go` et 2 % `stop`. La colonne « incertain » correspond aux clips dont aucun score ne dépasse 0,6.
 
-- **Accuracy 80,67 %**, F1 de 0,82 à 0,91. « Incertain » signifie qu'aucun score ne dépasse le seuil de 0,6.
-- **Faux positifs** : 10 % des clips de bruit sont pris pour « go », 2 % pour « stop ». Pour une commande vocale, c'est le chiffre le plus important : un « go » déclenché sans que personne ne parle.
-
-## Étape 6 — Déployer sur la Nano et mesurer
+## 6. Déployer sur la Nano et mesurer
 
 **Deployment** : cible **Arduino library**, moteur **EON Compiler**, modèle **Quantized (int8)**, puis **Build**. Le Studio télécharge un ZIP.
-
-![Estimations de déploiement](../../docs/screenshots/edgeimpulse-etape06-deploiement-arduino-studio.png)
-
-*Remarquez que le classifieur float32 occupe **moins** de Flash (27,1 K) que l'int8 (30,6 K) : comme à l'exemple 05, l'int8 ne réduit pas toujours la taille d'un très petit modèle.*
 
 Décompressez le ZIP **dans un dossier temporaire**, sans l'installer dans vos bibliothèques Arduino, puis compilez l'exemple micro avec l'environnement du cours :
 
@@ -111,36 +66,19 @@ Décompressez le ZIP **dans un dossier temporaire**, sans l'installer dans vos b
 ./scripts/upload.sh  CHEMIN/.../nano_ble33_sense_microphone
 ```
 
-**Mesures réelles** (carte originale, [journal](../../evidence/edge-impulse/ei-kws-deploiement-macos15.6-v1.txt)) :
+Dans les deux commandes, remplacez `CHEMIN` par le dossier d’extraction et adaptez le nom de la bibliothèque à celui de l’archive. Pour le téléversement, remplacez `CHEMIN/...` par le chemin complet vers le même dossier de sketch qu’à la compilation. Ouvrez ensuite le moniteur série avec la commande de l’étape 1 et observez les scores au silence, puis en prononçant `go` et `stop`.
 
-| | Estimation du Studio | Mesure sur la carte |
-|---|---|---|
-| Traitement MFCC | 258 ms | **134 ms** |
-| Classification | 4 ms | **6 ms** |
-| Flash | 30,6 K (classifieur seul) | **161 920 octets** pour tout le programme (16 %) |
-| RAM | 15,4 K | **51 872 octets** de variables globales (19 %), plus 32 000 octets de tampon audio alloués au démarrage |
+L’exemple écoute pendant une seconde, puis fait une pause. Certaines fenêtres tombent entre deux mots. Dans l’essai de référence sur la carte originale, `stop` arrive en tête dans 1 fenêtre sur 12 pendant l’essai vocal, alors que 88 % des clips `stop` du Studio sont correctement classés. Pour comparer les performances sur carte, il faudrait disposer de fenêtres étiquetées et synchronisées avec les mots prononcés. Relevez aussi les temps de traitement et de classification. Les chiffres de mémoire de la compilation incluent le programme complet. Retrouvez les [mesures et journaux de la Nano originale](../../evidence/edge-impulse/). L’export reste à tester sur Rev2.
 
-Les estimations ne mesurent pas la même chose que la carte : le Studio compte le modèle et le traitement, la compilation compte tout le programme (Mbed OS, USB, PDM…). **Ce sont les mesures qui comptent.**
+Après l’essai, restaurez le programme d’inférence du cours. Si vous disposez de la release `motion-v1`, utilisez la commande suivante. Sinon, recompilez et téléversez le firmware selon le [TP03](../../labs/03-embedded-inference/README.md).
 
-**Essai réel sur la carte** ([journaux](../../evidence/edge-impulse/)). La carte écoute 1 s, puis fait une pause d'environ 2 s :
+```sh
+uv run python -m tinyml2027.release flash releases/motion-v1
+```
 
-- **silence** : 5 fenêtres sur 5 classées « bruit » ;
-- l'enseignant dit « go » toutes les 2 s pendant 35 s : « go » en tête dans **7 fenêtres sur 11** ;
-- puis « stop » de la même façon : « stop » en tête dans **1 fenêtre sur 12**, les autres classées « bruit ».
+## Questions
 
-Les fenêtres n'étant pas synchronisées avec la voix, certaines tombent entre deux mots : ces chiffres ne sont pas une accuracy. Mais l'écart avec le test du Studio (88 % sur « stop ») est net. Causes possibles, **non vérifiées** : un accent français absent de Speech Commands, la distance et le micro de la carte, un « stop » prononcé plus court. C'est la leçon de cette extension : **un bon score sur un jeu de test public ne garantit pas le résultat avec un nouvel utilisateur**.
+1. Pourquoi séparer les locuteurs entre entraînement et test ?
+2. Comment constituer un test étiqueté avec le microphone de la Nano ? Comment compter les déclenchements au silence et les mots manqués ?
 
-> **Question.** Comment mesureriez-vous proprement la qualité avec votre propre voix ? (Indice : enregistrer des clips étiquetés avec la carte, en ajouter au test… et ne jamais régler le modèle sur ce même test.)
-
-Après l'essai, remettez le firmware du cours : `uv run python -m tinyml2027.release flash releases/motion-v1`.
-
-**Testez séparément sur une Rev2** avant d'affirmer que l'export y fonctionne : ce n'est pas fait ici.
-
-## Limites
-
-- Le service peut changer ses offres, son interface ou ses formats d'export : chaque version doit être notée.
-- Sans Internet ni compte, cette extension n'est pas réalisable. La solution de repli, sans service en ligne, consiste à appliquer la démarche des TP01 à TP03 à l'audio. Elle ne donne pas le même résultat et demande plus de travail.
-
-## Sources
-
-<https://docs.edgeimpulse.com/> · <https://docs.arduino.cc/tutorials/nano-33-ble-sense/edge-impulse> · <https://docs.arduino.cc/hardware/nano-33-ble-sense/>
+Les noms des menus peuvent évoluer. Consultez la [documentation Edge Impulse](https://docs.edgeimpulse.com/) et le [guide Arduino](https://docs.arduino.cc/tutorials/nano-33-ble-sense/edge-impulse).

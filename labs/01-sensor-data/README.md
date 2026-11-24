@@ -1,259 +1,151 @@
-# TP01 — Du capteur au dataset
+# TP01 — Du capteur au jeu de données
 
-**Durée :** environ 4 h. **Matériel :** une Arduino Nano 33 BLE Sense (originale ou Rev2), un câble USB de données et un ordinateur préparé avec le [guide d'installation](../../docs/INSTALLATION.md).
+**Objectif.** Enregistrer trois gestes avec un accéléromètre, contrôler la qualité des mesures et préparer les données utilisées pour entraîner le modèle du TP02.
 
-> **Testé** sur une carte originale avec macOS 15.6, le 23/11/2026 : 5 sessions, 15 enregistrements valides ([preuves](../../evidence/tp01/)). Rev2 : compilé seulement. Les captures viennent de cet essai.
+**Durée.** Environ 4 h.
 
-## Ce que vous allez faire
+**Matériel.** Une Arduino Nano 33 BLE Sense originale ou Rev2, un câble USB de données, un ordinateur et une table stable.
 
-Vous allez enregistrer trois gestes avec l'accéléromètre de la carte, vérifier que les mesures sont correctes, puis transformer chaque tranche de 2 secondes en **4 nombres**, les *features*. Ces 4 nombres serviront au TP02 à entraîner un modèle qui reconnaît le geste.
+**Prérequis.** Préparez le poste avec le [guide d’installation](../../docs/INSTALLATION.md) et suivez le [tutoriel Arduino](../../tutorials/02-arduino-nano/README.md) pour identifier la révision de la carte. Lancez les commandes depuis la racine du dépôt, dans Git Bash sous Windows.
 
-| Geste | Nom dans les fichiers | Ce que vous faites |
-|---|---|---|
-| ![immobile](../../docs/figures/geste-stationary.gif) | `stationary` | rien : la carte est posée, personne ne la touche |
-| ![glisser](../../docs/figures/geste-periodic.gif) | `periodic` | faire glisser la carte en avant et en arrière **dans le sens du câble**, environ 1 aller-retour par seconde |
-| ![tapoter](../../docs/figures/geste-impact.gif) | `impact` | tapoter la **table** à 10 cm de la carte, 1 à 2 fois par seconde. **Ne frappez jamais la carte.** |
+Nous allons enregistrer plusieurs sessions contenant les mêmes trois gestes. Nous découperons ensuite chaque enregistrement en fenêtres d’environ deux secondes et résumerons chaque fenêtre par quatre caractéristiques numériques (*features*). Les gestes servent à étudier la classification de signaux en laboratoire.
 
-*Ces animations sont des schémas dessinés, pas des photos.*
+## 1. Téléverser le firmware d’acquisition
 
-Ce sont des manipulations de laboratoire. Elles ne disent rien de l'état d'un vrai moteur ou d'une vraie machine.
+Branchez la carte et repérez son port série. La commande doit signaler le port par `<- Arduino`.
 
----
-
-## Étape 1 — Téléverser le firmware d'acquisition
-
-**Objectif :** la carte envoie ses mesures au PC sur demande.
-
-1. Branchez la carte, puis vérifiez qu'elle est reconnue :
-   ```sh
-   uv run python -m tinyml2027.capture ports
-   ```
-   Une ligne doit se terminer par `<- Arduino`.
-2. Compilez et téléversez :
-   ```sh
-   ./scripts/compile.sh labs/01-sensor-data/firmware/imu_capture
-   ./scripts/upload.sh  labs/01-sensor-data/firmware/imu_capture
-   ```
-   Pour une carte **Rev2**, ajoutez `REV=rev2` devant les deux commandes. Dans Arduino IDE ([captures](../../tutorials/02-arduino-nano/README.md#arduino-ide-pas-à-pas)), décommentez la ligne `#define NANO_REV2` en haut du sketch.
-3. Interrogez la carte :
-   ```sh
-   uv run python -m tinyml2027.capture info
-   ```
-
-**Résultat obtenu sur la carte de référence :**
-```text
-/dev/cu.usbmodem314101 : INFO firmware=imu_capture 0.1.0 board_revision=original imu=LSM9DS1 odr_nominal_hz=119.00
+```sh
+uv run python -m tinyml2027.capture ports
 ```
 
-![capture ports et capture info](../../docs/screenshots/tp01-etape01-capture-info-macos-original.png)
+Compilez le firmware, c’est-à-dire le programme d’acquisition exécuté par la carte, puis téléversez-le.
 
-**Si ça ne marche pas :**
-- `0 carte(s) Arduino détectée(s)` : changez de câble. Beaucoup de câbles ne font que la charge.
-- `pas de réponse « INFO »` : un autre firmware tourne sur la carte. Refaites l'étape 2.
-- `impossible d'ouvrir ... port busy` : fermez le moniteur série, Arduino IDE ou tout notebook qui utilise le port.
-- `ERREUR imu_begin : LSM9DS1 absent : carte Rev2 ?` : vous avez une Rev2. Recompilez avec `REV=rev2`.
-
-### Comment la carte envoie ses mesures
-
-Le firmware attend un ordre du PC, puis envoie une ligne par mesure :
-
-```text
-PC   -> carte : START s01_stationary_t01
-carte -> PC   : BEGIN recording_id=s01_stationary_t01 firmware=imu_capture 0.1.0 ...
-                seq,t_us,ax_g,ay_g,az_g
-                0,0,-0.00024,-0.00842,0.96509
-                1,8424,-0.00012,-0.00964,0.96521
-                ...
-PC   -> carte : STOP
-carte -> PC   : END recording_id=s01_stationary_t01 n=2315
+```sh
+./scripts/compile.sh labs/01-sensor-data/firmware/imu_capture
+./scripts/upload.sh  labs/01-sensor-data/firmware/imu_capture
 ```
 
-| Colonne | Signification | Unité |
+Ces commandes ciblent par défaut la carte originale, équipée du capteur LSM9DS1. Pour la Rev2 et son capteur BMI270, ajoutez `REV=rev2` devant les deux commandes. Si vous utilisez [Arduino IDE](../../tutorials/02-arduino-nano/README.md#arduino-ide-pas-à-pas), décommentez `#define NANO_REV2` en haut de `imu_capture.ino` pour la Rev2.
+
+```sh
+uv run python -m tinyml2027.capture info
+```
+
+Vérifiez que la réponse `INFO` indique `firmware=imu_capture` et la bonne paire révision-capteur. La cadence nominale annoncée est de 119 Hz pour l’originale et de 100 Hz pour la Rev2.
+
+Si aucun port n’est détecté, essayez un câble USB de données. Si le port est occupé, fermez le moniteur série ou le programme qui l’utilise. Si la carte reste muette, vérifiez le firmware téléversé. En cas d’erreur d’initialisation du capteur, vérifiez la révision utilisée à la compilation.
+
+## 2. Enregistrer les trois gestes
+
+Une session regroupe un enregistrement de 20 s pour chaque geste. Les animations schématisent les manipulations.
+
+| Geste | Étiquette | Consigne |
 |---|---|---|
-| `seq` | numéro de la mesure, sans trou ni doublon côté carte | — |
-| `t_us` | instant de la mesure **sur la carte**, depuis la première mesure | µs |
-| `ax_g`, `ay_g`, `az_g` | accélération sur chaque axe | g (1 g ≈ 9,81 m/s²) |
-
-**Pourquoi `t_us` vient de la carte et non du PC ?** Les lignes arrivent par paquets sur l'USB, si bien que l'heure de réception sur le PC est irrégulière. Seule l'horloge de la carte dit quand la mesure a vraiment été prise.
-
----
-
-## Étape 2 — Enregistrer une session
-
-**Objectif :** enregistrer les 3 gestes, 20 secondes chacun.
+| ![Carte immobile](../../docs/figures/geste-stationary.gif) | `stationary` | Posez la carte à plat et laissez-la immobile. |
+| ![Glissement de la carte](../../docs/figures/geste-periodic.gif) | `periodic` | Faites glisser la carte dans le sens du câble, environ un aller-retour par seconde. |
+| ![Tapotement de la table](../../docs/figures/geste-impact.gif) | `impact` | Tapotez la table à 10 cm de la carte, une à deux fois par seconde. **Ne frappez jamais la carte.** |
 
 ```sh
 uv run python -m tinyml2027.capture guided --session s01
 ```
 
-Pour chaque geste, l'outil procède ainsi :
-1. il affiche la consigne et attend que vous appuyiez sur **Entrée** ;
-2. il compte 3, 2, 1 ;
-3. pour `periodic` et `impact`, il affiche **« COMMENCEZ LE GESTE MAINTENANT »**. Commencez alors le geste. L'enregistrement démarre 2 s plus tard, quand le geste est déjà régulier : **continuez jusqu'à la fin** ;
-4. il enregistre pendant 20 s ;
-5. il affiche le **contrôle qualité** et vous demande `Accepter cet essai ? [O/n]`.
+Pour chaque geste, lisez la consigne et appuyez sur Entrée. Pour un geste en mouvement, commencez dès le message « COMMENCEZ LE GESTE MAINTENANT ». L’enregistrement démarre deux secondes plus tard, le temps d’établir le mouvement. Poursuivez jusqu’à la fin.
 
-**Résultat réel pour `s01_stationary_t01` :**
-```text
-échantillons      : 2315 sur 19.91 s
-cadence mesurée   : 116.24 Hz (intervalle médian 8436 µs, CV 0.032)
-séquence / temps  : 0 rupture(s), 0 timestamp(s) non croissant(s)
-lacunes           : 0 (plus grande 9072 µs)
-NaN / saturations : 0 / 0
-fenêtres de 256  : 17 sans lacune
-VERDICT           : VALIDE
-  -> ACCEPTÉ : data/raw/s01/s01_stationary_t01.csv
-```
+Avant d’accepter l’essai, vérifiez que le verdict est `VALIDE` et que le geste a été tenu pendant toute la capture. Le contrôle qualité indique la cadence mesurée, les ruptures de séquence, les horodatages non croissants, les lacunes (intervalles anormalement longs), les valeurs non numériques et les saturations à la limite de mesure de ±4 g. Il indique aussi combien de fenêtres de 256 mesures sont exploitables. Le mode guidé en exige au moins trois par essai.
 
-![Enregistrement et contrôle qualité](../../docs/screenshots/tp01-etape02-enregistrement-qc-macos-original.png)
+Un essai accepté est enregistré dans `data/raw/`, sous le dossier de sa session. Refusez un essai invalide ou un geste mal exécuté. L’outil conserve l’essai refusé dans `data/rejected/` et l’inscrit avec `valid=0` dans `data/manifest.csv`, le registre des enregistrements.
 
-**Lire le contrôle qualité :**
-- **cadence mesurée** : la carte annonce 119 Hz, mais on en mesure 116. C'est la valeur mesurée qui compte, jamais la valeur annoncée.
-- **ruptures, lacunes** : des mesures ont été perdues. Elles ne sont **jamais** inventées ni interpolées.
-- **saturations** : l'accéléromètre est réglé sur ±4 g. Au-delà, la valeur est fausse.
-- **fenêtres de 256 sans lacune** : le nombre de tranches utilisables pour le TP02.
-
-Si vous refusez un essai, il est **conservé** dans `data/rejected/` et noté `valid=0` dans `data/manifest.csv`. On ne supprime pas une mauvaise mesure : on la met de côté, avec la raison du refus.
-
-### Combien de sessions ?
-
-**Au moins 4, idéalement 5.** Une session contient les 3 gestes et dure environ 3 minutes.
-
-**Entre deux sessions, déplacez la carte** dans un autre coin de la table et tournez-la d'un quart de tour. **Variez aussi les gestes** : glissement lent ou rapide, tapotements doux ou forts. Le TP02 montre ce qui arrive quand une session contient un geste que le modèle n'a jamais vu.
+Réalisez au moins quatre sessions. Enregistrez cinq sessions pour suivre le parcours de référence du TP02, qui réserve `s05` au test. Entre les sessions, changez l’emplacement de la carte, tournez-la d’un quart de tour et variez légèrement la vitesse du glissement ou la force des tapotements. Le TP02 gardera une session entière pour évaluer le modèle sur des gestes enregistrés séparément.
 
 ```sh
 uv run python -m tinyml2027.capture guided --session s02
 # ... jusqu'à s05
 ```
 
-Pour refaire un seul geste, utilisez la commande ci-dessous. Le numéro d'essai change, car un identifiant n'est jamais réutilisé.
+Pour refaire un seul geste, choisissez un numéro d’essai encore inutilisé pour ce geste et cette session.
 
 ```sh
 uv run python -m tinyml2027.capture record --session s02 --condition impact --trial 2
 ```
 
----
+## 3. Lire les signaux
 
-## Étape 3 — Regarder les signaux
+Ouvrez un CSV de chaque geste. Chaque ligne contient un numéro de mesure (`seq`), le temps écoulé depuis la première mesure (`t_us`, en microsecondes) et l’accélération sur les trois axes (`ax_g`, `ay_g`, `az_g`). Les accélérations sont exprimées en g (1 g ≈ 9,81 m/s²). Les horodatages pris sur la carte permettent de calculer la cadence d’échantillonnage même si les lignes arrivent par paquets sur le port USB.
 
-**Objectif :** relier chaque geste à ce que mesure le capteur.
+![Accélération mesurée pour les trois gestes](../../docs/figures/tp01-signaux-3-conditions.png)
 
-![Accélération des 3 gestes](../../docs/figures/tp01-signaux-3-conditions.png)
+*Mesures de la session de référence s01. La courbe de l’axe z est décalée de −1 g sur la figure.*
 
-*Mesure réelle, session s01. L'axe az a été décalé de −1 g.*
+Dans vos données, repérez la composante due à la pesanteur. À plat et immobile, la carte donne environ +1 g sur l’axe z, ou −1 g si vous la retournez. Sur la figure, le glissement fait osciller l’axe x, orienté dans la longueur de la carte. Les tapotements produisent des pics brefs, surtout sur l’axe z.
 
-**À observer :**
-- **La gravité.** Carte posée à plat, `az` vaut environ +1 g même quand rien ne bouge, car l'accéléromètre mesure aussi la pesanteur. Retournez la carte et `az` passe à −1 g. Le tutoriel 02 a vérifié les 6 orientations.
-- **Glisser** fait osciller `ax`, l'axe qui suit la longueur de la carte, donc le sens du câble.
-- **Tapoter** produit des pics brefs, surtout sur `az`, car la table vibre verticalement.
+## 4. Découper le signal en fenêtres
 
-> **Question 1.** Pourquoi faut-il glisser la carte **dans le sens du câble**, et pas en travers ? Indice : le modèle n'utilise que `ax`.
+Nous utilisons des fenêtres de **256 mesures**, décalées de **128 mesures**. Deux fenêtres voisines partagent donc la moitié de leurs mesures. À environ 116 Hz, cadence mesurée sur la carte originale de référence, une fenêtre couvre environ 2,2 s.
 
----
+![Fenêtre glissante sur un enregistrement de glissement](../../docs/figures/tp01-fenetrage.gif)
 
-## Étape 4 — Découper en fenêtres
+*Enregistrement de référence s01, geste `periodic`. La fenêtre avance de 128 mesures à chaque image.*
 
-**Objectif :** transformer un long enregistrement en tranches de même taille.
+Pour chaque fenêtre, nous calculons la cadence à partir de ses horodatages. Avec `N = 256`, la cadence `fs_win` vaut `(N − 1) / ((t_us[N−1] − t_us[0]) · 10⁻⁶)` en Hz. Une fenêtre est invalide si la séquence comporte une rupture, si les horodatages cessent de croître strictement ou si un intervalle dépasse 1,5 fois la médiane des intervalles de la fenêtre. Les mesures manquantes restent manquantes.
 
-![Fenêtrage](../../docs/figures/tp01-fenetrage.gif)
+La cadence fixe aussi la fréquence maximale observable sans repliement spectral, c’est-à-dire sans qu’une fréquence élevée apparaisse comme une fréquence plus basse. Cette limite, appelée fréquence de Nyquist, vaut la moitié de la cadence, soit environ 58 Hz à 116 Hz. Un filtrage après acquisition ne peut pas annuler ce repliement.
 
-*Mesure réelle (s01, glisser). La fenêtre colorée avance de 128 mesures à chaque image.*
+## 5. Résumer chaque fenêtre par quatre caractéristiques
 
-- Une fenêtre contient **N = 256 mesures**, soit 256 / 116 ≈ **2,2 s**.
-- Elle avance de **128 mesures** à chaque fois : deux fenêtres voisines partagent donc la moitié de leurs mesures (recouvrement de 50 %).
-- La cadence de chaque fenêtre est recalculée à partir de ses propres horodatages :
-  `fs_win = (N − 1) / ((t_us[N−1] − t_us[0]) · 10⁻⁶)` Hz.
-- Une fenêtre est **rejetée** dans trois cas : un `seq` manque, `t_us` recule, ou un intervalle dépasse 1,5 fois la médiane. On ne la répare jamais.
+Nous utilisons l’axe x. Pour chaque fenêtre, nous calculons le signal centré `c` en soustrayant sa moyenne à chaque mesure. Ce centrage retire la composante constante due à l’orientation et au décalage du capteur.
 
-**Fréquence d'échantillonnage et Nyquist.** À 116 Hz, on ne peut pas observer correctement un phénomène plus rapide que 116 / 2 = 58 Hz, la fréquence de Nyquist. Un filtre appliqué *après* l'acquisition ne corrige pas une cadence trop basse : l'information manquante n'a jamais été mesurée.
+| Caractéristique | Calcul et interprétation |
+|---|---|
+| `rms_g` | Valeur efficace, en g. La racine carrée de la moyenne de `c²` mesure l’amplitude des variations. |
+| `crest_factor` | Facteur de crête, sans unité. Le maximum de `abs(c)` divisé par la valeur efficace indique l’importance des pics par rapport au niveau moyen du signal. |
+| `dominant_hz` | Fréquence du pic spectral le plus élevé entre 0,5 et 10 Hz. Elle donne un indice sur le rythme du geste. |
+| `band_power_g2` | Puissance intégrée entre 0,5 et 10 Hz, en g². Elle mesure la contribution de cette bande aux variations du signal. |
 
----
+Lorsque `rms_g < 10⁻⁶ g`, les trois autres caractéristiques valent zéro. Pour les deux caractéristiques fréquentielles, nous pondérons le signal centré par une fenêtre de Hann afin d’atténuer les effets de bord, puis nous calculons sa transformée de Fourier rapide (FFT). La densité spectrale de puissance répartit la puissance selon la fréquence, en g²/Hz. Le [contrat de données](../../docs/DATA_CONTRACT.md#4-les-4-features) donne les formules utilisées dans Python et sur la carte.
 
-## Étape 5 — Les 4 features
+![Densités spectrales de puissance pour les trois gestes](../../docs/figures/tp01-psd-3-conditions.png)
 
-**Objectif :** résumer chaque fenêtre de l'axe `ax` par 4 nombres, avec leurs unités.
+*Mesures de référence. La bande grise va de 0,5 à 10 Hz. Le point indique la fréquence dominante dans cette bande. Repérez le pic du glissement périodique.*
 
-On note x[n] la mesure (en g), pour n = 0 … 255. On commence par **retirer la moyenne** : c[n] = x[n] − moyenne(x). Ce retrait élimine la gravité et le décalage du capteur.
+Le [spectrogramme des tapotements](../../docs/figures/tp01-spectrogramme-impact.png) montre comment le contenu fréquentiel varie au cours du temps. Repérez les bandes verticales correspondant aux chocs brefs.
 
-| Feature | Formule | Unité | Ce qu'elle mesure |
-|---|---|---|---|
-| `rms_g` | √(moyenne de c²) | g | l'énergie du mouvement |
-| `crest_factor` | max\|c\| / rms | — | à quel point il y a des **pics** isolés |
-| `dominant_hz` | fréquence du plus grand pic du spectre, entre 0,5 et 10 Hz | Hz | le **rythme** du geste |
-| `band_power_g2` | puissance du spectre entre 0,5 et 10 Hz | g² | l'énergie dans la bande des gestes |
-
-Si la fenêtre est parfaitement immobile (rms < 10⁻⁶ g), les trois dernières features valent 0.
-
-Le spectre se calcule ainsi : on multiplie c[n] par une fenêtre de Hann, puis on calcule la FFT et la densité spectrale P[k] en g²/Hz. La définition exacte est dans [docs/DATA_CONTRACT.md](../../docs/DATA_CONTRACT.md). Un test vérifie qu'elle donne le même résultat que `scipy.signal.welch`, à 10⁻¹² près.
-
-![PSD des 3 gestes](../../docs/figures/tp01-psd-3-conditions.png)
-
-*Mesure réelle. Le point marque `dominant_hz`, et la zone grise la bande 0,5–10 Hz.*
-
-![Spectrogramme](../../docs/figures/tp01-spectrogramme-impact.png)
-
-*Mesure réelle. Le spectrogramme montre le spectre au cours du temps : chaque tapotement allume toutes les fréquences pendant un instant.*
-
-**Spectre, densité spectrale ou spectrogramme ?**
-- Le **spectre** (FFT) indique quelles fréquences sont présentes dans une fenêtre.
-- La **densité spectrale (PSD)** est ce même spectre normalisé en g²/Hz, ce qui le rend comparable d'une cadence à l'autre.
-- Le **spectrogramme** montre comment le spectre évolue au cours du temps.
-
----
-
-## Étape 6 — Construire la table de features
+## 6. Construire et contrôler la table de caractéristiques
 
 ```sh
 uv run python -m tinyml2027.build_features
 ```
 
-**Résultat réel, 5 sessions :**
-```text
-255 fenêtres, 255 valides -> results/tp01/features.csv
-condition   impact  periodic  stationary
-session_id
-s01             17        17          17
-...
-s05             17        17          17
+La commande lit les essais acceptés dans le registre et affiche le nombre de fenêtres valides par session et par geste. Vérifiez que les trois gestes sont représentés dans chaque session. Le nombre de fenêtres dépend de la cadence mesurée, de la durée réelle et de la qualité des captures.
+
+- `results/tp01/features.csv` contient une ligne par fenêtre, avec la session, le geste, la cadence et un indicateur de validité. Les quatre caractéristiques sont calculées pour les fenêtres valides.
+- `results/tp01/quality_report.md` résume la qualité par enregistrement et les valeurs médianes des caractéristiques par geste.
+
+![Répartition des fenêtres de référence selon leurs caractéristiques](../../docs/figures/tp01-features-nuage.png)
+
+*Données de référence. La couleur indique le geste et la forme du marqueur la session. Certains tapotements et glissements présentent des valeurs de puissance proches. Comparez les médianes de votre rapport pour voir quelles caractéristiques distinguent les gestes.*
+
+Sans carte, réalisez les étapes 3 à 6 avec les [enregistrements publiés](../../datasets/motion-nano-v1/README.md). Cette commande écrit dans le même dossier de résultats que la commande précédente.
+
+```sh
+uv run python -m tinyml2027.build_features --data datasets/motion-nano-v1
 ```
 
-![Construction de la table de features](../../docs/screenshots/tp01-etape06-build-features-macos.png)
+L’essai de référence a produit 255 fenêtres valides sur 255, à partir de cinq sessions sur la carte originale. La validation de la Rev2 se limite à la compilation. Sa cadence reste à mesurer sur carte. Les [résultats de référence](../../evidence/tp01/) et le [rapport de validation](../../docs/VALIDATION.md) documentent les essais. Le module `tinyml2027.simulate` sert aux tests automatiques et marque ses données `source=simulated`.
 
-La commande produit deux fichiers :
-- `results/tp01/features.csv` : une ligne par fenêtre (session, geste, position, validité, `fs_win_hz` et les 4 features) ;
-- `results/tp01/quality_report.md` : le bilan de chaque enregistrement. Celui de la carte de référence est dans [evidence/tp01](../../evidence/tp01/quality_report.md).
+## Questions de compréhension
 
-![Nuage des features](../../docs/figures/tp01-features-nuage.png)
+1. Pourquoi faisons-nous glisser la carte dans le sens du câble ? Appuyez-vous sur l’axe utilisé pour calculer les caractéristiques.
+2. Quelles caractéristiques distinguent le mieux le glissement des autres gestes et les tapotements de l’immobilité ? Justifiez votre réponse avec les figures ou le rapport.
+3. Quels défauts le contrôle qualité peut-il repérer dans un CSV alors qu’ils sont difficiles à voir sur une courbe d’accélération ?
 
-*Mesure réelle, 255 fenêtres. La couleur indique le geste, la forme du marqueur la session.*
+Pour examiner des erreurs d’acquisition, lancez la commande suivante. Les tests couvrent notamment les pertes d’échantillons. Avec la carte, essayez aussi d’interroger le firmware pendant que le moniteur série occupe le port, puis fermez le moniteur et vérifiez que `capture info` répond de nouveau.
 
-**À observer :** les 3 gestes forment des groupes séparés. Ces groupes se chevauchent pourtant un peu d'une session à l'autre : en s03 (triangles), les tapotements ont autant d'énergie que certains glissements. Le TP02 y revient.
-
-> **Question 2.** Quelle feature distingue le mieux `periodic` des deux autres gestes ? Laquelle distingue le mieux `impact` de `stationary` ?
->
-> **Question 3.** Pourquoi une figure ne suffit-elle pas à valider la qualité d'un CSV ? Pensez à ce que le contrôle qualité vérifie et qu'un graphique ne montre pas.
-
----
-
-## Travailler sans carte
-
-Le module `tinyml2027.simulate` génère des enregistrements **simulés**, marqués `source=simulated` dans le manifest. Ils servent aux tests automatiques, mais **ne prouvent rien sur le matériel**. Les vrais signaux sont plus irréguliers (voir le GIF de l'étape 4).
-
-## Provoquer les erreurs
-
-Chacun de ces cas est couvert par un test automatique (`uv run pytest tests/test_recording.py tests/test_capture_protocol.py`). Essayez-les aussi en vrai :
-
-| Erreur | Comment la provoquer | Ce qui doit se passer |
-|---|---|---|
-| port occupé | ouvrir le moniteur série puis lancer `capture` | message « port déjà ouvert ? » |
-| mauvais firmware | téléverser `examples/01_blink`, puis `capture info` | « pas de réponse INFO » |
-| carte débranchée pendant l'enregistrement | débrancher le câble | « la carte n'a pas confirmé la fin (END) » |
-| mesures perdues | (test simulé) | essai refusé, « échantillons perdus » |
+```sh
+uv run pytest tests/test_recording.py tests/test_capture_protocol.py
+```
 
 ## Livrables
 
-`data/manifest.csv`, `data/raw/…`, `results/tp01/features.csv`, `results/tp01/quality_report.md` et les réponses aux questions. Le dossier `data/` reste sur votre poste : il n'est pas publié sur Git.
+Pour le parcours sur carte, conservez `data/manifest.csv` et les enregistrements de `data/raw/`. Dans les deux parcours, remettez `results/tp01/features.csv`, `results/tp01/quality_report.md` et vos réponses. Le dossier `data/` reste sur votre poste, hors de Git.
 
-## Sources
-
-Ce TP adapte le chapitre 7–8 de [AIoT-Book](https://github.com/wld-code/AIoT-Book/tree/main/labs/ch07-08-acceleration-features). Le code est réécrit pour ce dépôt.
+Ce TP adapte les [chapitres 7 et 8 d’AIoT-Book](../../docs/REFERENCES.md).

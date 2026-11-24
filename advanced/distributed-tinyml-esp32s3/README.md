@@ -1,7 +1,12 @@
-# Extension expérimentale — Nano + ESP32-S3
+# Extension expérimentale — Nano et ESP32-S3
 
-**En pause.** Ce dossier ne fait pas partie du parcours et n'est pas encore un tutoriel.
+Le travail préparatoire porte sur la compilation de l’exemple officiel `hello_world` d’[Espressif](https://github.com/espressif/esp-tflite-micro) avec ESP-IDF. L’exemple approxime une sinusoïde avec TensorFlow Lite Micro. Consultez le [README d’origine](esp32s3/00_tflm_hello_world/README.md) pour le détail de l’exemple et sa licence.
 
-Il contient pour l'instant l'exemple officiel `hello_world` d'[esp-tflite-micro](https://github.com/espressif/esp-tflite-micro) (licence Apache-2.0, README d'origine en anglais), préparé pour ESP-IDF. Statut : **compilé** seulement ; il n'a pas encore tourné sur une carte ([journal](../../evidence/esp32s3/README.md)).
+Depuis la racine du dépôt, préparez l’environnement ESP-IDF dédié et lancez la compilation.
 
-Installation séparée (ne touche pas au parcours principal) : `./scripts/setup_esp.sh`, puis `./scripts/esp.sh -C advanced/distributed-tinyml-esp32s3/esp32s3/00_tflm_hello_world build`.
+```sh
+./scripts/setup_esp.sh
+./scripts/esp.sh -C advanced/distributed-tinyml-esp32s3/esp32s3/00_tflm_hello_world build
+```
+
+La compilation a été vérifiée. L’exécution sur ESP32-S3 et la communication avec la Nano restent à valider. Le [journal de compilation](../../evidence/esp32s3/README.md) décrit l’essai.

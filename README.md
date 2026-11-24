@@ -1,50 +1,16 @@
 # TinyML 2027
 
-**Un cours de TinyML complet, en français, sur une seule carte Arduino Nano 33 BLE Sense.**
-Du signal du capteur au réseau de neurones qui tourne sur le microcontrôleur, avec de vraies mesures à chaque étape.
+Cours de TinyML sur Arduino Nano 33 BLE Sense. Nous enregistrons trois gestes avec l’accéléromètre, entraînons un modèle à reconnaître leurs signatures et exécutons ce modèle sur le microcontrôleur.
 
-[![Code : MIT](https://img.shields.io/badge/code-MIT-blue)](LICENSE)
-[![Contenus : CC BY 4.0](https://img.shields.io/badge/contenus-CC%20BY%204.0-lightgrey)](LICENSE-docs.md)
-[![Python 3.12](https://img.shields.io/badge/python-3.12-3776AB)](docs/INSTALLATION.md)
-[![Carte : Nano 33 BLE Sense](https://img.shields.io/badge/carte-Nano%2033%20BLE%20Sense-00979D)](https://docs.arduino.cc/hardware/nano-33-ble-sense/)
-[![TensorFlow Lite Micro](https://img.shields.io/badge/runtime-TensorFlow%20Lite%20Micro-FF6F00)](https://github.com/tensorflow/tflite-micro)
+![Du signal à l’inférence embarquée](docs/figures/parcours.png)
 
-![Le parcours du cours](docs/figures/parcours.png)
+## Matériel et installation
 
-## Ce que vous allez construire
+- Une **Arduino Nano 33 BLE Sense** originale (ABX00031) ou Rev2 (ABX00069). Choisissez bien un modèle **Sense**, équipé des capteurs utilisés en TP.
+- Un câble micro-USB de données et un ordinateur sous macOS, Linux ou Windows.
+- Git, uv et environ 3 Go d’espace libre. Sous Windows, lancez les commandes depuis Git Bash.
 
-Vous enregistrez trois gestes avec l'accéléromètre de la carte : **immobile**, **glisser** et **tapoter**. Vous en tirez un dataset propre, vous entraînez un petit réseau de neurones, vous le quantifiez en INT8, puis la carte reconnaît le geste **en direct**, seule, sans ordinateur pour calculer.
-
-| ![immobile](docs/figures/geste-stationary.gif) | ![glisser](docs/figures/geste-periodic.gif) | ![tapoter](docs/figures/geste-impact.gif) |
-|:---:|:---:|:---:|
-| `stationary` | `periodic` | `impact` |
-
-**Résultats obtenus sur la carte de référence :**
-
-| | |
-|---|---|
-| Test sur une session jamais vue | 96 % de bonnes réponses (macro-F1 0,961) |
-| Taille du modèle INT8 | 2 176 octets |
-| Calcul des features + inférence sur la carte | ≈ 0,8 ms par fenêtre |
-| Carte = Python, sur 8 fenêtres témoins | 8/8, aucun écart |
-| Reconnaissance en direct | 50 fenêtres justes sur 51 |
-
-## Le parcours
-
-| Module | Durée | Vous apprenez à… |
-|---|---|---|
-| [Tutoriel 01 — Python et Jupyter](tutorials/01-python-jupyter/README.md) | 2 h | utiliser l'environnement du cours, NumPy, contrôler un fichier de capteur |
-| [Tutoriel 02 — Prendre en main la Nano](tutorials/02-arduino-nano/README.md) | 45 min | téléverser un programme, identifier la carte, lire l'IMU (terminal ou Arduino IDE) |
-| [Exemples 01 à 05](examples/) | — | faire tourner un premier réseau sur la carte, en FP32 puis en INT8 |
-| [TP01 — Du capteur au dataset](labs/01-sensor-data/README.md) | 4 h | enregistrer, contrôler la qualité, découper en fenêtres, calculer 4 features |
-| [TP02 — Entraîner sans tricher](labs/02-model-training/README.md) | 4 h | séparer par session, comparer à des modèles simples, évaluer honnêtement |
-| [TP03 — Le modèle sur la carte](labs/03-embedded-inference/README.md) | 4 h | quantifier en INT8, vérifier la carte avec des golden vectors, passer en direct |
-| [Pour aller plus loin — Edge Impulse](advanced/edge-impulse/README.md) | 2–3 h | reconnaître des mots avec le micro et une plateforme en ligne |
-| [Pour aller plus loin — Edge MLOps](advanced/edge-mlops/README.md) | 2–3 h | versionner un modèle, refuser une mauvaise version, revenir en arrière |
-
-Les trois TP fonctionnent **sans Internet ni compte en ligne**. Seule l'extension Edge Impulse en demande un.
-
-## Démarrage rapide
+Suivez le [guide d’installation](docs/INSTALLATION.md) pour préparer les outils de votre système et récupérer le dépôt.
 
 ```sh
 git clone https://github.com/wld-code/TinyML2027.git
@@ -53,60 +19,30 @@ cd TinyML2027
 uv run pytest -q            # vérifie l'installation
 ```
 
-Il faut d'abord `git` et [uv](https://docs.astral.sh/uv/). Les détails pour macOS, Linux et Windows sont dans le **[guide d'installation](docs/INSTALLATION.md)**.
+Les versions du Python et de la chaîne Arduino sont fixées dans [uv.lock](uv.lock) et [config/versions.lock](config/versions.lock). Après installation, les trois TP se font hors ligne.
 
-Puis branchez la carte et commencez le [tutoriel 02](tutorials/02-arduino-nano/README.md).
+## Parcours
 
-**Pas de carte ?** Les TP02 et TP03 (partie ordinateur) fonctionnent avec le dataset réel fourni, [`datasets/motion-nano-v1`](datasets/motion-nano-v1/README.md).
+| Support | Durée | Travail |
+|---|---|---|
+| [Tutoriel 01 — Python et Jupyter](tutorials/01-python-jupyter/README.md) | 2 h | Ouvrir les notebooks, manipuler un signal et contrôler un CSV. |
+| [Tutoriel 02 — Prise en main de la Nano](tutorials/02-arduino-nano/README.md) | 30 à 45 min | Téléverser un programme, identifier la révision et lire les capteurs de mouvement. |
+| [TP01 — Du capteur au jeu de données](labs/01-sensor-data/README.md) | 4 h | Enregistrer les gestes, contrôler les mesures et résumer les fenêtres de signal. |
+| [TP02 — Entraînement et évaluation du modèle](labs/02-model-training/README.md) | 4 h | Comparer trois modèles et les évaluer sur une session réservée. |
+| [TP03 — Quantification et inférence sur la Nano](labs/03-embedded-inference/README.md) | 4 h | Convertir en INT8, vérifier le rejeu des fenêtres témoins et tester en direct. |
 
-## Matériel
+Les [exemples Arduino](examples/) permettent de s’exercer entre les tutoriels et les TP. Sans carte, utilisez les [enregistrements publiés](datasets/motion-nano-v1/README.md) pour l’analyse du TP01, le TP02 et les étapes sur ordinateur du TP03.
 
-- Une **Arduino Nano 33 BLE Sense**, originale (ABX00031) ou Rev2 (ABX00069). Attention : la Nano 33 BLE *sans* « Sense » n'a pas les capteurs.
-- Un câble micro-USB **de données**. Beaucoup de câbles ne font que la charge : si la carte n'apparaît pas, changez de câble en premier.
-- Un ordinateur sous macOS, Linux ou Windows.
+## Extensions
 
-Pas de capteur externe, pas de breadboard, pas de cloud payant.
+- [Edge Impulse](advanced/edge-impulse/README.md) — reconnaître deux mots à partir du microphone (2 à 3 h, compte et connexion Internet).
+- [Edge MLOps](advanced/edge-mlops/README.md) — préparer une version, vérifier son exécution et restaurer une version confirmée (2 à 3 h).
+- [Nano et ESP32-S3](advanced/distributed-tinyml-esp32s3/README.md) — compilation expérimentale d’un exemple TensorFlow Lite Micro.
 
-## Principes du cours
+## Références et validation
 
-- **De vraies mesures.** Chaque capture d'écran et chaque chiffre vient d'un essai réel, daté. Les journaux sont dans [`evidence/`](evidence/).
-- **Une évaluation honnête.** Le test se fait sur une session entière jamais vue ; la normalisation et la calibration INT8 n'utilisent que l'entraînement.
-- **La carte calcule comme Python.** Avant le direct, la carte rejoue des fenêtres témoins (*golden vectors*) et doit retrouver les mêmes valeurs.
-- **Des versions figées.** Toute la chaîne est verrouillée ([`config/versions.lock`](config/versions.lock), [`uv.lock`](uv.lock)) et n'utilise que des bibliothèques officielles.
+Le [contrat de données](docs/DATA_CONTRACT.md) décrit le calcul des caractéristiques, le prétraitement et les tolérances appliquées au rejeu. Le [rapport de validation](docs/VALIDATION.md) distingue les tests sur ordinateur, les compilations et les essais sur la Nano originale. Les journaux détaillés sont dans [evidence/](evidence/).
 
-## Où en sont les tests
+Pour signaler un problème dans les *issues* GitHub, indiquez le système, la révision de la carte, la commande lancée et le résultat observé.
 
-| Système | Sans carte | Avec la carte originale | Avec une Rev2 |
-|---|---|---|---|
-| macOS 15 (Apple Silicon) | ✅ | ✅ tout le parcours | compilé seulement |
-| Linux (Debian 12 arm64) | ✅ | non testé | non testé |
-| Windows 10 | ✅ | ✅ sauf Arduino IDE | compilé seulement |
-
-Détail et preuves : [docs/VALIDATION.md](docs/VALIDATION.md). Vous avez une Rev2, un PC Windows ou Linux ? Vos retours sont les bienvenus.
-
-## Organisation du dépôt
-
-```text
-tutorials/    tutoriels 01 (Python) et 02 (Arduino)
-examples/     petits sketches : Blink, hello_world, modèle sinus FP32 et INT8, IMU
-labs/         TP01 à TP03, avec leurs firmwares
-advanced/     extensions facultatives
-datasets/     dataset réel de la carte de référence
-src/          code Python des TP (package tinyml2027)
-scripts/      installation, compilation, téléversement
-tests/        tests automatiques, sans carte
-docs/         installation, contrat de données, validation, figures et captures
-evidence/     journaux et mesures des essais réels
-```
-
-## Contribuer
-
-Les signalements d'erreur et les retours d'essai sont les bienvenus, via les *issues* GitHub. Pour un retour d'essai, indiquez : le système, la révision de la carte, la commande lancée et la sortie complète. Avant de proposer une modification, lancez `uv run pytest -q`.
-
-## Licence et crédits
-
-- Code (Python, C++, sketches, scripts) : [MIT](LICENSE).
-- Textes, figures et captures : [CC BY 4.0](LICENSE-docs.md). Photos de la carte et du câble : CC BY-SA ([crédits](docs/photos/CREDITS.md)).
-- Composants tiers : leur propre licence (TensorFlow Lite Micro : Apache-2.0).
-
-Le cours adapte des travaux de [AIoT-Book](https://github.com/wld-code/AIoT-Book/tree/main/labs) et de [TinyML-for-motor](https://github.com/wld-code/TinyML-for-motor). Auteur : Walid Abdaoui.
+Code sous licence [MIT](LICENSE). Supports sous licence [CC BY 4.0](LICENSE-docs.md). Les photos et composants tiers conservent leurs licences respectives. Les [crédits des photos](docs/photos/CREDITS.md) et les [références du cours](docs/REFERENCES.md) précisent les sources, notamment AIoT-Book et TinyML-for-motor. Cours adapté par Walid Abdaoui.
