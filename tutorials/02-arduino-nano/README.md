@@ -1,8 +1,8 @@
 # Tutoriel 02 — Prendre en main la Nano 33 BLE Sense
 
-**Durée :** 30 à 45 minutes. **Matériel :** une Nano 33 BLE **Sense** (originale ou Rev2), un câble USB **de données** et l'ordinateur préparé avec le [README principal](../../README.md), étapes 1 à 3.
+**Durée :** 30 à 45 minutes. **Matériel :** une Nano 33 BLE **Sense** (originale ou Rev2), un câble USB **de données** et l'ordinateur préparé avec le [guide d'installation](../../docs/INSTALLATION.md).
 
-**Statut : validé sur matériel le 23/11/2026** sur une Nano 33 BLE Sense **originale** (macOS 15.6, Apple Silicon). Les versions Rev2 des sketches sont **compilées seulement**. Windows et Linux ne sont **pas testés**.
+> **Testé** sur une carte originale avec macOS 15.6, le 23/11/2026. Rev2 : sketches compilés seulement. Les captures viennent de cet essai ; sur celles d'Arduino IDE (2.3.11), les cadres rouges numérotés donnent l'ordre des clics.
 
 ## Ce que vous allez faire
 
@@ -26,49 +26,39 @@ Les étapes ci-dessous donnent les commandes du **Terminal** (scripts du dépôt
 
 ![Gestionnaire de cartes](../../docs/screenshots/ide-01-gestionnaire-cartes-mbed-nano.png)
 
-*Capture réelle, Arduino IDE 2.3.11, macOS 15.6, carte Nano 33 BLE Sense originale, 23/11/2026. Les cadres rouges numérotés indiquent l'ordre des clics ; ils ont été ajoutés sur la capture.* *Ne choisissez ni « Arduino Zephyr Boards » ni l'entrée « [DEPRECATED] » visibles en dessous.*
+*Ne choisissez ni « Arduino Zephyr Boards » ni l'entrée « [DEPRECATED] » visibles en dessous.*
 
 **B. Installer la bibliothèque de l'IMU (une seule fois).** Icône **bibliothèques** (1), tapez `Arduino_LSM9DS1` (2), installez **Arduino_LSM9DS1 by Arduino** (3). Pour une **Rev2**, installez plutôt **Arduino_BMI270_BMM150**.
 
 ![Gestionnaire de bibliothèques](../../docs/screenshots/ide-02-gestionnaire-bibliotheques-lsm9ds1.png)
 
-*Capture réelle, Arduino IDE 2.3.11, macOS 15.6, carte Nano 33 BLE Sense originale, 23/11/2026. Les cadres rouges numérotés indiquent l'ordre des clics ; ils ont été ajoutés sur la capture.*
-
 **C. Ouvrir le sketch et choisir la carte.** **File → Open** puis `examples/01_blink/01_blink.ino`. Cliquez sur **Select Board** (1) : la carte branchée apparaît sous le nom **Arduino Nano 33 BLE** avec son port (2). Choisissez-la. Les lignes « Unknown » sont des ports du Mac, pas votre carte.
 
 ![Choisir la carte et le port](../../docs/screenshots/ide-03-choisir-carte-port.png)
-
-*Capture réelle, Arduino IDE 2.3.11, macOS 15.6, carte Nano 33 BLE Sense originale, 23/11/2026. Les cadres rouges numérotés indiquent l'ordre des clics ; ils ont été ajoutés sur la capture.*
 
 **D. Vérifier (compiler).** La carte est choisie (1). Cliquez sur **✓ Verify** (2). En bas, « Output » doit afficher la taille du programme (3), ici 85 480 octets (8 %).
 
 ![Vérifier](../../docs/screenshots/ide-04-verifier-blink.png)
 
-*Capture réelle, Arduino IDE 2.3.11, macOS 15.6, carte Nano 33 BLE Sense originale, 23/11/2026. Les cadres rouges numérotés indiquent l'ordre des clics ; ils ont été ajoutés sur la capture.*
-
 **E. Téléverser.** Cliquez sur **→ Upload** (1). Attendez `Done in … seconds` (2) : la LED orange clignote.
 
 ![Téléverser](../../docs/screenshots/ide-05-televerser-blink.png)
 
-*Capture réelle, Arduino IDE 2.3.11, macOS 15.6, carte Nano 33 BLE Sense originale, 23/11/2026. Les cadres rouges numérotés indiquent l'ordre des clics ; ils ont été ajoutés sur la capture.* *Si le téléversement échoue, double-cliquez sur RESET (la LED orange pulse) et recommencez.*
+*Si le téléversement échoue, double-cliquez sur RESET (la LED orange pulse) et recommencez.*
 
 **F. Moniteur série.** Cliquez sur la **loupe** en haut à droite (1), choisissez **115200 baud** (2). Les lignes `blink … LED=ON/OFF` défilent (3).
 
 ![Moniteur série](../../docs/screenshots/ide-06-moniteur-serie-blink.png)
 
-*Capture réelle, Arduino IDE 2.3.11, macOS 15.6, carte Nano 33 BLE Sense originale, 23/11/2026. Les cadres rouges numérotés indiquent l'ordre des clics ; ils ont été ajoutés sur la capture.*
-
 **G. Carte Rev2 : une ligne à changer.** Dans les sketches du cours qui lisent l'IMU, la ligne 7 est `// #define NANO_REV2`. Sur une **Rev2**, enlevez les deux barres `//` au début de cette ligne, puis vérifiez et téléversez. Sur une carte originale, ne touchez à rien.
 
 ![Ligne NANO_REV2](../../docs/screenshots/ide-07-sketch-04-imu-ligne-rev2.png)
-
-*Capture réelle, Arduino IDE 2.3.11, macOS 15.6, carte Nano 33 BLE Sense originale, 23/11/2026. Les cadres rouges numérotés indiquent l'ordre des clics ; ils ont été ajoutés sur la capture.*
 
 **H. Lire l'IMU dans l'IDE.** Ouvrez `examples/04_imu/04_imu.ino`, téléversez-le comme en E, ouvrez le moniteur à **115200 baud** (1). Chaque ligne contient le temps, les 3 accélérations (g), les 3 vitesses de rotation (°/s), les deux cadences mesurées et l'axe de la gravité (2). L'étape 4 explique chaque colonne.
 
 ![Moniteur série de 04_imu](../../docs/screenshots/ide-08-moniteur-serie-04-imu.png)
 
-*Capture réelle, Arduino IDE 2.3.11, macOS 15.6, carte Nano 33 BLE Sense originale, 23/11/2026. Les cadres rouges numérotés indiquent l'ordre des clics ; ils ont été ajoutés sur la capture.* *Le traceur série (icône à gauche de la loupe) est peu lisible avec ce sketch : la première colonne, le temps en ms, écrase les autres courbes.*
+*Le traceur série (icône à gauche de la loupe) est peu lisible avec ce sketch : la première colonne, le temps en ms, écrase les autres courbes.*
 
 **Fermez le moniteur série de l'IDE avant d'utiliser les scripts Python du cours** : un port série ne peut être ouvert que par un seul programme à la fois.
 
@@ -99,7 +89,7 @@ Les étapes ci-dessous donnent les commandes du **Terminal** (scripts du dépôt
 
 ![Résultat de board list](../../docs/screenshots/tuto02-etape01-board-list-macos-original.png)
 
-*Capture réelle, Terminal macOS 15.6, carte Nano 33 BLE Sense V1, 23/11/2026.* La carte est la ligne « Arduino Nano 33 BLE » ; les deux autres ports appartiennent au Mac.
+La carte est la ligne « Arduino Nano 33 BLE » ; les deux autres ports appartiennent au Mac.
 
 **Notez votre port.** Il peut changer si vous branchez la carte sur une autre prise : sur la carte de référence, il est passé de `usbmodem31201` à `usbmodem314101`. Les scripts du cours ne supposent jamais un nom de port. Si plusieurs cartes sont branchées, ils refusent de choisir à votre place.
 
@@ -123,8 +113,6 @@ Les étapes ci-dessous donnent les commandes du **Terminal** (scripts du dépôt
 **Résultat réel :** compilation en 85 504 octets (8 % de la Flash), clignotement confirmé à l'œil ([evidence/phase2](../../evidence/phase2/phase2-blink-macos15.6-v1.txt)).
 
 ![Compilation et téléversement de Blink](../../docs/screenshots/tuto02-etape02-blink-compile-upload-macos-original.png)
-
-*Capture réelle, Terminal macOS 15.6, carte Nano 33 BLE Sense V1, 23/11/2026.*
 
 **Si le téléversement échoue :** double-cliquez sur RESET (la LED orange pulse), puis relancez `upload.sh`.
 
@@ -159,8 +147,6 @@ verdict=nano33ble_sense_original
 
 ![Identification de la révision](../../docs/screenshots/tuto02-etape03-identification-macos-original.png)
 
-*Capture réelle, Terminal macOS 15.6, carte Nano 33 BLE Sense V1, 23/11/2026.*
-
 Une Rev2 affiche `verdict=nano33ble_sense_rev2`. **Pour une Rev2, tous les sketches suivants se compilent avec `REV=rev2` devant la commande**, par exemple `REV=rev2 ./scripts/compile.sh examples/04_imu`. Dans Arduino IDE, décommentez la ligne `#define NANO_REV2` en tête du sketch.
 
 Si vous vous trompez de révision, la carte affiche une erreur claire, par exemple `ERREUR imu_begin : LSM9DS1 absent : carte Rev2 ? Decommentez #define NANO_REV2.`
@@ -185,7 +171,7 @@ t_ms,ax_g,ay_g,az_g,gx_dps,gy_dps,gz_dps,fs_acc_hz,fs_gyr_hz,gravite
 
 ![Moniteur série de 04_imu](../../docs/screenshots/tuto02-etape04-imu-moniteur-macos-original.png)
 
-*Capture réelle, Terminal macOS 15.6, carte Nano 33 BLE Sense V1 posée à plat, 23/11/2026. Une ligne toutes les 100 ms ; `az_g` proche de 1 et `gravite=+Z` : la gravité est sur l'axe Z.*
+*Une ligne toutes les 100 ms ; `az_g` proche de 1 et `gravite=+Z` : la gravité est sur l'axe Z.*
 
 | Colonne | Signification | Unité |
 |---|---|---|
@@ -211,7 +197,7 @@ L'outil vous fait poser la carte dans 6 positions. Pour chacune : **mettez d'abo
 
 ![Les 6 positions](../../docs/figures/tuto02-six-positions.png)
 
-*Les dessins sont des schémas ; les valeurs sont celles mesurées sur la carte de référence. Le guide illustré utilisé pendant l'essai : <https://claude.ai/artifact/V1pTHJfftNTHS6ZK8o9m7X> (accès privé, à partager par l'enseignant).*
+*Les dessins sont des schémas ; les valeurs sont celles mesurées sur la carte de référence.*
 
 **Ce qu'on apprend :**
 - La gravité apparaît successivement sur +Z, −Z, +X, −X, −Y et +Y : les 6 directions sont couvertes et le capteur répond sur ses 3 axes.
@@ -240,6 +226,3 @@ Les mesures sont dans [evidence/phase6](../../evidence/phase6/README.md). Le pre
 - <https://docs.arduino.cc/tutorials/nano-33-ble-sense/cheat-sheet>
 - [AIoT-Book — tutoriel de démarrage Nano 33 BLE](https://github.com/wld-code/AIoT-Book/blob/main/labs/tutorials/arduino-nano33ble-startup.md)
 
-## Captures d'écran
-
-Les captures du Terminal (étapes 1 à 4) et d'Arduino IDE 2.3.11 (section « Arduino IDE pas à pas ») sont réelles, prises sur macOS 15.6 avec la carte de référence. `TODO: CAPTURE RÉELLE` pour Windows et Linux.

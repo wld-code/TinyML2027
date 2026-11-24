@@ -3,7 +3,7 @@
 Utilisés par python/convert.py, python/verify.py et les TP. Le moteur desktop
 est ai_edge_litert avec les noyaux de référence (BUILTIN_REF), plus proches de
 TensorFlow Lite Micro que les noyaux optimisés XNNPACK. Il n'est pas pour autant
-bit-exact avec TFLM : voir docs/AUDIT.md §11.4.
+bit-exact avec TFLM : voir docs/archives/AUDIT.md §11.4.
 """
 
 from __future__ import annotations

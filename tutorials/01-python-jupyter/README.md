@@ -2,7 +2,7 @@
 
 **Durée :** environ 2 h. **Matériel :** l'ordinateur seul.
 
-**Statut : exécuté sur macOS 15.6 (Apple Silicon) le 23/11/2026.** Les 4 notebooks tournent de bout en bout (`uv run pytest --nbmake tutorials/01-python-jupyter` : 4 passed). Windows et Linux ne sont **pas testés**. Les captures d'écran (Terminal et JupyterLab) sont réelles, prises sur macOS ; il n'y en a pas encore pour Windows et Linux.
+> **Testé** sur macOS 15.6 le 23/11/2026 : les 4 notebooks tournent de bout en bout. Les captures viennent de cet essai.
 
 ## Ce que vous allez faire
 
@@ -22,7 +22,7 @@ Préparer le Python du cours, ouvrir des notebooks, manipuler des tableaux de no
 
 ## Étape 1 — Installer le Python du cours
 
-Si vous avez déjà suivi le [README principal](../../README.md) (`./scripts/setup.sh`), c'est fait. Sinon, pour la partie Python seulement :
+Si vous avez suivi le [guide d'installation](../../docs/INSTALLATION.md) (`./scripts/setup.sh`), c'est fait. Sinon, pour la partie Python seulement :
 
 ```sh
 cd TinyML2027
@@ -39,8 +39,6 @@ uv run python -c "import numpy, pandas, matplotlib, scipy; print('OK')"
 
 ![Contrôle de l'environnement Python](../../docs/screenshots/tuto01-etape01-python-et-tests-macos.png)
 
-*Capture réelle, Terminal macOS 15.6, 23/11/2026.*
-
 ## Étape 2 — Ouvrir JupyterLab
 
 ```sh
@@ -53,7 +51,7 @@ Le navigateur s'ouvre. Double-cliquez sur `01-python-basics.ipynb`.
 
 ![JupyterLab avec le notebook 03](../../docs/screenshots/tuto01-etape02-jupyterlab-notebook03-macos.png)
 
-*Capture réelle, JupyterLab dans Chrome, macOS 15.6, 23/11/2026. À gauche, les 3 notebooks ; en haut à droite, le kernel « Python 3 (ipykernel) » ; la cellule [1] a chargé le CSV.*
+*À gauche, les 3 notebooks ; en haut à droite, le kernel « Python 3 (ipykernel) » ; la cellule [1] a chargé le CSV.*
 
 **Autre possibilité : VS Code.** Installez les extensions « Python » et « Jupyter », ouvrez le dossier `TinyML2027`, ouvrez un notebook, puis cliquez sur **Select Kernel** en haut à droite et choisissez l'interpréteur `.venv/bin/python` (`.venv\Scripts\python.exe` sous Windows).
 
@@ -67,11 +65,11 @@ Le navigateur s'ouvre. Double-cliquez sur `01-python-basics.ipynb`.
 
 ![Notebook 01 dans JupyterLab](../../docs/screenshots/tuto01-etape03-notebook01-kernel-macos.png)
 
-*Capture réelle, JupyterLab, macOS 15.6, 23/11/2026. La première cellule du notebook 01 vérifie le kernel : elle doit afficher `Environnement : .venv`.*
+*La première cellule du notebook 01 vérifie le kernel : elle doit afficher `Environnement : .venv`.*
 
 ![Notebook 02 dans JupyterLab](../../docs/screenshots/tuto01-etape03-notebook02-trace-macos.png)
 
-*Capture réelle. Notebook 02, partie 4 : le tracé du signal simulé (points bruités et sinusoïde sans bruit).*
+*Notebook 02, partie 4 : le tracé du signal simulé (points bruités et sinusoïde sans bruit).*
 
 Exercices : [exercises/README.md](exercises/README.md). Solutions, séparées : [solutions/solutions.ipynb](solutions/solutions.ipynb).
 
@@ -95,7 +93,7 @@ uv run pytest --nbmake tutorials/01-python-jupyter
 
 ![Vérification automatique des notebooks](../../docs/screenshots/tuto01-etape04-nbmake-macos.png)
 
-*Capture réelle, Terminal macOS 15.6, 23/11/2026.* `4 passed` : les 4 notebooks (dont les solutions) tournent du début à la fin.
+`4 passed` : les 4 notebooks (dont les solutions) tournent du début à la fin.
 
 ## Dépannage
 

@@ -2,7 +2,7 @@
 
 **Durée :** environ 4 h. **Matériel :** la même Nano 33 BLE Sense, son câble USB et l'ordinateur. **Entrée :** `artifacts/motion/`, produit par le [TP02](../02-model-training/README.md).
 
-**Statut : validé sur matériel le 23/11/2026** (Nano 33 BLE Sense originale, macOS 15.6) : rejeu 8/8 et test en direct sur les 3 gestes. Les preuves sont dans [evidence/tp03](../../evidence/tp03/README.md). La version Rev2 est **compilée mais pas testée**.
+> **Testé** sur une carte originale avec macOS 15.6, le 23/11/2026 : rejeu 8/8 et direct sur les 3 gestes ([preuves](../../evidence/tp03/README.md)). Rev2 : compilé seulement. Les captures viennent de cet essai.
 
 ## Ce que vous allez faire
 
@@ -35,8 +35,6 @@ test s05 : accuracy FP32 0.961, INT8 0.961, accord 1.000, écart max de score 0.
 ```
 
 ![Quantification INT8](../../docs/screenshots/tp03-etape01-quantification-macos.png)
-
-*Capture réelle, Terminal macOS 15.6, 23/11/2026.*
 
 ### Ce que veut dire « quantifier »
 
@@ -81,8 +79,6 @@ Résultat attendu : `1 passed`.
 
 ![Test des features C++ sur l'ordinateur](../../docs/screenshots/tp03-etape02-test-cpp-hote-macos.png)
 
-*Capture réelle, Terminal macOS 15.6, 23/11/2026.*
-
 Ce test a déjà trouvé un vrai défaut. Sur une fenêtre parfaitement constante, le calcul en float32 laisse un résidu de 7·10⁻⁹ g, alors que Python (float64) obtient 0. Le seuil « fenêtre immobile » du contrat, qui était de 10⁻⁹ g, a donc été porté à 10⁻⁶ g, sur le Mac comme sur la carte. Sans ce test, la carte et Python auraient donné un facteur de crête différent (1 contre 0).
 
 ---
@@ -104,7 +100,7 @@ Global variables use 61792 bytes (23%) of dynamic memory, leaving 200352 bytes f
 
 ![Compilation et téléversement du firmware](../../docs/screenshots/tp03-etape03-compilation-televersement-macos-original.png)
 
-*Capture réelle, Terminal macOS 15.6, carte Nano 33 BLE Sense V1, 23/11/2026. La compilation affiche ici 183 968 octets, contre 183 872 dans le bloc ci-dessus, issu du premier essai. Cet écart de 96 octets entre deux compilations n'a pas été analysé. Notez vos propres chiffres.*
+*Ici 183 968 octets, contre 183 872 au premier essai : notez vos propres chiffres.*
 
 ### Ce que contient le dossier du sketch
 
@@ -150,8 +146,6 @@ REPLAY STATUT OK
 
 ![Rejeu des golden vectors dans le moniteur](../../docs/screenshots/tp03-etape04-replay-moniteur-macos-original.png)
 
-*Capture réelle, Terminal macOS 15.6, carte Nano 33 BLE Sense V1, 23/11/2026.*
-
 **8/8, et 0 cran d'écart** sur les entrées comme sur les sorties. La carte fait exactement les mêmes calculs que Python.
 
 > **Si le rejeu échoue, on ne passe pas au direct.** Une erreur dans le prétraitement C++ (un mauvais ordre de features, un log10 oublié…) donnerait des prédictions fausses en direct, sans aucun message d'erreur.
@@ -167,8 +161,6 @@ LIVE periodic stationary=0.00 periodic=1.00 impact=0.00 | rms=0.0589 crest=2.91 
 ```
 
 ![Classification en direct dans le moniteur](../../docs/screenshots/tp03-etape05-live-moniteur-macos-original.png)
-
-*Capture réelle, Terminal macOS 15.6, carte Nano 33 BLE Sense V1, 23/11/2026.*
 
 ![Scores en direct](../../docs/figures/tp03-live-scores.png)
 
@@ -217,8 +209,6 @@ Si un téléversement échoue ou si la carte ne répond plus :
 Avec l'outil de l'[extension MLOps](../../advanced/edge-mlops/README.md), le retour à la version validée et sa vérification tiennent en deux commandes :
 
 ![Retour à motion-v1](../../docs/screenshots/tp03-etape07-retour-v1-macos-original.png)
-
-*Capture réelle, Terminal macOS 15.6, carte Nano 33 BLE Sense V1, 23/11/2026.*
 
 **Un téléversement réussi ne prouve pas que le bon modèle tourne.** Seul le SHA-256 annoncé par la carte le prouve.
 

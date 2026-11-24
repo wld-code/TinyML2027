@@ -1,8 +1,8 @@
 # TP01 — Du capteur au dataset
 
-**Durée :** environ 4 h. **Matériel :** une Arduino Nano 33 BLE Sense (originale ou Rev2), un câble USB de données et un ordinateur préparé avec le [README principal](../../README.md).
+**Durée :** environ 4 h. **Matériel :** une Arduino Nano 33 BLE Sense (originale ou Rev2), un câble USB de données et un ordinateur préparé avec le [guide d'installation](../../docs/INSTALLATION.md).
 
-**Statut : validé sur matériel le 23/11/2026** (Nano 33 BLE Sense originale, macOS 15.6). 5 sessions et 15 enregistrements ont été faits, tous valides. Les preuves sont dans [evidence/tp01](../../evidence/tp01/). La version Rev2 du firmware est **compilée mais pas testée** faute de carte.
+> **Testé** sur une carte originale avec macOS 15.6, le 23/11/2026 : 5 sessions, 15 enregistrements valides ([preuves](../../evidence/tp01/)). Rev2 : compilé seulement. Les captures viennent de cet essai.
 
 ## Ce que vous allez faire
 
@@ -46,8 +46,6 @@ Ce sont des manipulations de laboratoire. Elles ne disent rien de l'état d'un v
 ```
 
 ![capture ports et capture info](../../docs/screenshots/tp01-etape01-capture-info-macos-original.png)
-
-*Capture réelle, Terminal macOS 15.6, carte Nano 33 BLE Sense V1, 23/11/2026.*
 
 **Si ça ne marche pas :**
 - `0 carte(s) Arduino détectée(s)` : changez de câble. Beaucoup de câbles ne font que la charge.
@@ -108,8 +106,6 @@ VERDICT           : VALIDE
 ```
 
 ![Enregistrement et contrôle qualité](../../docs/screenshots/tp01-etape02-enregistrement-qc-macos-original.png)
-
-*Capture réelle, Terminal macOS 15.6, carte Nano 33 BLE Sense V1, 23/11/2026.*
 
 **Lire le contrôle qualité :**
 - **cadence mesurée** : la carte annonce 119 Hz, mais on en mesure 116. C'est la valeur mesurée qui compte, jamais la valeur annoncée.
@@ -222,8 +218,6 @@ s05             17        17          17
 ```
 
 ![Construction de la table de features](../../docs/screenshots/tp01-etape06-build-features-macos.png)
-
-*Capture réelle, Terminal macOS 15.6, 23/11/2026.*
 
 La commande produit deux fichiers :
 - `results/tp01/features.csv` : une ligne par fenêtre (session, geste, position, validité, `fs_win_hz` et les 4 features) ;

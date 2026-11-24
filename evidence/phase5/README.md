@@ -60,7 +60,7 @@ Le modèle est exécuté sur 23 entrées : 21 points réguliers sur [0, 2π], pl
 
 Pour comparaison, l'exemple officiel `hello_world` occupe 345 384 octets de Flash (phase 3). Il enregistre **tous** les opérateurs (`AllOpsResolver`), alors que nos sketches n'enregistrent que `FULLY_CONNECTED`. Cela économise environ 200 Ko de Flash.
 
-**Écart de 1 LSB en INT8, test n° 8 (x = 2,513274) : la carte donne 72, LiteRT 73.** Les codes d'entrée sont identiques sur les 23 tests (vérifié). L'écart vient donc de la requantification entière à l'intérieur de `FULLY_CONNECTED`, que LiteRT desktop et TFLM n'arrondissent pas de la même manière. Ce phénomène était déjà relevé dans `docs/AUDIT.md` §11.4. Un écart de 1 LSB vaut 0,008 en sortie, une valeur négligeable devant l'erreur de quantification (0,084).
+**Écart de 1 LSB en INT8, test n° 8 (x = 2,513274) : la carte donne 72, LiteRT 73.** Les codes d'entrée sont identiques sur les 23 tests (vérifié). L'écart vient donc de la requantification entière à l'intérieur de `FULLY_CONNECTED`, que LiteRT desktop et TFLM n'arrondissent pas de la même manière. Ce phénomène était déjà relevé dans `docs/archives/AUDIT.md` §11.4. Un écart de 1 LSB vaut 0,008 en sortie, une valeur négligeable devant l'erreur de quantification (0,084).
 
 **Hors domaine :** pour x = 7,0, l'entrée INT8 sature à 127, ce qui revient à x ≈ 6,28. La carte répond alors −0,153, quand le modèle FP32 répond +0,021. La quantification ne peut pas représenter une entrée qui sort de la plage de calibration. Le firmware sature explicitement l'entrée au lieu de la laisser déborder.
 

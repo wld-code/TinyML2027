@@ -16,9 +16,14 @@
 |---|---|---|
 | Git for Windows (fournit **Git Bash**) | <https://git-scm.com/download/win> | `git --version` |
 | uv | PowerShell : `powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 \| iex"` | `uv --version` |
+| Microsoft Visual C++ Redistributable x64 **récent** (TensorFlow en a besoin) | <https://aka.ms/vs/17/release/vc_redist.x64.exe> | Paramètres → Applications : « Microsoft Visual C++ 2015-2022 Redistributable (x64) », 14.40 ou plus |
 | Arduino IDE 2 (pour la partie IDE) | <https://www.arduino.cc/en/software> | menu Aide → À propos |
 
+Prévoir **environ 3 Go libres** : 1,8 Go pour `.venv` (TensorFlow) et 0,9 Go pour `.arduino`.
+
 Toutes les commandes du cours se lancent dans **Git Bash**, pas dans PowerShell ni cmd.
+
+Tant que le dépôt est **privé**, le clone HTTPS demande une connexion GitHub ; sans elle, il échoue avec « could not read Username for 'https://github.com' ». Utiliser alors l'adresse SSH `git@github.com:wld-code/TinyML2027.git` (clé SSH enregistrée sur GitHub).
 
 ```sh
 git clone https://github.com/wld-code/TinyML2027.git
@@ -74,6 +79,15 @@ Pour chaque étape : lancer la commande, comparer au « résultat attendu » du 
 Une carte **Rev2** : ajouter `REV=rev2` devant chaque `compile.sh` / `upload.sh`, et noter les résultats séparément.
 
 ## 3. Points Windows à surveiller (et à noter s'ils arrivent)
+
+Déjà rencontrés lors du premier essai (Windows 10 Pro 22H2, 24/11/2026) :
+
+| Symptôme | Cause | Remède |
+|---|---|---|
+| `setup.sh: line 14: printf: '': not a valid identifier` | Git for Windows extrait les fichiers en CRLF (`core.autocrlf=true`) | corrigé dans le dépôt (`.gitattributes` : LF partout ; `setup.sh` tolère le CRLF). Sur un clone fait avant la correction, **sans modification locale** à garder : `git pull` puis `git rm --cached -r -q . && git reset --hard` (attention : efface les modifications non commitées des fichiers suivis) |
+| `ImportError: DLL load failed while importing _pywrap_tensorflow_internal` | Visual C++ Redistributable trop ancien (14.28) | installer le Redistributable x64 récent (prérequis ci-dessus) |
+| `Espace insuffisant sur le disque (os error 112)` pendant `uv sync` | disque presque plein | libérer environ 3 Go |
+| accents cassés dans Git Bash (« fen▒tres ») | Python écrit en cp1252 hors console Windows | corrigé dans le dépôt (sortie forcée en UTF-8) |
 
 - Ports `COMx` et pilote USB de la carte (Gestionnaire de périphériques).
 - Fins de ligne : erreur `$'\r': command not found` dans un script `.sh`.

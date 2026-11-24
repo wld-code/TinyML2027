@@ -1,6 +1,6 @@
 # Exemple 05 — Le même modèle en INT8
 
-**Statut : validé sur matériel le 23/11/2026** (Nano 33 BLE Sense V1). Les preuves sont dans [evidence/phase5](../../evidence/phase5/README.md).
+> **Testé** sur une carte originale avec macOS 15.6, le 23/11/2026 ([preuves](../../evidence/phase5/README.md)).
 
 **Objectif :** quantifier en entiers 8 bits le modèle de l'[exemple 03](../03_custom_model/README.md), puis mesurer ce que l'on gagne (taille, temps) et ce que l'on perd (précision) **sur les mêmes entrées**.
 
@@ -15,8 +15,6 @@ uv run python python/verify.py --mode int8 --port PORT
 ```
 
 ![Vérification INT8 sur la carte](../../docs/screenshots/ex05-verification-carte-macos-original.png)
-
-*Capture réelle, Terminal macOS 15.6, carte Nano 33 BLE Sense V1, 23/11/2026.*
 
 ## Ce que fait la conversion INT8
 

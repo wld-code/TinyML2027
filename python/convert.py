@@ -12,7 +12,7 @@ Contrôles bloquants (le script s'arrête en erreur sinon) :
 INT8 : la calibration utilise exclusivement x_train. La quantification par canal
 des couches denses est désactivée, car le noyau FULLY_CONNECTED de la
 bibliothèque Arduino de 2023 ne la prend pas en charge (une seule échelle par tenseur
-de poids). Voir docs/AUDIT.md §12.
+de poids). Voir docs/archives/AUDIT.md §12.
 """
 
 from __future__ import annotations

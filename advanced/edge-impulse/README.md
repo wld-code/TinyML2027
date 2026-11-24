@@ -2,17 +2,7 @@
 
 **Durée :** 2 à 3 h. **Matériel :** la même Nano 33 BLE **Sense**, avec son microphone intégré, plus une connexion Internet et un compte Edge Impulse. Facultatif : les TP01 à TP03 fonctionnent sans ce service.
 
-**Statut au 23/11/2026 :**
-
-| Partie | Statut |
-|---|---|
-| Microphone de la carte (`mic_check`) | **validé sur matériel** sur la Nano V1 : environ 16 000 échantillons/s ; crête de 13 à 113 au calme, de 913 à 3 658 pendant les claquements de mains ([evidence](../../evidence/edge-impulse/)) |
-| Collecte, entraînement et test dans le Studio (Speech Commands : `go`, `stop`, `bruit`) | **exécuté** : test sur 150 clips de locuteurs jamais vus, accuracy 80,67 % (float32 et int8) |
-| Bibliothèque Arduino exportée, carte **originale** | **validé sur matériel** : compilée (161 920 octets de Flash), téléversée ; DSP 134 ms, classification 6 ms mesurés ([evidence](../../evidence/edge-impulse/)) |
-| Essai avec une voix réelle (enseignant, français) | **exécuté**, résultat médiocre sur « stop » : voir l'étape 6 |
-| Bibliothèque exportée sur une **Rev2** | **non testé** |
-
-Les chiffres ci-dessous viennent d'une séance réelle (projet privé, Studio Edge Impulse, 23/11/2026). Le Studio évolue : notez la date et les versions de votre propre séance.
+> **Testé** sur une carte originale avec macOS 15.6, le 23/11/2026 ([preuves](../../evidence/edge-impulse/)) : micro, Studio (test 80,67 %), export compilé et exécuté sur la carte. Avec une vraie voix, « stop » est mal reconnu (étape 6). Rev2 : non testée. Le Studio évolue : notez la date de votre séance.
 
 ## Ce que vous allez faire
 
@@ -42,8 +32,6 @@ t_ms,rms,crete,echantillons_par_s
 
 ![Moniteur série du micro, pièce calme](../../docs/screenshots/edgeimpulse-etape01-micro-moniteur-macos-original.png)
 
-*Capture réelle, Terminal macOS 15.6, carte Nano 33 BLE Sense V1, 23/11/2026.*
-
 - `echantillons_par_s` alterne entre 15 360 et 16 384, car le micro livre ses données par blocs de 512 octets (256 échantillons). La moyenne est bien d'environ 16 000.
 - Les premières lignes sont plus fortes : c'est la mise en route du micro, qui se stabilise en environ 1 s.
 - Dans le calme, le niveau RMS reste autour de 10 (unités brutes, sur une échelle de 0 à 32 767).
@@ -58,7 +46,7 @@ Créez un compte sur <https://studio.edgeimpulse.com>, puis un projet **Personal
 
 ![Projet privé](../../docs/screenshots/edgeimpulse-etape02-projet-prive-studio.png)
 
-*Capture réelle du Studio, 23/11/2026 : le projet est bien **Private** (encadré « Sharing »).*
+*Le projet est bien **Private** (encadré « Sharing »).*
 
 Dans le Studio, choisissez la cible **Arduino Nano 33 BLE Sense (Cortex-M4F 64MHz)** (en haut à droite) : les estimations de RAM, de Flash et de latence en dépendent.
 
@@ -76,7 +64,7 @@ Le parcours de référence utilise le jeu public **Speech Commands v0.02** (Goog
 
 ![Données importées](../../docs/screenshots/edgeimpulse-etape03-donnees-studio.png)
 
-*Capture réelle : 600 clips d'entraînement, 150 de test ; à droite, la forme d'onde d'un « stop ».*
+*600 clips d'entraînement, 150 de test ; à droite, la forme d'onde d'un « stop ».*
 
 Résultat réel : 750 fichiers importés, 0 échec, soit 10 min de données d'entraînement et 150 clips de test.
 
@@ -88,7 +76,7 @@ Résultat réel : 750 fichiers importés, 0 échec, soit 10 min de données d'en
 
 ![Estimation du Studio pour la Nano](../../docs/screenshots/edgeimpulse-etape04-estimation-nano-studio.png)
 
-*Capture réelle du Studio Edge Impulse, 23/11/2026. Le score affiché au-dessus (85,8 %) est celui de la « validation », un tirage aléatoire du train par le Studio : un même locuteur peut s'y trouver des deux côtés, ce score est donc optimiste.*
+*Le score affiché au-dessus (85,8 %) est celui de la « validation », un tirage aléatoire du train par le Studio : un même locuteur peut s'y trouver des deux côtés, ce score est donc optimiste.*
 
 ## Étape 5 — Évaluer sur le test
 
@@ -96,7 +84,7 @@ Résultat réel : 750 fichiers importés, 0 échec, soit 10 min de données d'en
 
 ![Résultat du test, modèle int8](../../docs/screenshots/edgeimpulse-etape05-test-int8-studio.png)
 
-*Capture réelle, modèle int8, 150 clips de locuteurs jamais vus. Le float32 donne exactement la même matrice.*
+*Modèle int8, 150 clips de locuteurs jamais vus. Le float32 donne exactement la même matrice.*
 
 | vrai ↓ / prédit → | bruit | go | stop | incertain |
 |---|---|---|---|---|
@@ -113,7 +101,7 @@ Résultat réel : 750 fichiers importés, 0 échec, soit 10 min de données d'en
 
 ![Estimations de déploiement](../../docs/screenshots/edgeimpulse-etape06-deploiement-arduino-studio.png)
 
-*Capture réelle. Remarquez que le classifieur float32 occupe **moins** de Flash (27,1 K) que l'int8 (30,6 K) : comme à l'exemple 05, l'int8 ne réduit pas toujours la taille d'un très petit modèle.*
+*Remarquez que le classifieur float32 occupe **moins** de Flash (27,1 K) que l'int8 (30,6 K) : comme à l'exemple 05, l'int8 ne réduit pas toujours la taille d'un très petit modèle.*
 
 Décompressez le ZIP **dans un dossier temporaire**, sans l'installer dans vos bibliothèques Arduino, puis compilez l'exemple micro avec l'environnement du cours :
 

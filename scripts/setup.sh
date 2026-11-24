@@ -10,9 +10,10 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 # Lecture de config/versions.lock (compatible bash 3.2 de macOS)
 while IFS='=' read -r key value; do
+  key="${key%$'\r'}"; value="${value%$'\r'}"   # tolère un fichier en CRLF (Windows)
   case "$key" in ''|\#*) continue ;; esac
   printf -v "$key" '%s' "$value"
-done < <(tr -d '\r' < "$ROOT/config/versions.lock")  # \r : fichier en CRLF sous Windows
+done < "$ROOT/config/versions.lock"
 A="$ROOT/scripts/arduino.sh"
 
 step() { printf '\n=== %s\n' "$*"; }

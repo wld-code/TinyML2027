@@ -2,7 +2,7 @@
 
 **Durée :** 2 à 3 h. **Matériel :** la même Nano et son câble USB. Pas de cloud, pas de mise à jour à distance. **Prérequis :** le [TP03](../../labs/03-embedded-inference/README.md) terminé.
 
-**Statut : validé sur matériel le 23/11/2026** (Nano 33 BLE Sense V1, macOS 15.6). Les journaux sont dans [evidence/mlops](../../evidence/mlops/).
+> **Testé** sur une carte originale avec macOS 15.6, le 23/11/2026 ([journaux](../../evidence/mlops/)). Les captures viennent de cet essai.
 
 ## L'idée
 
@@ -43,8 +43,6 @@ releases/motion-v1/
 *Schéma, avec les valeurs réelles de motion-v1.*
 
 ![Release réelle](../../docs/screenshots/mlops-etape01-release-contenu-macos.png)
-
-*Capture réelle, Terminal macOS 15.6, 23/11/2026.*
 
 Le `release_manifest.json` contient, entre autres :
 
@@ -105,7 +103,7 @@ Pour le voir vous-même, abîmez une **copie** (jamais la release elle-même) :
 
 ![Refus d'un fichier modifié](../../docs/screenshots/mlops-etape03-refus-fichier-modifie-macos.png)
 
-*Capture réelle, Terminal macOS 15.6, 23/11/2026.* Un seul espace ajouté à `labels.json` suffit : son SHA-256 change et la release est refusée. Supprimez ensuite la copie (`rm -rf releases/essai-modifie`).
+Un seul espace ajouté à `labels.json` suffit : son SHA-256 change et la release est refusée. Supprimez ensuite la copie (`rm -rf releases/essai-modifie`).
 
 **Essai réel**, sur deux copies abîmées de motion-v2 ([journal](../../evidence/mlops/mlops-refus-avant-flash-macos15.6-v1.txt)) :
 ```text
@@ -128,8 +126,6 @@ Dans les deux cas, **rien n'a été téléversé**. Ces refus sont aussi couvert
 L'outil distingue **l'état souhaité** (la version qu'on a voulu installer) et **l'état confirmé** (ce que la carte a prouvé). Les deux sont écrits dans `releases/device_state.json`.
 
 ![validate, flash et status sur motion-v1](../../docs/screenshots/mlops-validate-flash-status-macos-original.png)
-
-*Capture réelle, Terminal macOS 15.6, carte Nano 33 BLE Sense V1, 23/11/2026.*
 
 **Un téléversement réussi ne prouve rien sur le modèle qui tourne.** Seule la réponse de la carte compte.
 

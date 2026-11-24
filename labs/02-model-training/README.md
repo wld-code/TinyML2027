@@ -7,7 +7,7 @@
 uv run python -m tinyml2027.build_features --data datasets/motion-nano-v1
 ```
 
-**Statut : exécuté le 23/11/2026** sur les 5 sessions réelles de la carte de référence. Les chiffres ci-dessous sont ceux obtenus. Ils changeront avec vos propres données.
+> **Testé** le 23/11/2026 (macOS 15.6) sur les 5 sessions réelles de la carte de référence. Avec vos propres données, vos chiffres seront différents.
 
 ## Ce que vous allez faire
 
@@ -18,8 +18,6 @@ uv run python -m tinyml2027.train_motion --test-session s05
 ```
 
 ![Entraînement train_motion](../../docs/screenshots/tp02-train-motion-macos.png)
-
-*Capture réelle, Terminal macOS 15.6, 23/11/2026.*
 
 Le reste de ce document explique ce que fait cette commande, étape par étape.
 
@@ -138,8 +136,6 @@ Dans `artifacts/motion/` :
 | `training_config.json` | seed (2027), époques, sessions et versions des outils |
 
 ![Fichiers du TP02](../../docs/screenshots/tp02-etape05-fichiers-macos.png)
-
-*Capture réelle, Terminal macOS 15.6, 23/11/2026.*
 
 ![Du TP02 au TP03](../../docs/figures/tp02-fichiers-vers-tp03.png)
 

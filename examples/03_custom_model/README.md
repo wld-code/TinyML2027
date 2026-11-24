@@ -1,6 +1,6 @@
 # Exemple 03 — Notre propre modèle (FP32) sur la Nano
 
-**Statut : validé sur matériel le 23/11/2026** (Nano 33 BLE Sense V1, macOS). Les preuves sont dans [evidence/phase5](../../evidence/phase5/README.md).
+> **Testé** sur une carte originale avec macOS 15.6, le 23/11/2026 ([preuves](../../evidence/phase5/README.md)).
 
 **Objectif :** entraîner un petit réseau sur le Mac, le convertir pour TensorFlow Lite Micro, l'exécuter sur la carte et **prouver** que la carte calcule la même chose que l'ordinateur.
 
@@ -45,11 +45,7 @@ Lancez toutes les commandes depuis la racine du dépôt.
 
 ![Entraînement et conversion](../../docs/screenshots/ex03-entrainement-conversion-macos.png)
 
-*Capture réelle, Terminal macOS 15.6, 23/11/2026.*
-
 ![Vérification sur la carte](../../docs/screenshots/ex03-verification-carte-macos-original.png)
-
-*Capture réelle, Terminal macOS 15.6, carte Nano 33 BLE Sense V1, 23/11/2026.*
 
 ## Lire la sortie de la carte
 
