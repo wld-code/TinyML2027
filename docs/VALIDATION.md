@@ -15,7 +15,7 @@ Un résultat n'est annoncé que s'il a été obtenu pour de vrai. Chaque ligne p
 |---|---|---|---|
 | macOS 15.6, Apple Silicon | exécuté | **validé sur matériel** (23/11/2026) | compilé |
 | Linux Debian 12 arm64 (conteneur, clone neuf) | exécuté (23/11/2026) | non testé | non testé |
-| Windows 10 Pro 22H2 | en cours ([consignes](TEST_WINDOWS.md)) | en cours | non testé |
+| Windows 10 Pro 22H2, Intel x86-64 | exécuté (24/11/2026) | **validé sur matériel** (24/11/2026), sauf Arduino IDE | compilé |
 | Windows 11, macOS Intel, Ubuntu x86-64 | non testé | non testé | non testé |
 
 ## Détail (macOS 15.6 + carte originale)
@@ -33,12 +33,16 @@ Un résultat n'est annoncé que s'il a été obtenu pour de vrai. Chaque ligne p
 | MLOps : refus, v1 → v2 → échec → retour à v1 | validé sur matériel | [mlops](../evidence/mlops/) |
 | Micro PDM | validé sur matériel | [edge-impulse](../evidence/edge-impulse/) |
 | Edge Impulse : Studio, export, essai sur la carte | validé sur matériel ; voix réelle médiocre sur « stop » | [edge-impulse](../evidence/edge-impulse/) |
-| Firmwares Rev2 (`REV=rev2`) | compilé | — |
+| Firmwares Rev2 (`REV=rev2`) | compilé (16/16 avec l'originale, 24/11/2026) | [compilation](../evidence/compilation/README.md) |
 
 ## Autres systèmes
 
-- **Linux** ([preuves](../evidence/linux/)) : 9 étapes sur 9 sans carte. TP02 identique à macOS (test 0,961). Le modèle INT8 a la même taille mais un SHA-256 différent : l'entraînement n'est pas identique au bit près d'une machine à l'autre. `infer_nano` fait 171 152 octets de Flash contre 183 968 sur macOS : **écart non expliqué**.
-- **Windows 10** : campagne en cours. Sans carte, les étapes testées donnent les mêmes chiffres que macOS. Deux défauts du dépôt ont été trouvés (fins de ligne CRLF, accents dans Git Bash) et corrigés ; la correction reste à revérifier sous Windows. Un prérequis manquait : le Visual C++ Redistributable.
+- **Linux** ([preuves](../evidence/linux/)) : 9 étapes sur 9 sans carte. TP02 identique à macOS (test 0,961). Le modèle INT8 a la même taille mais un SHA-256 différent : l'entraînement n'est pas identique au bit près d'une machine à l'autre. `infer_nano` y faisait 171 152 octets de Flash contre 183 968 sur macOS. **Expliqué depuis :** dans ce clone neuf, `golden.h` ne contenait que 2 golden vectors sur 8, sans erreur ; le script s'arrête désormais dans ce cas ([détail](../evidence/compilation/README.md)).
+- **Windows 10** ([rapport](../evidence/windows/RAPPORT.md)) : PC Intel de 2012, Nano originale sur COM12, 24/11/2026. Étapes 1 à 7 et 9 à 15 de la [campagne](TEST_WINDOWS.md) OK : Blink, identification, IMU, exemples 03 et 05 vérifiés sur la carte, capture guidée 3/3 valide (116 Hz), TP02 identique à macOS (test 0,961), TP03 rejeu 8/8 et direct sur les 3 gestes, cycle MLOps complet puis retour à `motion-v1`.
+  - Défauts trouvés et corrigés dans le dépôt : fins de ligne CRLF, encodage des fichiers (UTF-8 imposé partout), `release flash` impossible sous Windows (script `.sh` lancé depuis Python), chemin Windows dans `training_config.json`, golden vectors réduits sans erreur dans un clone neuf, consigne de glissement contradictoire.
+  - Prérequis ajoutés : Visual C++ Redistributable récent, environ 3 Go de disque.
+  - Non fait : captures Arduino IDE (étape 8) ; test C++ des features (`tests/test_features_cpp.py`), ignoré faute de compilateur C++ sur le PC.
+  - Ces correctifs ont été écrits pendant la campagne : un clone neuf sous Windows doit encore le confirmer.
 - **CI GitHub Actions** ([workflow](../.github/workflows/ci.yml)) : écrite pour Windows, Linux et macOS, mais **jamais exécutée** (les jobs ne démarrent pas sur ce compte).
 
 ## Règle pour ajouter une ligne

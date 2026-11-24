@@ -1,0 +1,17 @@
+examples/01_blink	original	OK	flash=85504	ram=44552	1s
+examples/01_blink	rev2	OK	flash=85504	ram=44552	6s
+tutorials/02-arduino-nano/sketches/board_identify	original	OK	flash=93224	ram=45912	1s
+tutorials/02-arduino-nano/sketches/board_identify	rev2	OK	flash=93224	ram=45912	7s
+examples/03_custom_model	original	OK	flash=142464	ram=50432	91s
+examples/03_custom_model	rev2	OK	flash=142464	ram=50432	91s
+examples/04_imu	original	OK	flash=95384	ram=45992	0s
+examples/04_imu	rev2	OK	flash=116408	ram=46648	1s
+examples/05_int8_model	original	OK	flash=142136	ram=50432	91s
+examples/05_int8_model	rev2	OK	flash=142136	ram=50432	91s
+labs/01-sensor-data/firmware/imu_capture	original	OK	flash=95768	ram=46048	0s
+labs/01-sensor-data/firmware/imu_capture	rev2	OK	flash=116728	ram=46712	1s
+labs/03-embedded-inference/firmware/infer_nano	original	OK	flash=183968	ram=61792	1s
+labs/03-embedded-inference/firmware/infer_nano	rev2	OK	flash=204912	ram=62448	6s
+advanced/edge-impulse/sketches/mic_check	original	OK	flash=88136	ram=45720	0s
+advanced/edge-impulse/sketches/mic_check	rev2	OK	flash=88136	ram=45720	8s
+FIN

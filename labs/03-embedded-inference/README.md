@@ -2,7 +2,7 @@
 
 **Durée :** environ 4 h. **Matériel :** la même Nano 33 BLE Sense, son câble USB et l'ordinateur. **Entrée :** `artifacts/motion/`, produit par le [TP02](../02-model-training/README.md).
 
-> **Testé** sur une carte originale avec macOS 15.6, le 23/11/2026 : rejeu 8/8 et direct sur les 3 gestes ([preuves](../../evidence/tp03/README.md)). Rev2 : compilé seulement. Les captures viennent de cet essai.
+> **Testé** sur une carte originale avec macOS 15.6 le 23/11/2026, puis avec Windows 10 le 24/11/2026 : rejeu 8/8 et direct sur les 3 gestes ([preuves macOS](../../evidence/tp03/README.md), [preuves Windows](../../evidence/windows/RAPPORT.md)). Rev2 : compilé seulement. Les captures viennent de l'essai macOS.
 
 ## Ce que vous allez faire
 
@@ -25,6 +25,12 @@ Bibliothèques utilisées, toutes officielles :
 ```sh
 uv run python -m tinyml2027.quantize_motion
 ```
+
+**Sans données du TP01 ?** Si vous avez entraîné au TP02 sur le dataset de référence, indiquez-le ici aussi, car les golden vectors sont pris dans la session de test :
+```sh
+uv run python -m tinyml2027.quantize_motion --data datasets/motion-nano-v1
+```
+Sans cela, le script s'arrête avec le message `aucun enregistrement valide de la session s05…`.
 
 **Résultat réel :**
 ```text
@@ -102,6 +108,8 @@ Global variables use 61792 bytes (23%) of dynamic memory, leaving 200352 bytes f
 
 *Ici 183 968 octets, contre 183 872 au premier essai : notez vos propres chiffres.*
 
+Sous Windows, comptez quelques dizaines d'octets de plus (184 088). Pour la Rev2, 204 912 octets ([toutes les tailles](../../evidence/compilation/README.md)). Si vous obtenez environ 171 000 octets, `golden.h` ne contient que 2 vecteurs au lieu de 8 : refaites l'étape 1.
+
 ### Ce que contient le dossier du sketch
 
 | Fichier | Rôle | Généré ? |
@@ -154,7 +162,9 @@ REPLAY STATUT OK
 
 ## Étape 5 — En direct (LIVE)
 
-Tapez `L` dans le moniteur. La carte classe une fenêtre toutes les 128 mesures. Faites les 3 gestes du TP01.
+Tapez `L` dans le moniteur. La carte classe une fenêtre toutes les 128 mesures. Faites les 3 gestes du TP01, **exactement comme pendant la capture** : glisser dans le sens du câble, tapoter la table au même endroit et avec la même force.
+
+> **Attention à « tapoter ».** Le modèle ne regarde que l'axe x (le sens du câble). Or un tapotement sur la table secoue surtout l'axe z : sur l'axe x, il ne laisse qu'une trace faible. Des coups trop doux, ou donnés ailleurs sur la table, sont classés `stationary`. Sous Windows, un premier essai a donné 2 « impact » sur 21 (rms 0,0005 g, le bruit d'une carte immobile) ; en tapotant comme à la capture, 28 sur 30. C'est une limite du choix d'un seul axe, pas un défaut du firmware.
 
 ```text
 LIVE periodic stationary=0.00 periodic=1.00 impact=0.00 | rms=0.0589 crest=2.91 dom=0.91Hz fs=116.4 feat_us=659 invoke_us=107

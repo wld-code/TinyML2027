@@ -5,5 +5,6 @@
 - **9/9 étapes OK** : setup.sh, 4 notebooks, tests, compilation de tous les sketches (originale et Rev2), exemples 03/05, TP01 (dataset publié), TP02, TP03 (INT8 + test C++), release MLOps build + validate.
 - TP02 : test s05 accuracy 0,961, macro-F1 0,961, validation croisée 0,864 : **identiques à macOS**.
 - Modèle INT8 : 2 176 octets comme sur macOS, mais SHA-256 `23685fb7…` au lieu de `023e01b8…` : l'entraînement n'est pas identique au bit près d'une machine à l'autre.
-- `infer_nano` : 171 152 octets de Flash contre 183 968 sur macOS, même core 4.6.0 et même compilateur 7-2017q4 annoncé (Blink : 85 424 contre 85 504). **Écart non expliqué.**
+- `infer_nano` : 171 152 octets de Flash contre 183 968 sur macOS, même core 4.6.0 et même compilateur 7-2017q4 annoncé (Blink : 85 424 contre 85 504). **Écart non expliqué** le 23/11.
+  *Expliqué le 24/11 :* le journal TP03 indique « 2 golden vectors ». Dans ce clone neuf, `quantize_motion` cherchait les données dans `data/` (absent) et n'a écrit que les 2 cas synthétiques, sans erreur. Corrigé au commit 021a003 ; voir [evidence/compilation](../compilation/README.md).
 - Limites : pas de carte (aucun port USB, téléversement, capteur), pas de x86-64 (TensorFlow exige AVX, non émulé), Debian et non Ubuntu.

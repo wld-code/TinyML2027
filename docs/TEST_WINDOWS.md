@@ -1,5 +1,7 @@
 # Campagne de test Windows — consignes pour l'agent (ou la personne) qui teste
 
+> **Première campagne faite** le 24/11/2026 sur Windows 10 : voir le [rapport](../evidence/windows/RAPPORT.md). À refaire sur un clone neuf pour confirmer les correctifs, puis sous Windows 11 et avec une Rev2.
+
 **But :** refaire tout le parcours du cours sur un **vrai PC Windows**, avec la carte Nano 33 BLE Sense, et rapporter des **preuves réelles** (journaux et captures d'écran). Ces consignes peuvent être suivies par une personne ou par Claude Code lancé sur le PC Windows.
 
 ## Règles (non négociables)
@@ -72,7 +74,7 @@ Pour chaque étape : lancer la commande, comparer au « résultat attendu » du 
 | 10 | TP01 — acquisition | `uv run python -m tinyml2027.capture info` puis **une** session guidée courte `capture guided --session w01` (la personne fait les gestes) | **oui** |
 | 11 | TP01 sans carte | `uv run python -m tinyml2027.build_features --data datasets/motion-nano-v1` | non |
 | 12 | TP02 | `uv run python -m tinyml2027.train_motion --test-session s05` (comparer aux chiffres du README : test 0,961) | non |
-| 13 | TP03 | `quantize_motion`, `pytest tests/test_features_cpp.py`, compile + upload `infer_nano`, moniteur : `R` (rejeu 8/8 attendu) puis `L` (direct, 3 gestes) | **oui** |
+| 13 | TP03 | `quantize_motion --data datasets/motion-nano-v1`, `pytest tests/test_features_cpp.py`, compile + upload `infer_nano`, moniteur : `R` (rejeu 8/8 attendu) puis `L` (direct, 3 gestes) | **oui** |
 | 14 | MLOps | `release build --version motion-win`, `validate`, `flash`, `status` | **oui** |
 | 15 | Fin | remettre le firmware du cours : `git checkout labs/03-embedded-inference/firmware/infer_nano` (en-têtes motion-v1 du dépôt), puis `compile.sh` + `upload.sh` de `infer_nano` ; vérifier `# model_version=motion-v1` avec `R` | **oui** |
 
@@ -88,6 +90,9 @@ Déjà rencontrés lors du premier essai (Windows 10 Pro 22H2, 24/11/2026) :
 | `ImportError: DLL load failed while importing _pywrap_tensorflow_internal` | Visual C++ Redistributable trop ancien (14.28) | installer le Redistributable x64 récent (prérequis ci-dessus) |
 | `Espace insuffisant sur le disque (os error 112)` pendant `uv sync` | disque presque plein | libérer environ 3 Go |
 | accents cassés dans Git Bash (« fen▒tres ») | Python écrit en cp1252 hors console Windows | corrigé dans le dépôt (sortie forcée en UTF-8) |
+| en-têtes `.h` générés en cp1252 et CRLF (« g�n�r� ») | fichiers ouverts sans `encoding=` | corrigé : UTF-8 et LF imposés, test `tests/test_text_encoding.py` |
+| `release flash` : `OSError: [WinError 193]` | Python lançait `scripts/arduino.sh`, que Windows ne sait pas exécuter | corrigé : `release.py` appelle `arduino-cli.exe` directement |
+| compilation : `exit status 0xc0000142` | échec ponctuel au lancement d'un processus | relancer ; vérifier le code de sortie (`set -o pipefail` si la sortie passe par `tail`) |
 
 - Ports `COMx` et pilote USB de la carte (Gestionnaire de périphériques).
 - Fins de ligne : erreur `$'\r': command not found` dans un script `.sh`.

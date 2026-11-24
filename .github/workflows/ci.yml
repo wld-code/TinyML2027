@@ -61,7 +61,7 @@ jobs:
       - name: "TP03 — quantification INT8, test C++ des features, firmware"
         run: |
           set -e
-          uv run python -m tinyml2027.quantize_motion
+          uv run python -m tinyml2027.quantize_motion --data datasets/motion-nano-v1
           uv run pytest -q tests/test_features_cpp.py
           REV=original ./scripts/compile.sh labs/03-embedded-inference/firmware/infer_nano | tail -2
           REV=rev2     ./scripts/compile.sh labs/03-embedded-inference/firmware/infer_nano | tail -2
@@ -69,7 +69,7 @@ jobs:
       - name: "Extension MLOps — construire et valider une release"
         run: |
           set -e
-          uv run python -m tinyml2027.quantize_motion --model-version ci-${{ matrix.os }}
+          uv run python -m tinyml2027.quantize_motion --data datasets/motion-nano-v1 --model-version ci-${{ matrix.os }}
           REV=original ./scripts/compile.sh labs/03-embedded-inference/firmware/infer_nano > /dev/null
           uv run python -m tinyml2027.release build --version ci-${{ matrix.os }}
           uv run python -m tinyml2027.release validate releases/ci-${{ matrix.os }}

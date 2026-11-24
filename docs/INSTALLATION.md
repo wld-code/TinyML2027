@@ -87,6 +87,7 @@ Le cours utilise les scripts du dépôt, dont les versions sont figées. Vous po
 | `uv: command not found` | rouvrez le terminal après l'installation de uv |
 | Windows : `printf: '': not a valid identifier` | clone fait avant la correction des fins de ligne : refaites un `git clone` |
 | Windows : `DLL load failed while importing _pywrap_tensorflow_internal` | installez le Visual C++ Redistributable x64 récent |
+| Windows : compilation en échec avec `exit status 0xc0000142` | échec ponctuel au lancement d'un processus Windows : relancez la même commande |
 | `Espace insuffisant sur le disque` / `No space left on device` | libérez 3 Go |
 | Linux : port série `permission denied` | ajoutez-vous au groupe `dialout` (`sudo usermod -aG dialout $USER`), puis rouvrez la session ; jamais `chmod 777` |
 | Clone HTTPS refusé (`could not read Username`) | le dépôt est privé : connectez-vous à GitHub ou utilisez l'adresse SSH `git@github.com:wld-code/TinyML2027.git` |

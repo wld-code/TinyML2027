@@ -80,7 +80,7 @@ Pas de capteur externe, pas de breadboard, pas de cloud payant.
 |---|---|---|---|
 | macOS 15 (Apple Silicon) | ✅ | ✅ tout le parcours | compilé seulement |
 | Linux (Debian 12 arm64) | ✅ | non testé | non testé |
-| Windows 10 | en cours | en cours | non testé |
+| Windows 10 | ✅ | ✅ sauf Arduino IDE | compilé seulement |
 
 Détail et preuves : [docs/VALIDATION.md](docs/VALIDATION.md). Vous avez une Rev2, un PC Windows ou Linux ? Vos retours sont les bienvenus.
 
