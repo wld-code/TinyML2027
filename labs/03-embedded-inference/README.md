@@ -97,3 +97,15 @@ Le rejeu et le direct ont été vérifiés sur la Nano originale. La validation 
 Remettez `comparison.json`, votre relevé du rejeu, des prédictions et des ressources, ainsi que vos réponses. Pour le parcours sur ordinateur, remettez le résultat du test C++.
 
 Ce TP adapte les chapitres 11 et 12 d’[AIoT-Book](../../docs/REFERENCES.md).
+
+## Corrigé
+
+<details>
+<summary>Afficher les réponses</summary>
+
+1. La calibration fixe les plages de quantification à partir des données d’entraînement. Utiliser le test pour les fixer introduirait des informations du test dans le modèle quantifié avant son évaluation. Une entrée au-delà de la plage est ramenée à la borne la plus proche, −128 ou 127. Des valeurs différentes peuvent alors donner le même code.
+2. Une erreur de centrage, d’échelle ou d’arrondi peut modifier les codes INT8 alors que la classe gagnante reste identique. Comparer séparément les codes d’entrée et de sortie aide à localiser l’écart entre le prétraitement et l’inférence.
+3. Relevez la classe et le meilleur score affichés pendant votre essai. La classe dépend du mouvement et de la fenêtre. Le modèle choisit parmi ses trois classes apprises. L’indication `(incertain)` s’affiche si le meilleur score est inférieur à 0,6. Un geste inconnu peut tout de même recevoir un score élevé.
+4. Avec 512 octets disponibles pour un besoin de 788 octets, l’interpréteur ne peut pas allouer ses tenseurs. Le firmware affiche `ERREUR init=AllocateTensors` et l’inférence ne démarre pas.
+
+</details>

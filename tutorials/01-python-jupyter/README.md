@@ -61,3 +61,14 @@ Faites les [exercices](exercises/README.md), puis comparez vos réponses aux [so
 1. Quel rôle joue l’environnement virtuel lorsque Jupyter exécute une cellule ?
 2. Combien de mesures attendez-vous sur deux secondes à 100 Hz ?
 3. Pourquoi vérifier les numéros de mesure et les horodatages avant de tracer le signal ?
+
+## Corrigé
+
+<details>
+<summary>Afficher les réponses</summary>
+
+1. Le kernel exécute les cellules avec l’interpréteur et les bibliothèques de l’environnement sélectionné. Le kernel du projet utilise `.venv` et retrouve les versions prévues pour le cours.
+2. À 100 mesures par seconde, deux secondes correspondent à 200 mesures.
+3. Les numéros de mesure révèlent les ruptures de séquence et les doublons. Les horodatages permettent de repérer les inversions, les intervalles longs et de calculer la cadence. Le tracé peut relier deux points de part et d’autre d’une lacune sans la rendre visible.
+
+</details>

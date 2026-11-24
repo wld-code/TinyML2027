@@ -149,3 +149,16 @@ uv run pytest tests/test_recording.py tests/test_capture_protocol.py
 Pour le parcours sur carte, conservez `data/manifest.csv` et les enregistrements de `data/raw/`. Dans les deux parcours, remettez `results/tp01/features.csv`, `results/tp01/quality_report.md` et vos réponses. Le dossier `data/` reste sur votre poste, hors de Git.
 
 Ce TP adapte les [chapitres 7 et 8 d’AIoT-Book](../../docs/REFERENCES.md).
+
+## Corrigé
+
+<details>
+<summary>Afficher les réponses</summary>
+
+1. Le modèle utilise uniquement `ax_g`. Un glissement dans le sens du câble sollicite l’axe x et produit une oscillation visible sur cet axe. En glissant en travers, on solliciterait surtout l’axe y.
+2. Dans le [rapport de référence](../../evidence/tp01/quality_report.md), le glissement se distingue par une fréquence dominante proche de 0,91 Hz et par une puissance de bande médiane plus élevée. Pour distinguer les tapotements de l’immobilité, comparez notamment le facteur de crête médian (6,037 contre 3,217) et la RMS médiane (0,004083 g contre 0,0006447 g). Ces médianes donnent des repères. Vérifiez la dispersion sur vos propres captures avant de tirer une conclusion.
+3. Une courbe peut masquer une mesure manquante ou dupliquée, un horodatage qui recule, un intervalle anormalement long, une valeur non numérique ou une saturation. Le contrôle qualité examine les valeurs et les écarts entre les lignes du CSV.
+
+**Essai de dépannage.** Si le moniteur occupe le port, `capture info` doit signaler un problème d’ouverture. Une fois le port libéré, le firmware d’acquisition doit de nouveau répondre par une ligne `INFO`.
+
+</details>

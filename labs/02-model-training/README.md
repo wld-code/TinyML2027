@@ -88,3 +88,20 @@ Le [schéma des fichiers utilisés au TP03](../../docs/figures/tp02-fichiers-ver
 Remettez `metrics.json`, `test_predictions.csv` et vos réponses. Conservez le dossier `artifacts/motion/` pour le [TP03](../03-embedded-inference/README.md).
 
 Ce TP adapte les chapitres 9 et 10 d’[AIoT-Book](../../docs/REFERENCES.md).
+
+## Corrigé
+
+<details>
+<summary>Afficher les réponses</summary>
+
+1. Deux fenêtres voisines se recouvrent sur 128 mesures. Une fenêtre de test peut donc contenir des mesures déjà utilisées pour entraîner le modèle. Des fenêtres éloignées d’une même session partagent aussi le montage et la façon de faire le geste. La séparation par session réduit ces deux sources de fuite.
+2. Le réseau permet d’étudier la conversion FP32 vers INT8, le prétraitement embarqué et le rejeu avec TensorFlow Lite Micro. Pour choisir un modèle à déployer, comparez les erreurs par classe et la stabilité sur plusieurs sessions indépendantes, puis la Flash, la RAM et la latence sur la cible. Les 51 fenêtres de `s05` donnent un résultat de référence. Le choix du modèle peut s’appuyer sur la validation croisée, avec une session séparée pour le bilan final.
+3. Les 51 fenêtres décrivent les performances sur `s05`, dans les conditions de cette collecte. Comme elles se recouvrent et viennent d’une seule session, elles ne représentent pas 51 essais indépendants. Il faut d’autres sessions, avec d’autres personnes, tables ou cartes, pour mesurer l’effet de ces changements.
+4. Pour la première fenêtre de référence (`s05_stationary_t01`, `start=0`), `crest_factor` vaut 3,54686. La moyenne d’entraînement vaut environ 4,43068 et l’écart-type 2,05859.
+
+   - Avec la moyenne apprise, `(3,54686 − 4,43068) / 2,05859 ≈ −0,429`.
+   - Avec une moyenne supposée nulle, `3,54686 / 2,05859 ≈ 1,723`.
+
+   L’erreur décale cette entrée d’environ +2,152 pour chaque fenêtre. Elle peut modifier les scores et parfois la classe prédite. Reprenez le calcul avec vos fichiers si vous avez utilisé vos propres captures.
+
+</details>

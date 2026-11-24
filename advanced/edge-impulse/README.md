@@ -82,3 +82,13 @@ uv run python -m tinyml2027.release flash releases/motion-v1
 2. Comment constituer un test étiqueté avec le microphone de la Nano ? Comment compter les déclenchements au silence et les mots manqués ?
 
 Les noms des menus peuvent évoluer. Consultez la [documentation Edge Impulse](https://docs.edgeimpulse.com/) et le [guide Arduino](https://docs.arduino.cc/tutorials/nano-33-ble-sense/edge-impulse).
+
+## Corrigé
+
+<details>
+<summary>Afficher les réponses</summary>
+
+1. La voix d’une personne se retrouve dans plusieurs clips. Si elle figure dans l’entraînement et le test, le modèle peut exploiter des caractéristiques propres à cette voix. La séparation par locuteur permet d’évaluer la reconnaissance sur de nouvelles voix.
+2. Enregistrez localement des clips associés à des étiquettes définies à l’avance, avec les mêmes conditions de capture que sur la Nano. Repérez les fenêtres contenant un mot entier et celles contenant seulement du bruit ou du silence. Comptez les prédictions `go` ou `stop` sur les fenêtres sans mot pour mesurer les faux déclenchements. Pour chaque mot, comptez les fenêtres étiquetées avec ce mot où il n’a pas été reconnu, y compris les réponses « incertain ». Rapportez chaque compte au nombre de fenêtres concernées.
+
+</details>

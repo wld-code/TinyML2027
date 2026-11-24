@@ -48,3 +48,14 @@ Pour un modèle aussi petit, le gain de l'INT8 reste modeste. **L'INT8 ne garant
 1. Le test n° 8 donne 72 sur la carte et 73 sur le Mac, avec pourtant le même code d'entrée. D'où peut venir cet écart d'un cran ? Voir [evidence/phase5](../../evidence/phase5/README.md).
 2. Que répond le modèle INT8 pour x = 7,0, et pourquoi est-ce si loin du modèle FP32 ?
 3. Pourquoi ne faut-il pas calibrer la quantification avec le jeu de test ?
+
+## Corrigé
+
+<details>
+<summary>Afficher les réponses</summary>
+
+1. Les noyaux de calcul peuvent arrondir différemment lors de la remise à l’échelle de l’accumulateur en INT8. Près d’une limite entre deux codes, cela peut produire un écart d’un cran avec la même entrée quantifiée.
+2. Pour `x = 7,0`, le code d’entrée sature à 127, qui représente environ 6,28. Dans l’essai de référence, la carte renvoie le code −14, soit environ −0,153 après déquantification. Le modèle FP32 reçoit 7,0 et prédit environ 0,021. Les deux modèles reçoivent donc des valeurs effectives différentes et 7,0 se trouve hors du domaine d’entraînement. [Mesures de référence](../../evidence/phase5/README.md)
+3. La calibration choisit les échelles de quantification. Si elle utilisait les données de test, les plages du modèle seraient ajustées à ces données avant l’évaluation. Calibrez sur l’entraînement et gardez le test pour la comparaison FP32–INT8.
+
+</details>

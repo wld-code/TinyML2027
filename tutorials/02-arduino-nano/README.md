@@ -136,3 +136,17 @@ Fermez le moniteur avant de lancer les scripts Python. Le port série est utilis
 4. Que se passe-t-il si l'on téléverse un sketch compilé pour la carte originale sur une Rev2 ?
 
 Retrouvez les fiches Arduino et les crédits du tutoriel dans les [références du cours](../../docs/REFERENCES.md).
+
+## Corrigé
+
+<details>
+<summary>Afficher les réponses</summary>
+
+1. Le système attribue le port. Son nom peut changer entre deux ordinateurs, après un changement de prise ou en mode bootloader. Détectez le port ou passez-le en argument.
+2. Posée sur la table, la carte subit la force de support qui équilibre son poids. L’accéléromètre mesure cette accélération propre, d’environ 1 g, sur l’axe vertical de la carte. Le signe dépend de son orientation.
+3. À 119 Hz, on attend environ 2 380 mesures en 20 s, contre 2 320 à 116 Hz, soit un écart de 60. Si l’on convertissait les indices de la FFT en hertz avec 119 Hz, les fréquences seraient surestimées d’environ 2,6 %.
+4. Un sketch prévu pour le LSM9DS1 cherche un capteur absent sur la Rev2. L’initialisation de l’IMU échoue. Recompilez et téléversez avec `REV=rev2` pour utiliser le BMI270.
+
+**Repérage de +Y.** Sur la Nano originale de référence, câble à gauche et composants face à soi, `ay` vaut environ −0,904 g. L’axe +Y pointe donc vers le bas dans cette position. Pour vérifier l’inversion du signe, retournez la carte autour de son axe longitudinal en gardant le câble à gauche. [Mesures des six orientations](../../evidence/phase6/README.md)
+
+</details>

@@ -81,3 +81,14 @@ Attendez l’état confirmé `motion-v1`. Après une interruption du téléverse
 3. Quel état la carte annonce-t-elle après le retour à `motion-v1` ? Quels contrôles permettent de le confirmer ?
 
 Les [essais sur carte originale](../../evidence/mlops/) documentent le refus avant téléversement, l’échec au rejeu et le retour à la version confirmée. Cette extension adapte le chapitre 13 d’[AIoT-Book](../../docs/REFERENCES.md).
+
+## Corrigé
+
+<details>
+<summary>Afficher les réponses</summary>
+
+1. `validate` vérifie l’intégrité des fichiers et les informations du manifeste. Une erreur présente au moment de la construction peut se trouver dans un binaire dont l’empreinte est correcte. Le rejeu vérifie que les calculs exécutés sur la carte donnent les valeurs attendues.
+2. Le binaire conservé permet de remettre exactement la version vérifiée, avec ses paramètres et son prétraitement. Une reconstruction peut produire un autre binaire ou intégrer des fichiers différents.
+3. Après restauration, `status` doit indiquer `motion-v1` comme état souhaité et confirmé. Vérifiez la version et l’empreinte SHA-256 annoncées par la carte ainsi que la réussite du rejeu (`REPLAY STATUT OK`).
+
+</details>

@@ -65,3 +65,14 @@ Le firmware **affiche toute erreur** au lieu de la masquer : schéma incompatibl
 1. Pourquoi la carte et LiteRT ne donnent-ils pas toujours le même résultat au bit près, alors qu'ils exécutent les mêmes opérations en float32 ? Indice : l'ordre des additions.
 2. `arena_used=880` alors que `kArenaSize=4096`. Que gagne-t-on en réduisant la réserve, et que risque-t-on si on la réduit trop ?
 3. Pourquoi ce sketch occupe-t-il 200 Ko de Flash de moins que l'exemple officiel `hello_world` ?
+
+## Corrigé
+
+<details>
+<summary>Afficher les réponses</summary>
+
+1. En float32, chaque opération peut être arrondie. Changer l’ordre des additions peut donc changer les derniers bits du résultat. L’exemple compare l’écart absolu à la tolérance annoncée.
+2. Réduire `kArenaSize` libère de la RAM statique. Si la réserve devient trop petite pour les tenseurs et leurs buffers, `AllocateTensors()` échoue à l’initialisation.
+3. Ce firmware enregistre uniquement l’opérateur `FULLY_CONNECTED`. L’exemple officiel utilise `AllOpsResolver`, qui enregistre tous les opérateurs et augmente la taille du programme en Flash.
+
+</details>
