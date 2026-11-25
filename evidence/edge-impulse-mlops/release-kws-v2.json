@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "version": "kws-v2",
+  "firmware": "kws_nano 0.1.1",
+  "target": {
+    "board": "ABX00031",
+    "fqbn": "arduino:mbed_nano:nano33ble",
+    "core": "arduino:mbed_nano@4.6.0"
+  },
+  "git_commit": "8febfec0a69567b93fd0c16264f82daccf6d08bb",
+  "git_dirty": true,
+  "files": {
+    "arduino-int8.zip": "8c8efa54d34e1d97e66065112c8da583c6ba565c0ce72b00aa5a5ec45a2642ed",
+    "baseline.json": "47ebf7ddb427f81f7a8269340f64b8bf259abf454f85c6ac41a715dd86bc1789",
+    "experiment.json": "fd56a316794443a74d777f3aa7e4c1ada96483cf6d25c10c59f3dd1b35a13ffb",
+    "gates.json": "f0d524e3995b730c8000c1aaae867632369e46f57aa09036b3f95d16efc860b6",
+    "hardware.json": "6f75e561e686e1dacdb36c2ee488ca9f85453925fb026af033571a5ae2b02664",
+    "kws_nano.ino": "1df6f69c15ad79205969a61aa8d1cbfd7f9dc558c0f1b8bc58918f0540692d2e",
+    "kws_nano.ino.bin": "321172dfd921363567df05f8beae4f543021b3da95045f361805c3a5d6a447a0",
+    "manifest.csv": "f0d99bc7bd77f1e021d3b85a82d37c2f1a1e38da7702c12734d27da2d7b227ce",
+    "metrics.json": "66ace23c6389804610551bcd72da7b9fa19bfa8b948ba8ce280dc9b40944eb02",
+    "model.json": "42504d206e030b726383463fd8fcbf67e21b1c7176faca62e0f0ec79f3e94bd4",
+    "quality-gates.json": "ad74441baae8766bf25e4b24b891306a9913e5bb1ba53e4a19bd8a3edef6cb69",
+    "versions.lock": "ae133db0a04b9dbf7aa6e6570e4475115b7726bc77955a664ccdb70f4ad8fb11"
+  }
+}

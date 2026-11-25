@@ -1,0 +1,23 @@
+{
+  "labels": ["bruit", "go", "stop"],
+  "sample_rate_hz": 16000,
+  "window_ms": 1000,
+  "stride_ms": 500,
+  "mfcc": {
+    "coefficients": 13,
+    "frame_ms": 20,
+    "frame_stride_ms": 20,
+    "filters": 32,
+    "fft_length": 256
+  },
+  "training": {
+    "convolution_filters": [8, 16],
+    "cycles": 100,
+    "learning_rate": 0.0001,
+    "validation_fraction": 0.2,
+    "device": "CPU",
+    "studio_augmentation": false
+  },
+  "runtime": "Arduino EON INT8",
+  "decision_threshold": 0.6
+}

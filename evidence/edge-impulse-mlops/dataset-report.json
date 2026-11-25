@@ -1,0 +1,64 @@
+{
+  "seed": 2027,
+  "splits": {
+    "corrective-v2": {
+      "go": 100,
+      "stop": 100,
+      "bruit": 100
+    },
+    "evaluation-clean": {
+      "go": 50,
+      "stop": 50,
+      "bruit": 50
+    },
+    "evaluation-shifted": {
+      "go": 50,
+      "stop": 50,
+      "bruit": 50
+    },
+    "final-clean": {
+      "go": 50,
+      "stop": 50,
+      "bruit": 50
+    },
+    "final-shifted": {
+      "go": 50,
+      "stop": 50,
+      "bruit": 50
+    },
+    "train-v1": {
+      "go": 200,
+      "stop": 200,
+      "bruit": 200
+    }
+  },
+  "origins": {
+    "train": {
+      "speakers": 398,
+      "noise_sources": [
+        "running_tap.wav",
+        "white_noise.wav"
+      ]
+    },
+    "corrective": {
+      "speakers": 193,
+      "noise_sources": [
+        "pink_noise.wav",
+        "doing_the_dishes.wav"
+      ]
+    },
+    "promotion": {
+      "speakers": 94,
+      "noise_sources": [
+        "dude_miaowing.wav"
+      ]
+    },
+    "final": {
+      "speakers": 91,
+      "noise_sources": [
+        "exercise_bike.wav"
+      ]
+    }
+  },
+  "manifest_sha256": "f0d99bc7bd77f1e021d3b85a82d37c2f1a1e38da7702c12734d27da2d7b227ce"
+}

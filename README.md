@@ -37,6 +37,7 @@ Les [exemples Arduino](examples/) permettent de s’exercer entre les tutoriels 
 
 - [Edge Impulse](advanced/edge-impulse/README.md) — reconnaître deux mots à partir du microphone (2 à 3 h, compte et connexion Internet).
 - [Edge MLOps](advanced/edge-mlops/README.md) — préparer une version, vérifier son exécution et restaurer une version confirmée (2 à 3 h).
+- [Edge MLOps avec Edge Impulse](advanced/edge-impulse-mlops/README.md) — évaluer deux modèles de commandes vocales, contrôler leur promotion et restaurer une version par USB (3 à 4 h, Nano 33 BLE Sense originale et compte Edge Impulse).
 - [Nano et ESP32-S3](advanced/distributed-tinyml-esp32s3/README.md) — compilation expérimentale d’un exemple TensorFlow Lite Micro.
 
 ## Références et validation

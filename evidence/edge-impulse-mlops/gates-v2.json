@@ -1,0 +1,80 @@
+{
+  "decision": "rejected",
+  "offline_passed": false,
+  "checks": [
+    {
+      "criterion": "accuracy_clean",
+      "value": 0.19333333333333333,
+      "operator": ">=",
+      "limit": 0.75,
+      "status": "failed"
+    },
+    {
+      "criterion": "recall_go_clean",
+      "value": 0.0,
+      "operator": ">=",
+      "limit": 0.7,
+      "status": "failed"
+    },
+    {
+      "criterion": "recall_stop_clean",
+      "value": 0.48,
+      "operator": ">=",
+      "limit": 0.7,
+      "status": "failed"
+    },
+    {
+      "criterion": "macro_f1_shifted_gain",
+      "value": 0.00947176684881601,
+      "operator": ">=",
+      "limit": 0.03,
+      "status": "failed"
+    },
+    {
+      "criterion": "macro_f1_clean_loss",
+      "value": -0.06295003255672701,
+      "operator": "<=",
+      "limit": 0.02,
+      "status": "ok"
+    },
+    {
+      "criterion": "false_trigger_evaluation-clean",
+      "value": 0.02,
+      "operator": "<=",
+      "limit": 0.15,
+      "status": "ok"
+    },
+    {
+      "criterion": "false_trigger_evaluation-shifted",
+      "value": 0.04,
+      "operator": "<=",
+      "limit": 0.15,
+      "status": "ok"
+    },
+    {
+      "criterion": "firmware_compile",
+      "value": null,
+      "operator": "==",
+      "limit": true,
+      "status": "pending"
+    },
+    {
+      "criterion": "firmware_init",
+      "value": null,
+      "operator": "==",
+      "limit": true,
+      "status": "pending"
+    },
+    {
+      "criterion": "measured_acquisition_budget",
+      "value": null,
+      "operator": "==",
+      "limit": true,
+      "status": "pending"
+    }
+  ],
+  "policy_sha256": "ad74441baae8766bf25e4b24b891306a9913e5bb1ba53e4a19bd8a3edef6cb69",
+  "baseline_sha256": "47ebf7ddb427f81f7a8269340f64b8bf259abf454f85c6ac41a715dd86bc1789",
+  "candidate_sha256": "66ace23c6389804610551bcd72da7b9fa19bfa8b948ba8ce280dc9b40944eb02",
+  "manifest_sha256": "f0d99bc7bd77f1e021d3b85a82d37c2f1a1e38da7702c12734d27da2d7b227ce"
+}

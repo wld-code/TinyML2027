@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 258" role="img" aria-labelledby="title"><title id="title">Du candidat à la décision de déploiement</title>
+<defs><marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0l8 4-8 4z" fill="#375a70"/></marker></defs><rect width="960" height="100%" fill="#f8fafc"/>
+<text x="24" y="34" font-family="sans-serif" font-size="22" font-weight="bold" fill="#17334b">Du candidat à la décision de déploiement</text>
+<path d="M229 99H280" fill="none" stroke="#375a70" stroke-width="2" marker-end="url(#arrow)"/>
+<path d="M485 99H706" fill="none" stroke="#375a70" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="595" y="90" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#17334b">Tous les critères validés</text>
+<path d="M485 99H520V205H706" fill="none" stroke="#375a70" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="614" y="194" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#17334b">Échec ou mesure en attente</text>
+<rect x="24" y="68" width="205" height="62" rx="7" fill="#e6eff5" stroke="#7797aa"/>
+<text x="126.5" y="93" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#17334b">Comparer</text>
+<text x="126.5" y="114" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#17334b">v1 et v2 sur les mêmes clips</text>
+<rect x="280" y="68" width="205" height="62" rx="7" fill="#e6eff5" stroke="#7797aa"/>
+<text x="382.5" y="93" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#17334b">Contrôler</text>
+<text x="382.5" y="114" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#17334b">Critères logiciels et matériels</text>
+<rect x="706" y="68" width="230" height="62" rx="7" fill="#e6eff5" stroke="#7797aa"/>
+<text x="821.0" y="93" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#17334b">Promouvoir</text>
+<text x="821.0" y="114" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#17334b">Téléverser puis vérifier</text>
+<rect x="706" y="174" width="230" height="62" rx="7" fill="#e6eff5" stroke="#7797aa"/>
+<text x="821.0" y="199" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#17334b">Bloquer</text>
+<text x="821.0" y="220" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#17334b">Conserver le rapport et le binaire</text>
+</svg>

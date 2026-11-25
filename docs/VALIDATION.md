@@ -33,6 +33,11 @@ Un résultat n'est annoncé que s'il a été obtenu pour de vrai. Chaque ligne p
 | MLOps : refus, v1 → v2 → échec → retour à v1 | validé sur matériel | [mlops](../evidence/mlops/) |
 | Micro PDM | validé sur matériel | [edge-impulse](../evidence/edge-impulse/) |
 | Edge Impulse : Studio, export, essai sur la carte | validé sur matériel ; voix réelle médiocre sur « stop » | [edge-impulse](../evidence/edge-impulse/) |
+| Edge Impulse MLOps, expériences KWS v1 et v2 | exécuté dans Studio et analysé sur ordinateur | [comparaison INT8](../evidence/edge-impulse-mlops/studio-comparaison.md) |
+| Edge Impulse MLOps, client et critères KWS | lecture API réelle, écritures testées avec réponses simulées, calcul des critères exécuté sur ordinateur | [vérification du client](../evidence/edge-impulse-mlops/api-validation.md) |
+| Edge Impulse MLOps, firmware KWS v1 | compilé et validé sur Nano originale pour le démarrage, le rejeu et les captures PDM. Lecture de six clips avec volume système vérifié | [preuve matérielle](../evidence/edge-impulse-mlops/nano-v1.md) |
+| Edge Impulse MLOps, releases KWS et restauration | archives vérifiées, v2 compilée et bloquée par les critères, binaire archivé v1 restauré et confirmé sur la Nano originale | [validation des releases](../evidence/edge-impulse-mlops/releases.md) |
+| Edge Impulse MLOps, parcours étudiant | données régénérées, commandes d’analyse et archives vérifiées sur macOS arm64, liens et captures contrôlés | [vérification du parcours](../evidence/edge-impulse-mlops/parcours.md) |
 | Firmwares Rev2 (`REV=rev2`) | compilé (16/16 avec l'originale, 24/11/2026) | [compilation](../evidence/compilation/README.md) |
 
 ## Autres systèmes

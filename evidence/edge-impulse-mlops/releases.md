@@ -1,0 +1,9 @@
+# Archivage et restauration du 25 novembre 2026
+
+Essais sur macOS arm64 et Nano 33 BLE Sense originale ABX00031. Les deux dossiers ignorés par Git se trouvent sous `releases/`. Les copies des manifestes décrivent les fichiers et leurs empreintes. La copie de travail contenait les modifications du lab au moment de l’archivage, d’où `git_dirty: true`. Le sketch utilisé est inclus dans chaque archive.
+
+- [Manifeste de kws-v1](release-kws-v1.json) et [manifeste de kws-v2](release-kws-v2.json). Les deux archives passent le contrôle d’intégrité.
+- `kws-v2` compilée avec le core mbed_nano 4.6.0. Arduino CLI annonce 171 768 octets de Flash et 81 672 octets de RAM statique. [Critères après compilation](release-gates-v2.json) et [refus de la commande flash](kws-v2-blocked.log). Les essais matériels de v2 restent en attente.
+- `kws-v1` répond [avant la restauration](kws-v1-before-restore.json). La première écriture est suivie d’un délai série dépassé, avec la carte encore détectée en mode chargeur USB. Le chargeur `bossac` du dépôt a permis de réécrire le binaire archivé et de [vérifier la Flash](kws-v1-flash-verify.log). La commande `release_kws.py restore releases/kws-v1 --yes` a ensuite été relancée avec succès. Le [journal de la dernière exécution](kws-v1-restore.log) contient l’identité, la version et l’empreinte du ZIP annoncées par la carte, ainsi que le démarrage du modèle et du micro. Le binaire restauré est celui du premier essai matériel.
+- L’exercice a démontré une réinstallation de la référence via USB. `kws-v2` a été bloquée par la politique et le scénario v1 → v2 → v1 est resté conditionnel.
+- Après restauration, le [rejeu d’un clip public `stop`](kws-v1-restore-replay.jsonl) a confirmé la décision « incertaine » de Studio INT8, avec un écart maximal de score de 0,000003. Ce contrôle porte sur la concordance des deux exécutions.

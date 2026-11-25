@@ -1,0 +1,13 @@
+{"event": "hello", "protocol": 1, "firmware": "kws_nano 0.1.0", "release": "kws-v1", "export_sha256": "329671a8ac84d60805e89c284ea9b8f9ce6ee9a8e2eb294b4cd8fc73554919ba", "board": "ABX00031", "sample_rate_hz": 16000, "samples": 16000, "threshold": 0.6, "mic_ok": true, "model_ok": true, "session_note": "", "protocol_mode": "replay", "host_time_utc": "2026-11-25T08:07:12.286115+00:00"}
+{"event": "error", "seq": 1, "code": "replay_timeout", "pdm_errors": 0, "label": "bruit", "clip": "bruit.evaluation-clean.promotion-0115.wav", "host_time_utc": "2026-11-25T08:07:17.289042+00:00"}
+{"event": "error", "seq": 2, "code": "replay_timeout", "pdm_errors": 0, "label": "bruit", "clip": "bruit.evaluation-clean.promotion-0149.wav", "host_time_utc": "2026-11-25T08:07:22.291966+00:00"}
+{"event": "error", "seq": 3, "code": "replay_timeout", "pdm_errors": 0, "label": "go", "clip": "go.evaluation-clean.promotion-0000.wav", "host_time_utc": "2026-11-25T08:07:27.295009+00:00"}
+{"event": "error", "seq": 4, "code": "replay_timeout", "pdm_errors": 0, "label": "go", "clip": "go.evaluation-clean.promotion-0049.wav", "host_time_utc": "2026-11-25T08:07:32.298032+00:00"}
+{"event": "error", "seq": 5, "code": "replay_timeout", "pdm_errors": 0, "label": "stop", "clip": "stop.evaluation-clean.promotion-0052.wav", "host_time_utc": "2026-11-25T08:07:37.300948+00:00"}
+{"event": "error", "seq": 6, "code": "replay_timeout", "pdm_errors": 0, "label": "stop", "clip": "stop.evaluation-clean.promotion-0098.wav", "host_time_utc": "2026-11-25T08:07:42.303668+00:00"}
+{"event": "error", "seq": 7, "code": "replay_timeout", "pdm_errors": 0, "label": "bruit", "clip": "bruit.evaluation-shifted.promotion-0103.wav", "host_time_utc": "2026-11-25T08:07:47.306391+00:00"}
+{"event": "error", "seq": 8, "code": "replay_timeout", "pdm_errors": 0, "label": "bruit", "clip": "bruit.evaluation-shifted.promotion-0148.wav", "host_time_utc": "2026-11-25T08:07:52.309655+00:00"}
+{"event": "error", "seq": 9, "code": "replay_timeout", "pdm_errors": 0, "label": "go", "clip": "go.evaluation-shifted.promotion-0046.wav", "host_time_utc": "2026-11-25T08:07:57.312329+00:00"}
+{"event": "error", "seq": 10, "code": "replay_timeout", "pdm_errors": 0, "label": "go", "clip": "go.evaluation-shifted.promotion-0049.wav", "host_time_utc": "2026-11-25T08:08:02.315363+00:00"}
+{"event": "error", "seq": 11, "code": "replay_timeout", "pdm_errors": 0, "label": "stop", "clip": "stop.evaluation-shifted.promotion-0050.wav", "host_time_utc": "2026-11-25T08:08:07.317908+00:00"}
+{"event": "error", "seq": 12, "code": "replay_timeout", "pdm_errors": 0, "label": "stop", "clip": "stop.evaluation-shifted.promotion-0099.wav", "host_time_utc": "2026-11-25T08:08:12.321212+00:00"}

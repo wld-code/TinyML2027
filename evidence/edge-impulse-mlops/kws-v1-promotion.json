@@ -1,0 +1,73 @@
+{
+  "labels": [
+    "bruit",
+    "go",
+    "stop"
+  ],
+  "predictions": [
+    "bruit",
+    "go",
+    "stop",
+    "uncertain"
+  ],
+  "splits": {
+    "evaluation-clean": {
+      "n": 150,
+      "accuracy": 0.13333333333333333,
+      "macro_f1": 0.2071000927565562,
+      "recall_go": 0.0,
+      "recall_stop": 0.28,
+      "false_trigger_rate": 0.04,
+      "uncertain": 124,
+      "confusion": [
+        [
+          6,
+          0,
+          2,
+          42
+        ],
+        [
+          2,
+          0,
+          1,
+          47
+        ],
+        [
+          1,
+          0,
+          14,
+          35
+        ]
+      ]
+    },
+    "evaluation-shifted": {
+      "n": 150,
+      "accuracy": 0.10666666666666667,
+      "macro_f1": 0.16545284780578898,
+      "recall_go": 0.02,
+      "recall_stop": 0.08,
+      "false_trigger_rate": 0.02,
+      "uncertain": 123,
+      "confusion": [
+        [
+          11,
+          0,
+          1,
+          38
+        ],
+        [
+          3,
+          1,
+          1,
+          45
+        ],
+        [
+          6,
+          0,
+          4,
+          40
+        ]
+      ]
+    }
+  }
+}

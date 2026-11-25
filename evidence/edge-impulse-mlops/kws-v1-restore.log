@@ -1,0 +1,81 @@
+restore kws-v1 sur /dev/cu.usbmodem114101
+Binaire releases/kws-v1/kws_nano.ino.bin
+SHA-256 828a0c02d19aff90e89787254ff05f61534ca1060addd238d92b3d0a0a772747
+Device       : nRF52840-QIAA
+Version      : Arduino Bootloader (SAM-BA extended) 2.0 [Arduino:IKXYZ]
+Address      : 0x0
+Pages        : 256
+Page Size    : 4096 bytes
+Total Size   : 1024KB
+Planes       : 1
+Lock Regions : 0
+Locked       : none
+Security     : false
+Erase flash
+
+Done in 0.001 seconds
+Write 172556 bytes to flash (43 pages)
+
+[                              ] 0% (0/43 pages)
+[=                             ] 4% (2/43 pages)
+[==                            ] 6% (3/43 pages)
+[==                            ] 9% (4/43 pages)
+[===                           ] 11% (5/43 pages)
+[====                          ] 13% (6/43 pages)
+[====                          ] 16% (7/43 pages)
+[=====                         ] 18% (8/43 pages)
+[======                        ] 20% (9/43 pages)
+[======                        ] 23% (10/43 pages)
+[=======                       ] 25% (11/43 pages)
+[========                      ] 27% (12/43 pages)
+[=========                     ] 30% (13/43 pages)
+[=========                     ] 32% (14/43 pages)
+[==========                    ] 34% (15/43 pages)
+[===========                   ] 37% (16/43 pages)
+[===========                   ] 39% (17/43 pages)
+[============                  ] 41% (18/43 pages)
+[=============                 ] 44% (19/43 pages)
+[=============                 ] 46% (20/43 pages)
+[==============                ] 48% (21/43 pages)
+[===============               ] 51% (22/43 pages)
+[================              ] 53% (23/43 pages)
+[================              ] 55% (24/43 pages)
+[=================             ] 58% (25/43 pages)
+[==================            ] 60% (26/43 pages)
+[==================            ] 62% (27/43 pages)
+[===================           ] 65% (28/43 pages)
+[====================          ] 67% (29/43 pages)
+[====================          ] 69% (30/43 pages)
+[=====================         ] 72% (31/43 pages)
+[======================        ] 74% (32/43 pages)
+[=======================       ] 76% (33/43 pages)
+[=======================       ] 79% (34/43 pages)
+[========================      ] 81% (35/43 pages)
+[=========================     ] 83% (36/43 pages)
+[=========================     ] 86% (37/43 pages)
+[==========================    ] 88% (38/43 pages)
+[===========================   ] 90% (39/43 pages)
+[===========================   ] 93% (40/43 pages)
+[============================  ] 95% (41/43 pages)
+[============================= ] 97% (42/43 pages)
+[==============================] 100% (43/43 pages)
+Done in 6.827 seconds
+New upload port: /dev/cu.usbmodem114101 (serial)
+{
+  "utc": "2026-11-25T08:46:15.766940+00:00",
+  "operation": "restore",
+  "binary_sha256": "828a0c02d19aff90e89787254ff05f61534ca1060addd238d92b3d0a0a772747",
+  "identity": {
+    "event": "hello",
+    "protocol": 2,
+    "firmware": "kws_nano 0.1.1",
+    "release": "kws-v1",
+    "export_sha256": "329671a8ac84d60805e89c284ea9b8f9ce6ee9a8e2eb294b4cd8fc73554919ba",
+    "board": "ABX00031",
+    "sample_rate_hz": 16000,
+    "samples": 16000,
+    "threshold": 0.6,
+    "mic_ok": true,
+    "model_ok": true
+  }
+}

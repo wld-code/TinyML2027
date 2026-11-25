@@ -31,3 +31,6 @@ tutorials/01-python-jupyter/output/
 
 # Releases MLOps (binaires régénérables) et état de la carte
 releases/
+
+# Clés Edge Impulse et autres configurations privées locales
+.env

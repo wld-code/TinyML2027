@@ -1,0 +1,1 @@
+{"event": "hello", "protocol": 1, "firmware": "kws_nano 0.1.0", "release": "kws-v1", "export_sha256": "329671a8ac84d60805e89c284ea9b8f9ce6ee9a8e2eb294b4cd8fc73554919ba", "board": "ABX00031", "sample_rate_hz": 16000, "samples": 16000, "threshold": 0.6, "mic_ok": true, "model_ok": true}

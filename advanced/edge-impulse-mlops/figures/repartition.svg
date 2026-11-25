@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 890 280" role="img" aria-labelledby="title desc">
+  <title id="title">Répartition des jeux Speech Commands</title>
+  <desc id="desc">Entraînement, décision de promotion et test final, séparés par locuteur et par enregistrement de bruit.</desc>
+  <rect width="890" height="280" fill="#fff"/>
+  <g fill="#172b36" font-family="sans-serif" text-anchor="middle">
+    <text x="445" y="35" font-size="21" font-weight="bold">Répartir les sources avant l’augmentation</text>
+    <g fill="#e5f0f5" stroke="#7d9eaf">
+      <rect x="20" y="65" width="270" height="158" rx="8"/>
+      <rect x="310" y="65" width="270" height="158" rx="8"/>
+      <rect x="600" y="65" width="270" height="158" rx="8"/>
+    </g>
+    <g font-size="17" font-weight="bold">
+      <text x="155" y="95">Entraînement officiel</text>
+      <text x="445" y="95">Validation officielle</text>
+      <text x="735" y="95">Test officiel</text>
+    </g>
+    <g font-size="15">
+      <text x="155" y="133">train-v1 · 600 clips</text>
+      <text x="155" y="162">corrective-v2 · 300 clips</text>
+      <text x="155" y="194">Locuteurs distincts</text>
+      <text x="445" y="133">evaluation-clean · 150 clips</text>
+      <text x="445" y="162">evaluation-shifted · 150 clips</text>
+      <text x="445" y="194">Décision de promotion</text>
+      <text x="735" y="133">final-clean · 150 clips</text>
+      <text x="735" y="162">final-shifted · 150 clips</text>
+      <text x="735" y="194">Bilan après gel</text>
+      <text x="445" y="253">Chaque enregistrement de bruit source appartient à une seule partition.</text>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "evaluation": {
+    "clean_split": "evaluation-clean",
+    "shifted_split": "evaluation-shifted",
+    "uncertain_counts_as_miss": true,
+    "false_trigger_condition": "each"
+  },
+  "accuracy_clean_min": 0.75,
+  "command_recall_clean_min": 0.70,
+  "macro_f1_shifted_gain_min": 0.03,
+  "macro_f1_clean_loss_max": 0.02,
+  "noise_false_trigger_rate_max": 0.15,
+  "require_firmware_compile": true,
+  "require_firmware_init": true,
+  "require_measured_acquisition_budget": true
+}
