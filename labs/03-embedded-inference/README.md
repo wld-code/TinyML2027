@@ -57,10 +57,10 @@ Relevez la Flash et la RAM statique annoncées à la compilation. La Flash stock
 
 ## 4. Rejouer les fenêtres témoins sur la carte
 
-Ouvrez le moniteur série avec le port de la carte. Adaptez `/dev/ttyACM0` si nécessaire, puis envoyez `R` dans le moniteur.
+Ouvrez le moniteur série, puis envoyez `R`. La commande détecte automatiquement le port si une seule Nano est connectée.
 
 ```sh
-./scripts/arduino.sh monitor -p /dev/ttyACM0 -c baudrate=115200
+./scripts/arduino.sh monitor -p PORT -c baudrate=115200
 ```
 
 Le mode `REPLAY` exécute la chaîne embarquée sur six fenêtres prises dans le test et deux cas synthétiques (une fenêtre constante et un sinus à 2 Hz). Pour chaque fenêtre, lisez le statut et les écarts en crans de quantification (`lsb`). Les tolérances du [contrat de données](../../docs/DATA_CONTRACT.md#8-tolérances-carte--python) s’appliquent aux quatre caractéristiques, aux codes INT8 d’entrée et de sortie, et à la classe.

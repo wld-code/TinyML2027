@@ -32,7 +32,7 @@ Si la carte n’apparaît pas, commencez par vérifier la connexion.
 - Essayez un autre câble. Beaucoup de câbles USB ne transportent que le courant.
 - Essayez une autre prise. Si vous passez par un hub, branchez directement sur l'ordinateur.
 - Appuyez deux fois rapidement sur RESET (repère 2). La LED orange pulse quand la carte attend un programme en mode bootloader.
-- Sous Linux, en cas de « permission denied », vérifiez les droits du port avec `ls -l /dev/ttyACM0` et vos groupes avec `groups`. Si le port appartient à `dialout`, demandez à l’administrateur de vous ajouter à ce groupe. N'utilisez jamais `chmod 777`.
+- Sous Linux, en cas de « permission denied », utilisez `ls -l` suivi du chemin du port pour vérifier ses droits, puis `groups` pour vérifier vos groupes. Si le port appartient à `dialout`, demandez à l’administrateur de vous ajouter à ce groupe. N'utilisez jamais `chmod 777`.
 
 ## 2. Faire clignoter la LED
 
@@ -60,12 +60,10 @@ Les deux révisions apparaissent sous le nom « Nano 33 BLE ». Pour les disting
 ```sh
 ./scripts/compile.sh tutorials/02-arduino-nano/sketches/board_identify
 ./scripts/upload.sh  tutorials/02-arduino-nano/sketches/board_identify
-./scripts/arduino.sh monitor -p /dev/ttyACM0 -c baudrate=115200
+./scripts/arduino.sh monitor -p PORT -c baudrate=115200
 ```
 
-Les commandes du moniteur utilisent `/dev/ttyACM0` comme exemple Linux. Adaptez le chemin au port affiché par `board list` après le téléversement. Si le journal affiche `PORT=/dev/ttyACM0`, passez uniquement `/dev/ttyACM0` après `-p`. Appuyez sur **Entrée** dans le moniteur, puis sur **Ctrl+C** pour en sortir.
-
-Si une seule Nano est détectée, `./scripts/arduino.sh monitor -p PORT -c baudrate=115200` sélectionne son port automatiquement.
+`-p PORT` sélectionne automatiquement le port si une seule Nano est détectée. Avec plusieurs cartes, remplacez `PORT` par le chemin de la carte souhaitée dans la sortie de `board list`. Appuyez sur **Entrée** dans le moniteur, puis sur **Ctrl+C** pour en sortir.
 
 Cherchez `verdict=nano33ble_sense_original` ou `verdict=nano33ble_sense_rev2`. Pour chaque sketch suivant qui lit l’IMU, ajoutez `REV=rev2` devant la compilation et le téléversement si vous utilisez une Rev2. Pour l’étape 4, utilisez par exemple `REV=rev2 ./scripts/compile.sh examples/04_imu`. Dans Arduino IDE, décommentez la ligne `#define NANO_REV2` en tête du sketch.
 
@@ -76,7 +74,7 @@ Si vous vous trompez de révision, la carte affiche une erreur claire, par exemp
 ```sh
 ./scripts/compile.sh examples/04_imu
 ./scripts/upload.sh  examples/04_imu
-./scripts/arduino.sh monitor -p /dev/ttyACM0 -c baudrate=115200
+./scripts/arduino.sh monitor -p PORT -c baudrate=115200
 ```
 
 Voici un extrait mesuré sur la carte originale posée à plat.
