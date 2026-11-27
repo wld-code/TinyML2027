@@ -35,13 +35,13 @@ Lancez toutes les commandes depuis la racine du dépôt.
    ./scripts/upload.sh examples/03_custom_model
    ```
 
-4. **Vérifier.** Remplacez `PORT` par le port affiché à l'étape 3.
+4. **Vérifier.** Adaptez `/dev/ttyACM0` au port affiché à l’étape 3 dans les commandes de vérification et du moniteur série.
 
    ```sh
-   uv run python python/verify.py --mode fp32 --port PORT
+   uv run python python/verify.py --mode fp32 --port /dev/ttyACM0
    ```
 
-   La dernière ligne doit être `RÉSULTAT : OK`. On peut aussi ouvrir le moniteur avec `./scripts/arduino.sh monitor -p PORT -c baudrate=115200`, puis appuyer sur Entrée pour relancer les 23 tests.
+   La dernière ligne doit être `RÉSULTAT : OK`. On peut aussi ouvrir le moniteur avec `./scripts/arduino.sh monitor -p /dev/ttyACM0 -c baudrate=115200`, puis appuyer sur Entrée pour relancer les 23 tests.
 
 ![Entraînement et conversion](../../docs/screenshots/ex03-entrainement-conversion-macos.png)
 

@@ -1,7 +1,6 @@
 # Références
 
 ## Sources adaptées
-- [AIoT-Book — labs](https://github.com/wld-code/AIoT-Book/tree/main/labs) : chapitres 7–8 (features), 9–10 (classifieur), 11 (INT8), 12 (déploiement), 13 (mise à jour).
 - [TinyML-for-motor](https://github.com/wld-code/TinyML-for-motor) : idée du parcours guidé.
 
 ## Carte et outils Arduino

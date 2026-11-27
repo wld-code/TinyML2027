@@ -18,15 +18,11 @@ BUILD="$ROOT/build/$NAME"
 
 PORT="${2:-}"
 if [ -z "$PORT" ]; then
-  PORTS="$("$ROOT/scripts/arduino.sh" board list | awk -v f="$FQBN" '$0 ~ f {print $1}')"
-  COUNT="$(printf '%s\n' "$PORTS" | grep -c . || true)"
-  if [ "$COUNT" != "1" ]; then
-    echo "Impossible de choisir un port automatiquement ($COUNT carte(s) $FQBN détectée(s)) :" >&2
-    "$ROOT/scripts/arduino.sh" board list >&2
+  source "$ROOT/scripts/nano-port.sh"
+  PORT="$(nano_port)" || {
     echo "Relancez avec le port en second argument." >&2
     exit 1
-  fi
-  PORT="$PORTS"
+  }
 fi
 echo "Téléversement de $NAME sur $PORT"
 "$ROOT/scripts/arduino.sh" upload -p "$PORT" --fqbn "$FQBN" --input-dir "$BUILD"

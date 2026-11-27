@@ -11,10 +11,10 @@ Nous utiliserons trois classes, `go`, `stop` et `bruit`. Le Studio prépare les 
 ```sh
 ./scripts/compile.sh advanced/edge-impulse/sketches/mic_check
 ./scripts/upload.sh  advanced/edge-impulse/sketches/mic_check
-./scripts/arduino.sh monitor -p PORT -c baudrate=115200
+./scripts/arduino.sh monitor -p /dev/ttyACM0 -c baudrate=115200
 ```
 
-Remplacez `PORT` par le port de la carte. Le sketch utilise la bibliothèque PDM du support Arduino Mbed Nano. Attendez que le microphone se stabilise, puis observez le niveau RMS et la crête au calme et pendant quelques claquements de mains. Vérifiez que les crêtes augmentent et que la cadence moyenne est proche de 16 000 échantillons par seconde. Les valeurs fluctuent d’une ligne à l’autre car le microphone livre les données par blocs. Une erreur `PDM.begin` signale un échec d’initialisation. Vérifiez que vous utilisez bien une carte **Sense**.
+Adaptez `/dev/ttyACM0` au port de la carte. Le sketch utilise la bibliothèque PDM du support Arduino Mbed Nano. Attendez que le microphone se stabilise, puis observez le niveau RMS et la crête au calme et pendant quelques claquements de mains. Vérifiez que les crêtes augmentent et que la cadence moyenne est proche de 16 000 échantillons par seconde. Les valeurs fluctuent d’une ligne à l’autre car le microphone livre les données par blocs. Une erreur `PDM.begin` signale un échec d’initialisation. Vérifiez que vous utilisez bien une carte **Sense**.
 
 ## 2. Compte et projet Edge Impulse
 

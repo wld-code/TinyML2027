@@ -87,8 +87,6 @@ Le [schéma des fichiers utilisés au TP03](../../docs/figures/tp02-fichiers-ver
 
 Remettez `metrics.json`, `test_predictions.csv` et vos réponses. Conservez le dossier `artifacts/motion/` pour le [TP03](../03-embedded-inference/README.md).
 
-Ce TP adapte les chapitres 9 et 10 d’[AIoT-Book](../../docs/REFERENCES.md).
-
 ## Corrigé
 
 <details>

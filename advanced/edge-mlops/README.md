@@ -80,7 +80,7 @@ Attendez l’état confirmé `motion-v1`. Après une interruption du téléverse
 2. Pourquoi conserver le binaire de chaque version confirmée ?
 3. Quel état la carte annonce-t-elle après le retour à `motion-v1` ? Quels contrôles permettent de le confirmer ?
 
-Les [essais sur carte originale](../../evidence/mlops/) documentent le refus avant téléversement, l’échec au rejeu et le retour à la version confirmée. Cette extension adapte le chapitre 13 d’[AIoT-Book](../../docs/REFERENCES.md).
+Les [essais sur carte originale](../../evidence/mlops/) documentent le refus avant téléversement, l’échec au rejeu et le retour à la version confirmée.
 
 ## Corrigé
 

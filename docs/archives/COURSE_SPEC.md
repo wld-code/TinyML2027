@@ -57,8 +57,6 @@ Pour **chaque** sous-étape : Objectif → Explication courte → Prérequis →
 ## Architecture de référence
 Acquisition Arduino USB série → fichiers bruts + manifest → inspection/EDA → fenêtres et caractéristiques → splits **par session** → baselines et réseau → modèle float + contrat → quantification INT8 → tests de parité → en-tête C++ + firmware Nano → replay déterministe → acquisition réelle → latence, RAM, Flash.
 
-## Réutilisation du livre et du dépôt historique
-- Réutiliser et **adapter** `AIoT-Book/labs/ch07-08-acceleration-features`, `ch09-10-motion-classifier`, `ch11-int8-quantization` : ne pas recopier aveuglément.
-- `ch12-nano-esp32-deployment` et `ch13-edge-model-update` sont des **spécifications**, pas une preuve que les firmwares existent.
+## Réutilisation du dépôt historique
 - `TinyML-for-motor` fournit une variante gestuelle et l'idée de parcours interactif, mais contient des choix vieillissants (port série fixe, API TFLM, 119 échantillons, normalisation). Les refaire proprement.
 - Attribution et licences : relever la licence de chaque source avant d'intégrer son code ou ses médias; à défaut reprendre le concept avec implémentation originale.

@@ -19,4 +19,4 @@ Les composants tiers gardent leur propre licence. Ils ne sont pas couverts par l
 | Core Arduino Mbed OS Nano | voir le dépôt `arduino/ArduinoCore-mbed` | Installé par `arduino-cli`, non redistribué |
 | Dépendances Python | leurs licences respectives | Installées par `uv`, non redistribuées |
 
-Certains contenus sont adaptés de *AIoT Engineering* (Labs 7 à 11, W. Abdaoui) et de `TinyML-for-motor` (W. Abdaoui). Le concept de classification de gestes vient de l'exemple Arduino de D. Coleman et S. Mistry, déclaré « domaine public ».
+Certains contenus sont adaptés de `TinyML-for-motor` (W. Abdaoui). Le concept de classification de gestes vient de l'exemple Arduino de D. Coleman et S. Mistry, déclaré « domaine public ».

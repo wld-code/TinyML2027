@@ -46,4 +46,4 @@ Le [contrat de données](docs/DATA_CONTRACT.md) décrit le calcul des caractéri
 
 Pour signaler un problème dans les *issues* GitHub, indiquez le système, la révision de la carte, la commande lancée et le résultat observé.
 
-Code sous licence [MIT](LICENSE). Supports sous licence [CC BY 4.0](LICENSE-docs.md). Les photos et composants tiers conservent leurs licences respectives. Les [crédits des photos](docs/photos/CREDITS.md) et les [références du cours](docs/REFERENCES.md) précisent les sources, notamment AIoT-Book et TinyML-for-motor. Cours adapté par Walid Abdaoui.
+Code sous licence [MIT](LICENSE). Supports sous licence [CC BY 4.0](LICENSE-docs.md). Les photos et composants tiers conservent leurs licences respectives. Les [crédits des photos](docs/photos/CREDITS.md) et les [références du cours](docs/REFERENCES.md) précisent les sources, notamment TinyML-for-motor. Cours adapté par Walid Abdaoui.

@@ -60,10 +60,12 @@ Les deux révisions apparaissent sous le nom « Nano 33 BLE ». Pour les disting
 ```sh
 ./scripts/compile.sh tutorials/02-arduino-nano/sketches/board_identify
 ./scripts/upload.sh  tutorials/02-arduino-nano/sketches/board_identify
-./scripts/arduino.sh monitor -p PORT -c baudrate=115200
+./scripts/arduino.sh monitor -p /dev/ttyACM0 -c baudrate=115200
 ```
 
-Dans la commande, remplacez `PORT` par le port repéré à l’étape 1. Appuyez sur **Entrée** dans le moniteur, puis sur **Ctrl+C** pour en sortir.
+Les commandes du moniteur utilisent `/dev/ttyACM0` comme exemple Linux. Adaptez le chemin au port affiché par `board list` après le téléversement. Si le journal affiche `PORT=/dev/ttyACM0`, passez uniquement `/dev/ttyACM0` après `-p`. Appuyez sur **Entrée** dans le moniteur, puis sur **Ctrl+C** pour en sortir.
+
+Si une seule Nano est détectée, `./scripts/arduino.sh monitor -p PORT -c baudrate=115200` sélectionne son port automatiquement.
 
 Cherchez `verdict=nano33ble_sense_original` ou `verdict=nano33ble_sense_rev2`. Pour chaque sketch suivant qui lit l’IMU, ajoutez `REV=rev2` devant la compilation et le téléversement si vous utilisez une Rev2. Pour l’étape 4, utilisez par exemple `REV=rev2 ./scripts/compile.sh examples/04_imu`. Dans Arduino IDE, décommentez la ligne `#define NANO_REV2` en tête du sketch.
 
@@ -74,7 +76,7 @@ Si vous vous trompez de révision, la carte affiche une erreur claire, par exemp
 ```sh
 ./scripts/compile.sh examples/04_imu
 ./scripts/upload.sh  examples/04_imu
-./scripts/arduino.sh monitor -p PORT -c baudrate=115200
+./scripts/arduino.sh monitor -p /dev/ttyACM0 -c baudrate=115200
 ```
 
 Voici un extrait mesuré sur la carte originale posée à plat.

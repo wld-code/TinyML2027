@@ -4,9 +4,11 @@ L'exemple est utilisé **tel quel** depuis la bibliothèque officielle installé
 
 ```sh
 ./scripts/compile.sh .arduino/user/libraries/Arduino_TensorFlowLite/examples/hello_world
-./scripts/arduino.sh upload -p PORT --fqbn arduino:mbed_nano:nano33ble --input-dir build/hello_world
-./scripts/arduino.sh monitor -p PORT -c baudrate=115200
+./scripts/arduino.sh upload -p /dev/ttyACM0 --fqbn arduino:mbed_nano:nano33ble --input-dir build/hello_world
+./scripts/arduino.sh monitor -p /dev/ttyACM0 -c baudrate=115200
 ```
+
+Adaptez `/dev/ttyACM0` au port de la carte dans les deux commandes qui utilisent `-p`.
 
 Résultat attendu (mesuré, voir `evidence/phase3/`) :
 - environ 30 nombres par seconde entre 0 et 255 dans le moniteur (luminosité de la LED) ;

@@ -4,10 +4,10 @@ Tu es chargé de transformer les cahiers des charges du dépôt en **véritables
 
 ## Obligations initiales
 1. Lire intégralement `README.md`, `docs/archives/COURSE_SPEC.md`, `docs/DATA_CONTRACT.md`, `docs/VALIDATION.md`, les deux tutoriels, trois TP et deux extensions.
-2. Auditer les sources existantes `wld-code/AIoT-Book/labs` (ch07-08, ch09-10, ch11, ch12, ch13 et tutoriels Arduino) et `wld-code/TinyML-for-motor`. Vérifier leurs licences et conserver les attributions.
+2. Auditer le dépôt `wld-code/TinyML-for-motor`. Vérifier les licences et conserver les attributions.
 3. Vérifier en ligne **au moment de l'implémentation** les versions Python, TensorFlow/LiteRT, TFLM, Arduino CLI, Arduino Mbed OS Nano, bibliothèques IMU/PDM, dépendances et support OS. Figer un environnement réellement compatible (versions et lockfile). N'affirme pas une compatibilité sur la base d'un exemple ancien.
 4. Proposer d'abord un rapport `docs/archives/AUDIT.md` : état de l'existant, changements, risques, dépendances, choix de modèle et matrice de tests. Aucune migration aveugle.
-5. Confirmer le contrat des quatre features du livre et sa faisabilité **C++ sur Nano**, en particulier fréquence dominante et band power qui exigent une méthode spectrale. Si trop coûteux, proposer et tester un autre contrat **avant** d'entraîner quoi que ce soit; documenter les conséquences.
+5. Confirmer le contrat des quatre features et sa faisabilité **C++ sur Nano**, en particulier fréquence dominante et band power qui exigent une méthode spectrale. Si trop coûteux, proposer et tester un autre contrat **avant** d'entraîner quoi que ce soit; documenter les conséquences.
 6. Toute nouvelle fonctionnalité doit inclure tests reproductibles, documentation et critère d'acceptation observable.
 
 ## Démarche par lots validés

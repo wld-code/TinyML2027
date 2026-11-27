@@ -148,8 +148,6 @@ uv run pytest tests/test_recording.py tests/test_capture_protocol.py
 
 Pour le parcours sur carte, conservez `data/manifest.csv` et les enregistrements de `data/raw/`. Dans les deux parcours, remettez `results/tp01/features.csv`, `results/tp01/quality_report.md` et vos réponses. Le dossier `data/` reste sur votre poste, hors de Git.
 
-Ce TP adapte les [chapitres 7 et 8 d’AIoT-Book](../../docs/REFERENCES.md).
-
 ## Corrigé
 
 <details>

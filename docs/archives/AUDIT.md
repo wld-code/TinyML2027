@@ -84,7 +84,7 @@ ax_mean_g=+0.0059 ay_mean_g=-0.0261 az_mean_g=+0.9626   |a|_mean_g=0.9630
 
 Ce qu'on en retient :
 - La bibliothèque fixe l'ODR à **119 Hz nominal** (`LSM9DS1.cpp:73`, registre `CTRL_REG6_XL = 0x70`, ±4 g). Elle n'expose pas d'API pour la changer.
-- La cadence observée est plus basse et irrégulière (médiane 114 Hz, CV 3 %). Elle concorde avec la mesure du livre (114,3 Hz).
+- La cadence observée est plus basse et irrégulière (médiane 114 Hz, CV 3 %).
 - La **cible de 50 Hz** de `DATA_CONTRACT.md` / TP01 **n'est pas native**. L'atteindre demanderait d'écrire un registre (59,5 Hz est l'ODR LSM9DS1 la plus proche) ou de décimer. Voir §5.1.
 - La norme mesurée vaut 0,963 g : le capteur n'est pas calibré (offset et gain). C'est un bon support pédagogique (« g mesuré ≠ 1 g »).
 - Pour la Rev2, `Arduino_BMI270_BMM150` fixe **100 Hz** (`BMI270.cpp:291`) [lu]. Les deux révisions n'ont donc pas la même cadence.
@@ -95,13 +95,12 @@ La carte contient actuellement ce sketch de diagnostic. Elle sera reflashée lor
 
 ## 3. Analyse des sources existantes
 
-Clones en lecture seule (hors dépôt) : `wld-code/AIoT-Book` (privé, commit `440edcc`, 23/11/2026) et `wld-code/TinyML-for-motor` (public, commit `d0b134a`, 17/12/2025).
+Clone en lecture seule (hors dépôt) : `wld-code/TinyML-for-motor` (public, commit `d0b134a`, 17/12/2025).
 
 ### 3.1 Licences
 
 | Source | Licence [lu] | Conséquence |
 |---|---|---|
-| AIoT-Book | Aucun fichier LICENSE (dépôt privé de l'auteur) | Réutilisation par l'auteur possible ; ajouter une attribution « adapté de AIoT Engineering, Labs 7–11 » |
 | TinyML-for-motor | Aucun fichier LICENSE | Le firmware `classify_imu.ino` dérive de l'exemple Arduino de D. Coleman et S. Mistry, déclaré « domaine public » dans son en-tête. On ne reprend que le concept |
 | tflite-micro | Apache-2.0 | Conserver LICENSE et NOTICE dans tout arbre vendu |
 | Arduino_LSM9DS1, Arduino_BMI270_BMM150 | LGPL-2.1 | Utilisées comme bibliothèques, non modifiées |
@@ -109,17 +108,7 @@ Clones en lecture seule (hors dépôt) : `wld-code/AIoT-Book` (privé, commit `4
 
 **Il faut choisir la licence de TinyML2027 :** par exemple CC BY 4.0 pour les textes et MIT ou Apache-2.0 pour le code.
 
-### 3.2 AIoT-Book — à adapter
-
-| Lab | Réutilisable | Obsolète ou à corriger |
-|---|---|---|
-| ch07-08 features | `inspect_recording` (séquence, timestamps, gaps, CV), traitement « marquer invalide sans interpoler », spectres, démo d'aliasing, tests pytest, simulateur fondé sur des mesures réelles | `capture.py` impose `--port` et attend avec `time.sleep(2)`, sans début/fin d'enregistrement ni détection de déconnexion. Le sketch attend `while(!Serial)` sans limite. `fs` est estimée par enregistrement alors que l'embarqué n'a qu'une fenêtre. Les features dépendent de `scipy.signal.welch`, ce qui oblige à reproduire ses conventions en C++ |
-| ch09-10 classifieur | Split par session avec contrôle de fuite, dummy/logistique/4-8-3, sélection par macro-F1 en validation, un seul passage sur le test, seeds | Les chiffres publiés viennent d'un dataset **simulé**. Défaut structurel du protocole `impact` : 15 fenêtres sur 34 sans tapotement sont étiquetées `impact` |
-| ch11 INT8 | Contrôle « full INT8 », calibration sur train seulement, comparaison appariée, constat « INT8 plus gros que FP32 » (2 432 contre 2 088 octets), golden vectors, `model_int8.h` avec SHA-256 | Interpréteur desktop à revoir (`ai_edge_litert`) ; aucune parité avec TFLM réel |
-| ch12, ch13 | Spécifications seulement : replay avant live, désiré/confirmé, rollback USB | Architecture à deux cartes (ESP32) exclue. À réécrire pour une seule Nano |
-| Tutoriel Nano | Structure des étapes | **Erreurs** : il annonce WiFiNINA (la Nano 33 BLE Sense n'a pas de Wi-Fi), ne liste que les capteurs de l'originale, suppose 9600 bauds, et fait du `usermod` sans diagnostic préalable |
-
-### 3.3 TinyML-for-motor — à ne pas recopier
+### 3.2 TinyML-for-motor — à ne pas recopier
 
 - API TFLM supprimée : `MicroErrorReporter`, `AllOpsResolver`, `#include <TensorFlowLite.h>`, `version.h`. Ces fichiers n'existent plus dans `tflite-micro` HEAD [lu].
 - Le commentaire « 119 échantillons ≈ 2 s à 50 Hz » est faux : la carte échantillonne à environ 119 Hz, donc environ 1 s.
@@ -319,7 +308,7 @@ Reproductibilité :
 - Arduino CLI 1.6.0, Arduino IDE 2.3.11 (GitHub releases)
 - Sources des bibliothèques installées : `Arduino_LSM9DS1/src/LSM9DS1.cpp`, `Arduino_BMI270_BMM150/src/BMI270.cpp`
 - Nano 33 BLE Sense : https://docs.arduino.cc/hardware/nano-33-ble-sense/ ; Rev2 : https://docs.arduino.cc/hardware/nano-33-ble-sense-rev2/
-- Sources du cours : `wld-code/AIoT-Book/labs` (`440edcc`), `wld-code/TinyML-for-motor` (`d0b134a`)
+- Sources du cours : `wld-code/TinyML-for-motor` (`d0b134a`)
 
 ---
 
